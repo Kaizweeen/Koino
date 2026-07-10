@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { SpotifyEmbed } from "@/components/SpotifyEmbed";
 import { Verse } from "@/components/screens/Verse";
 import { Amen } from "@/components/screens/Amen";
+import { Prayer } from "@/components/screens/Prayer";
 import { getTheme } from "@/lib/themes";
 import type { Devotion } from "@/lib/devotions/types";
 
@@ -32,5 +33,14 @@ describe("Amen screen", () => {
   it("shows the streak count", () => {
     render(<Amen theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} />);
     expect(screen.getByText(/8-day streak/)).toBeInTheDocument();
+  });
+});
+
+describe("Prayer screen", () => {
+  it("exposes a real button and keeps the prayer as readable text", () => {
+    render(<Prayer devotion={dev} theme={getTheme("peace")} onContinue={() => {}} />);
+    const btn = screen.getByRole("button", { name: "Tap when you're ready" });
+    expect(btn).toBeInTheDocument();
+    expect(screen.getByText("p").tagName).toBe("P");
   });
 });
