@@ -1,0 +1,16 @@
+:root {
+  --color-paper: #FBFAF7;
+  --color-ink: #2C2C2A;
+  --color-ink-muted: #9A988F;
+  --color-ink-secondary: #6F6E68;
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
