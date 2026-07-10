@@ -5,14 +5,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: { DEFAULT: "#FDFBF7", deep: "#F5F0E6" },
-        navy: { DEFAULT: "#1E293B", soft: "#475569" },
-        clay: { DEFAULT: "#E29578", deep: "#D17A5C" },
-        sage: { DEFAULT: "#83C5BE", deep: "#5FA8A0" },
+        paper: "#FBFAF7",
+        ink: { DEFAULT: "#2C2C2A", muted: "#9A988F", secondary: "#6F6E68" },
       },
       fontFamily: {
-        display: ["var(--font-fraunces)", "Georgia", "serif"],
-        body: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)"],
+        serif: ["var(--font-serif)"],
       },
       borderRadius: { card: "1.25rem" },
       boxShadow: {
