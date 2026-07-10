@@ -6,6 +6,7 @@ export function getDevotionForDate(devotions: Devotion[], date: string): Devotio
 }
 
 export function getTodayDevotion(devotions: Devotion[], today: string): Devotion {
+  if (devotions.length === 0) throw new Error("no devotions available");
   const exact = getDevotionForDate(devotions, today);
   if (exact) return exact;
   const past = devotions.filter((d) => d.date <= today);

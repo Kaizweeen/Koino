@@ -24,6 +24,10 @@ describe("devotion selection", () => {
     expect(getTodayDevotion(sample, "2026-01-01").date).toBe("2026-06-23");
   });
 
+  it("throws when there are no devotions", () => {
+    expect(() => getTodayDevotion([], "2026-06-25")).toThrow("no devotions available");
+  });
+
   it("rotates playlists deterministically by date", () => {
     const theme = { playlistIds: ["x", "y"] } as any;
     expect(getPlaylistId(theme, "2026-06-24")).toBe(getPlaylistId(theme, "2026-06-24"));
