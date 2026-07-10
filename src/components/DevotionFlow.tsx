@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import type { Devotion } from "@/lib/devotions/types";
+import { useEffect, useMemo, useState } from "react";
+import { DEVOTIONS } from "@/lib/devotions/content";
 import { getTheme } from "@/lib/themes";
-import { getPlaylistId } from "@/lib/devotions/select";
+import { getPlaylistId, getTodayDevotion } from "@/lib/devotions/select";
 import { computeStreak, loadProgress, markComplete, toggleFavorite, isFavorite } from "@/lib/progress";
 import { Arrival } from "@/components/screens/Arrival";
 import { Verse } from "@/components/screens/Verse";
@@ -14,18 +14,41 @@ import { Linger } from "@/components/screens/Linger";
 
 type Step = "arrival" | "verse" | "reflection" | "prayer" | "amen" | "linger";
 
-export function DevotionFlow({ devotion }: { devotion: Devotion }) {
-  const theme = getTheme(devotion.theme);
-  const playlistId = getPlaylistId(theme, devotion.date);
+function localToday(): string {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+export function DevotionFlow() {
+  const [today, setToday] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("arrival");
   const [progress, setProgress] = useState(() => loadProgress());
 
-  const streak = useMemo(
-    () => computeStreak(progress.completedDates, devotion.date),
-    [progress.completedDates, devotion.date],
+  useEffect(() => {
+    setToday(localToday());
+  }, []);
+
+  const devotion = useMemo(
+    () => (today ? getTodayDevotion(DEVOTIONS, today) : null),
+    [today],
   );
 
+  const streak = useMemo(
+    () => (devotion ? computeStreak(progress.completedDates, devotion.date) : 0),
+    [progress.completedDates, devotion],
+  );
+
+  if (!devotion) {
+    return <main className="mx-auto flex min-h-screen max-w-sm flex-col bg-paper" />;
+  }
+
+  const theme = getTheme(devotion.theme);
+  const playlistId = getPlaylistId(theme, devotion.date);
+
   function complete() {
+    if (!devotion) return;
     setProgress(markComplete(devotion.date));
     setStep("amen");
   }
