@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { SpotifyEmbed } from "@/components/SpotifyEmbed";
 import { Verse } from "@/components/screens/Verse";
 import { Amen } from "@/components/screens/Amen";
@@ -42,5 +42,12 @@ describe("Prayer screen", () => {
     const btn = screen.getByRole("button", { name: "Tap when you're ready" });
     expect(btn).toBeInTheDocument();
     expect(screen.getByText("p").tagName).toBe("P");
+  });
+
+  it("fires onContinue exactly once per button click", () => {
+    const onContinue = vi.fn();
+    render(<Prayer devotion={dev} theme={getTheme("peace")} onContinue={onContinue} />);
+    fireEvent.click(screen.getByRole("button", { name: "Tap when you're ready" }));
+    expect(onContinue).toHaveBeenCalledTimes(1);
   });
 });
