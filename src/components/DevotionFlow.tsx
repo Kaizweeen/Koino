@@ -5,14 +5,16 @@ import { DEVOTIONS } from "@/lib/devotions/content";
 import { getTheme } from "@/lib/themes";
 import { getPlaylistId, getTodayDevotion } from "@/lib/devotions/select";
 import { computeStreak, loadProgress, markComplete, toggleFavorite, isFavorite } from "@/lib/progress";
+import { formatDisplayDate, greetingForHour } from "@/lib/dates";
 import { Arrival } from "@/components/screens/Arrival";
 import { Verse } from "@/components/screens/Verse";
 import { Reflection } from "@/components/screens/Reflection";
 import { Prayer } from "@/components/screens/Prayer";
 import { Amen } from "@/components/screens/Amen";
 import { Linger } from "@/components/screens/Linger";
+import { Done } from "@/components/screens/Done";
 
-type Step = "arrival" | "verse" | "reflection" | "prayer" | "amen" | "linger";
+type Step = "arrival" | "verse" | "reflection" | "prayer" | "amen" | "linger" | "done";
 
 function localToday(): string {
   const d = new Date();
@@ -27,7 +29,9 @@ export function DevotionFlow() {
   const [progress, setProgress] = useState(() => loadProgress());
 
   useEffect(() => {
-    setToday(localToday());
+    const t = localToday();
+    setToday(t);
+    if (loadProgress().completedDates.includes(t)) setStep("done");
   }, []);
 
   const devotion = useMemo(
@@ -36,8 +40,8 @@ export function DevotionFlow() {
   );
 
   const streak = useMemo(
-    () => (devotion ? computeStreak(progress.completedDates, devotion.date) : 0),
-    [progress.completedDates, devotion],
+    () => (today ? computeStreak(progress.completedDates, today) : 0),
+    [progress.completedDates, today],
   );
 
   if (!devotion) {
@@ -52,15 +56,23 @@ export function DevotionFlow() {
   const playlistId = getPlaylistId(theme, devotion.date);
 
   function complete() {
-    if (!devotion) return;
-    setProgress(markComplete(devotion.date));
+    if (!today) return;
+    setProgress(markComplete(today));
     setStep("amen");
   }
 
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col border-x border-black/5 bg-paper">
       <div className="flex min-h-screen flex-col">
-        {step === "arrival" && <Arrival theme={theme} today={devotion.date} streak={streak} onBegin={() => setStep("verse")} />}
+        {step === "arrival" && (
+          <Arrival
+            theme={theme}
+            today={formatDisplayDate(today ?? devotion.date)}
+            streak={streak}
+            greeting={greetingForHour(new Date().getHours())}
+            onBegin={() => setStep("verse")}
+          />
+        )}
         {step === "verse" && <Verse devotion={devotion} theme={theme} onContinue={() => setStep("reflection")} />}
         {step === "reflection" && <Reflection devotion={devotion} theme={theme} onContinue={() => setStep("prayer")} />}
         {step === "prayer" && <Prayer devotion={devotion} theme={theme} onContinue={complete} />}
@@ -78,6 +90,7 @@ export function DevotionFlow() {
           </button>
         )}
         {step === "linger" && <Linger devotion={devotion} theme={theme} playlistId={playlistId} />}
+        {step === "done" && <Done theme={theme} streak={streak} onReadAgain={() => setStep("verse")} />}
       </div>
     </main>
   );

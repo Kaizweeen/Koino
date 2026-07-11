@@ -4,6 +4,8 @@ import { SpotifyEmbed } from "@/components/SpotifyEmbed";
 import { Verse } from "@/components/screens/Verse";
 import { Amen } from "@/components/screens/Amen";
 import { Prayer } from "@/components/screens/Prayer";
+import { Arrival } from "@/components/screens/Arrival";
+import { Done } from "@/components/screens/Done";
 import { getTheme } from "@/lib/themes";
 import type { Devotion } from "@/lib/devotions/types";
 
@@ -49,5 +51,21 @@ describe("Prayer screen", () => {
     render(<Prayer devotion={dev} theme={getTheme("peace")} onContinue={onContinue} />);
     fireEvent.click(screen.getByRole("button", { name: "Tap when you're ready" }));
     expect(onContinue).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("Arrival screen", () => {
+  it("hides the streak at zero and shows the greeting", () => {
+    render(<Arrival theme={getTheme("peace")} today="Saturday · July 11" streak={0} greeting="Good evening" onBegin={() => {}} />);
+    expect(screen.getByText("Good evening")).toBeInTheDocument();
+    expect(screen.queryByText(/day streak/)).toBeNull();
+  });
+});
+
+describe("Done screen", () => {
+  it("offers a re-read", () => {
+    render(<Done theme={getTheme("peace")} streak={3} onReadAgain={() => {}} />);
+    expect(screen.getByText("You've already been here today.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Read it again" })).toBeInTheDocument();
   });
 });
