@@ -17,7 +17,7 @@ export function Prayer({ devotion, theme, onContinue }: { devotion: Devotion; th
         className="text-center text-xs"
         style={{ color: "#7E7C72", background: "transparent", border: 0 }}
       >
-        Tap when you're ready
+        Tap when you&apos;re ready
       </button>
     </div>
   );
