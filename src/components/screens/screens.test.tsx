@@ -24,10 +24,12 @@ const dev: Devotion = {
 };
 
 describe("Verse screen", () => {
-  it("shows the verse text and reference in the theme accent", () => {
-    render(<Verse devotion={dev} theme={getTheme("peace")} onContinue={() => {}} />);
+  it("shows the verse, reference, playlist, and progress", () => {
+    render(<Verse devotion={dev} theme={getTheme("peace")} playlistId="abc123" onContinue={() => {}} />);
     expect(screen.getByText("Be still, and know that I am God.")).toBeInTheDocument();
     expect(screen.getByText("Psalm 46:10")).toBeInTheDocument();
+    expect(screen.getByTitle("Peace playlist")).toBeInTheDocument();
+    expect(screen.getByLabelText("Step 1 of 3")).toBeInTheDocument();
   });
 });
 

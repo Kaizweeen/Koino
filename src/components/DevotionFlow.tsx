@@ -63,7 +63,7 @@ export function DevotionFlow() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-sm flex-col border-x border-black/5 bg-paper">
-      <div className="flex min-h-screen flex-col">
+      <div key={step} className="fade-in flex min-h-screen flex-col">
         {step === "arrival" && (
           <Arrival
             theme={theme}
@@ -73,7 +73,7 @@ export function DevotionFlow() {
             onBegin={() => setStep("verse")}
           />
         )}
-        {step === "verse" && <Verse devotion={devotion} theme={theme} onContinue={() => setStep("reflection")} />}
+        {step === "verse" && <Verse devotion={devotion} theme={theme} playlistId={playlistId} onContinue={() => setStep("reflection")} />}
         {step === "reflection" && <Reflection devotion={devotion} theme={theme} onContinue={() => setStep("prayer")} />}
         {step === "prayer" && <Prayer devotion={devotion} theme={theme} onContinue={complete} />}
         {step === "amen" && (
