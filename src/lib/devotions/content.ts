@@ -57,7 +57,7 @@ export const DEVOTIONS: Devotion[] = [
     date: "2026-06-30",
     verseRef: "Zephaniah 3:17",
     verseText:
-      "Yahweh, your God, is among you, a mighty one who will save. He will rejoice over you with joy. He will calm you in his love. He will delight in you with singing.",
+      "Yahweh, your God, is among you, a mighty one who will save. He will rejoice over you with joy. He will calm you in his love. He will rejoice over you with singing.",
     theme: "joy",
     reflection:
       "It's easy to think of God as watching from a distance, arms crossed. This verse says otherwise — he sings over you. Let that be true before you do anything else today.",
@@ -133,7 +133,7 @@ export const DEVOTIONS: Devotion[] = [
     date: "2026-07-07",
     verseRef: "Philippians 4:6-7",
     verseText:
-      "In nothing be anxious, but in everything, by prayer and petition with thanksgiving, let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and thoughts through Christ Jesus.",
+      "In nothing be anxious, but in everything, by prayer and petition with thanksgiving, let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your thoughts in Christ Jesus.",
     theme: "peace",
     reflection:
       "Peace here is described as a guard, not a feeling — it stands watch over your heart even when circumstances don't add up. You don't have to solve everything before you're allowed to be at peace.",
@@ -177,7 +177,7 @@ export const DEVOTIONS: Devotion[] = [
     date: "2026-07-11",
     verseRef: "Nehemiah 8:10",
     verseText:
-      "Then he said to them, Go your way. Eat the fat, and drink the sweet, and send portions to him for whom nothing is prepared, for this day is holy to our Lord. Don't be grieved, for the joy of Yahweh is your strength.",
+      "Then he said to them, “Go your way. Eat the fat, drink the sweet, and send portions to him for whom nothing is prepared, for today is holy to our Lord. Don't be grieved, for the joy of Yahweh is your strength.”",
     theme: "joy",
     reflection:
       "Joy isn't the opposite of hard work or hard seasons — it's what carries you through them. If today feels like it needs more strength than you have, joy in God might be exactly the strength you're missing.",
@@ -198,7 +198,7 @@ export const DEVOTIONS: Devotion[] = [
     date: "2026-07-13",
     verseRef: "Isaiah 41:10",
     verseText:
-      "Don't you be afraid, for I am with you. Don't be dismayed, for I am your God. I will strengthen you. I will help you. I will uphold you with the right hand of my righteousness.",
+      "Don't you be afraid, for I am with you. Don't be dismayed, for I am your God. I will strengthen you. Yes, I will help you. Yes, I will uphold you with the right hand of my righteousness.",
     theme: "strength",
     reflection:
       "Notice how much of this verse is God saying what he will do, not what you must do. Strength, in this promise, is something given to you, not something you scrape together on your own.",
@@ -231,7 +231,7 @@ export const DEVOTIONS: Devotion[] = [
     date: "2026-07-16",
     verseRef: "Matthew 11:28-29",
     verseText:
-      "Come to me, all you who labor and are heavily burdened, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and lowly in heart, and you will find rest for your souls.",
+      "Come to me, all you who labor and are heavily burdened, and I will give you rest. Take my yoke upon you, and learn from me, for I am gentle and humble in heart, and you will find rest for your souls.",
     theme: "surrender",
     reflection:
       "Rest, in this invitation, comes through taking on a yoke, not setting everything down. Surrendering to Jesus doesn't mean doing nothing — it means trading your heavy load for the one that fits.",
@@ -318,7 +318,7 @@ export const DEVOTIONS: Devotion[] = [
     date: "2026-07-24",
     verseRef: "James 4:8",
     verseText:
-      "Draw near to God, and he will draw near to you. Cleanse your hands, you sinners; purify your hearts, you double-minded.",
+      "Draw near to God, and he will draw near to you. Cleanse your hands, you sinners; and purify your hearts, you double-minded.",
     theme: "repentance",
     reflection:
       "Drawing near to God isn't a one-time altar call — it's a daily motion available whenever your heart has drifted. He meets you exactly halfway, every time you turn back.",
@@ -329,7 +329,7 @@ export const DEVOTIONS: Devotion[] = [
     date: "2026-07-25",
     verseRef: "2 Corinthians 12:9",
     verseText:
-      "He has said to me, My grace is sufficient for you, for my power is made perfect in weakness. Most gladly therefore I will rather glory in my weaknesses, that the power of Christ may rest on me.",
+      "He has said to me, “My grace is sufficient for you, for my power is made perfect in weakness.” Most gladly therefore I will rather glory in my weaknesses, that the power of Christ may rest on me.",
     theme: "strength",
     reflection:
       "Paul doesn't ask for the weakness to be removed — he learns to let it be the place where God's power shows up best. Your weak spot today might not need fixing so much as it needs surrendering.",
@@ -340,7 +340,7 @@ export const DEVOTIONS: Devotion[] = [
     date: "2026-07-26",
     verseRef: "Isaiah 66:13",
     verseText:
-      "As one whom his mother comforts, so I will comfort you. You will be comforted in Jerusalem.",
+      "As one whom his mother comforts, so will I comfort you. You will be comforted in Jerusalem.",
     theme: "comfort",
     reflection:
       "God reaches for one of the tenderest images available — a mother comforting a child — to describe how he treats you. Whatever you needed comfort for as a child, he offers still.",
@@ -373,7 +373,7 @@ export const DEVOTIONS: Devotion[] = [
     date: "2026-07-29",
     verseRef: "Romans 8:38-39",
     verseText:
-      "For I am persuaded that neither death, nor life, nor angels, nor principalities, nor things present, nor things to come, nor powers, nor height, nor depth, nor any other created thing, will be able to separate us from the love of God which is in Christ Jesus our Lord.",
+      "For I am persuaded that neither death, nor life, nor angels, nor principalities, nor things present, nor things to come, nor powers, nor height, nor depth, nor any other created thing, will be able to separate us from God's love, which is in Christ Jesus our Lord.",
     theme: "love",
     reflection:
       "Paul reaches for the biggest list he can think of — death, life, angels, powers, height, depth — and says none of it can touch this love. Whatever you're afraid could disqualify you from God's love was already on that list.",
