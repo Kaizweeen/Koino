@@ -1,16 +1,29 @@
 :root {
   --color-paper: #FBFAF7;
+  --color-canvas: #F1EFE8;
   --color-ink: #2C2C2A;
   --color-ink-muted: #9A988F;
   --color-ink-secondary: #6F6E68;
-  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-serif: Georgia, "Times New Roman", serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
-  background: var(--color-paper);
+  background: var(--color-canvas);
   color: var(--color-ink);
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+@keyframes koino-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes koino-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.75; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+.fade-in { animation: koino-fade 500ms ease both; }
+.breathe { animation: koino-breathe 3.5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .fade-in, .breathe { animation: none; }
 }

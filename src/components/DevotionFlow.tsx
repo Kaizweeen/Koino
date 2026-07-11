@@ -41,7 +41,11 @@ export function DevotionFlow() {
   );
 
   if (!devotion) {
-    return <main className="mx-auto flex min-h-screen max-w-sm flex-col bg-paper" />;
+    return (
+      <main className="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center border-x border-black/5 bg-paper">
+        <div className="breathe h-16 w-16 rounded-full border border-ink-muted/30 bg-white/60" aria-hidden="true" />
+      </main>
+    );
   }
 
   const theme = getTheme(devotion.theme);
@@ -54,7 +58,7 @@ export function DevotionFlow() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col bg-paper">
+    <main className="mx-auto flex min-h-screen max-w-sm flex-col border-x border-black/5 bg-paper">
       <div className="flex min-h-screen flex-col">
         {step === "arrival" && <Arrival theme={theme} today={devotion.date} streak={streak} onBegin={() => setStep("verse")} />}
         {step === "verse" && <Verse devotion={devotion} theme={theme} onContinue={() => setStep("reflection")} />}
