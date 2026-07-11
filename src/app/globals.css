@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --color-paper: #FBFAF7;
   --color-canvas: #F1EFE8;
