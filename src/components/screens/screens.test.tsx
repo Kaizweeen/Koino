@@ -6,6 +6,7 @@ import { Amen } from "@/components/screens/Amen";
 import { Prayer } from "@/components/screens/Prayer";
 import { Arrival } from "@/components/screens/Arrival";
 import { Done } from "@/components/screens/Done";
+import { Reflection } from "@/components/screens/Reflection";
 import { getTheme } from "@/lib/themes";
 import type { Devotion } from "@/lib/devotions/types";
 
@@ -69,5 +70,14 @@ describe("Done screen", () => {
     render(<Done theme={getTheme("peace")} streak={3} onReadAgain={() => {}} />);
     expect(screen.getByText("You've already been here today.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Read it again" })).toBeInTheDocument();
+  });
+});
+
+describe("Reflection screen", () => {
+  it("shows the reflection text, theme, and step progress", () => {
+    render(<Reflection devotion={dev} theme={getTheme("peace")} onContinue={() => {}} />);
+    expect(screen.getByText("r")).toBeInTheDocument();
+    expect(screen.getByText("Peace")).toBeInTheDocument();
+    expect(screen.getByLabelText("Step 2 of 3")).toBeInTheDocument();
   });
 });
