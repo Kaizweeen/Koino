@@ -21,7 +21,7 @@
 
 ---
 
-### Task I1: Typography, metadata, canvas, motion foundation, loading emblem
+### Task 1: Typography, metadata, canvas, motion foundation, loading emblem
 
 **Files:**
 - Modify: `src/app/layout.tsx`
@@ -135,7 +135,7 @@ git commit -m "feat: real typography, metadata, warm canvas, motion foundation"
 
 ---
 
-### Task I2: Date/greeting helpers, humanized Arrival, completed-today state
+### Task 2: Date/greeting helpers, humanized Arrival, completed-today state
 
 **Files:**
 - Create: `src/lib/dates.ts`
@@ -353,7 +353,7 @@ git commit -m "feat: humanized arrival, greetings, and completed-today state"
 
 ---
 
-### Task I3: Music on the Verse screen, progress indicator, motion application
+### Task 3: Music on the Verse screen, progress indicator, motion application
 
 **Files:**
 - Create: `src/components/screens/StepDots.tsx`
@@ -473,7 +473,7 @@ git commit -m "feat: music at the verse, progress dots, step cross-fade"
 
 ---
 
-### Task I4: WEB verse-text verification pass
+### Task 4: WEB verse-text verification pass
 
 **Files:**
 - Create: `scripts/verify-verses.mjs`
