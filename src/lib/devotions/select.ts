@@ -19,6 +19,7 @@ function dayIndex(date: string): number {
 }
 
 export function getPlaylistId(theme: Theme, date: string): string {
+  if (theme.playlistIds.length === 0) throw new Error("no playlists for theme");
   const ids = theme.playlistIds;
   return ids[dayIndex(date) % ids.length];
 }

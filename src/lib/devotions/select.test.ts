@@ -33,4 +33,8 @@ describe("devotion selection", () => {
     expect(getPlaylistId(theme, "2026-06-24")).toBe(getPlaylistId(theme, "2026-06-24"));
     expect(getPlaylistId({ playlistIds: ["only"] } as any, "2026-06-24")).toBe("only");
   });
+
+  it("throws when a theme has no playlists", () => {
+    expect(() => getPlaylistId({ playlistIds: [] } as any, "2026-06-24")).toThrow("no playlists for theme");
+  });
 });
