@@ -2,7 +2,7 @@ import type { Theme } from "@/lib/themes";
 
 export function Arrival({ theme, today, streak, greeting, onBegin }: { theme: Theme; today: string; streak: number; greeting: string; onBegin: () => void }) {
   return (
-    <div className="flex h-full flex-col p-6">
+    <div className="flex flex-1 flex-col p-6">
       <div className="my-auto flex flex-col items-center gap-3 text-center">
         <span className="text-xs uppercase tracking-widest text-ink-muted">{today}</span>
         <span className="text-xl font-medium text-ink">{greeting}</span>

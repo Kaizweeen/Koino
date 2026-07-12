@@ -2,7 +2,7 @@ import type { Theme } from "@/lib/themes";
 
 export function Amen({ theme, streak, favorite, onToggleFavorite }: { theme: Theme; streak: number; favorite: boolean; onToggleFavorite: () => void }) {
   return (
-    <div className="flex h-full flex-col p-6">
+    <div className="flex flex-1 flex-col p-6">
       <div className="my-auto flex flex-col items-center gap-2.5 text-center">
         <div className="flex h-18 w-18 items-center justify-center rounded-full"
           style={{ background: theme.accentSoft, border: `1px solid ${theme.accentBorder}`, width: 72, height: 72 }}>

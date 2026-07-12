@@ -4,7 +4,7 @@ import { SpotifyEmbed } from "@/components/SpotifyEmbed";
 
 export function Linger({ devotion, theme, playlistId }: { devotion: Devotion; theme: Theme; playlistId: string }) {
   return (
-    <div className="flex h-full flex-col gap-3 p-6">
+    <div className="flex flex-1 flex-col gap-3 p-6">
       <span className="text-base font-medium text-ink">Today</span>
       <div className="flex items-center gap-2.5 rounded-xl border p-3" style={{ borderColor: "rgba(0,0,0,0.1)" }}>
         <div className="flex h-8 w-8 items-center justify-center rounded-full" style={{ background: theme.accentSoft }}>

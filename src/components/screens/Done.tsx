@@ -2,7 +2,7 @@ import type { Theme } from "@/lib/themes";
 
 export function Done({ theme, streak, onReadAgain }: { theme: Theme; streak: number; onReadAgain: () => void }) {
   return (
-    <div className="flex h-full flex-col p-6">
+    <div className="flex flex-1 flex-col p-6">
       <div className="my-auto flex flex-col items-center gap-2.5 text-center">
         <div
           className="breathe flex items-center justify-center rounded-full"

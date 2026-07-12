@@ -5,7 +5,7 @@ import { StepDots } from "@/components/screens/StepDots";
 
 export function Verse({ devotion, theme, playlistId, onContinue }: { devotion: Devotion; theme: Theme; playlistId: string; onContinue: () => void }) {
   return (
-    <div className="flex h-full flex-col p-6">
+    <div className="flex flex-1 flex-col p-6">
       <div className="flex items-center justify-between">
         <span className="inline-flex items-center gap-1.5 text-sm font-medium" style={{ color: theme.accent }}>
           <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: theme.accent }} />
