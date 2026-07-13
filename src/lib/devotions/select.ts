@@ -23,3 +23,12 @@ export function getPlaylistId(theme: Theme, date: string): string {
   const ids = theme.playlistIds;
   return ids[dayIndex(date) % ids.length];
 }
+
+/** The devotions for a set of saved dates, most recent first; unknown dates are skipped. */
+export function getSavedDevotions(devotions: Devotion[], favorites: string[]): Devotion[] {
+  return [...favorites]
+    .sort()
+    .reverse()
+    .map((date) => getDevotionForDate(devotions, date))
+    .filter((d): d is Devotion => d !== null);
+}

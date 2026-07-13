@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getDevotionForDate, getTodayDevotion, getPlaylistId } from "@/lib/devotions/select";
+import { getDevotionForDate, getTodayDevotion, getPlaylistId, getSavedDevotions } from "@/lib/devotions/select";
 import type { Devotion } from "@/lib/devotions/types";
 
 const sample: Devotion[] = [
@@ -36,5 +36,10 @@ describe("devotion selection", () => {
 
   it("throws when a theme has no playlists", () => {
     expect(() => getPlaylistId({ playlistIds: [] } as any, "2026-06-24")).toThrow("no playlists for theme");
+  });
+
+  it("maps saved dates to devotions, most recent first, skipping unknowns", () => {
+    const saved = getSavedDevotions(sample, ["2026-06-23", "2030-01-01", "2026-06-25"]);
+    expect(saved.map((d) => d.date)).toEqual(["2026-06-25", "2026-06-23"]);
   });
 });

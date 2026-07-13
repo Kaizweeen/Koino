@@ -1,7 +1,19 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { computeStreak, loadProgress, markComplete, toggleFavorite, isFavorite } from "@/lib/progress";
+import { computeStreak, longestStreak, loadProgress, markComplete, toggleFavorite, isFavorite } from "@/lib/progress";
 
 beforeEach(() => localStorage.clear());
+
+describe("longestStreak", () => {
+  it("is zero for no history", () => {
+    expect(longestStreak([])).toBe(0);
+  });
+  it("finds the longest consecutive run regardless of order or gaps", () => {
+    expect(longestStreak(["2026-07-01", "2026-07-03", "2026-07-04", "2026-07-05", "2026-07-09"])).toBe(3);
+  });
+  it("counts a single isolated day as 1", () => {
+    expect(longestStreak(["2026-07-01"])).toBe(1);
+  });
+});
 
 describe("computeStreak", () => {
   it("counts consecutive days ending today", () => {

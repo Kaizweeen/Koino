@@ -56,3 +56,22 @@ export function toggleFavorite(date: string): Progress {
 export function isFavorite(p: Progress, date: string): boolean {
   return p.favorites.includes(date);
 }
+
+/** The longest run of consecutive completed days, anywhere in the history. */
+export function longestStreak(completedDates: string[]): number {
+  if (completedDates.length === 0) return 0;
+  const done = new Set(completedDates);
+  let best = 0;
+  for (const date of done) {
+    // Only start counting from the beginning of a run.
+    if (done.has(addDays(date, -1))) continue;
+    let run = 0;
+    let cursor: string | null = date;
+    while (cursor !== null && done.has(cursor)) {
+      run += 1;
+      cursor = addDays(cursor, 1);
+    }
+    if (run > best) best = run;
+  }
+  return best;
+}
