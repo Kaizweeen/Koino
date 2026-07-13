@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { computeStreak, longestStreak, loadProgress, markComplete, toggleFavorite, isFavorite } from "@/lib/progress";
+import { computeStreak, longestStreak, loadProgress, markComplete, toggleFavorite, isFavorite, setNote, getNote, notedDates } from "@/lib/progress";
 
 beforeEach(() => localStorage.clear());
 
@@ -40,5 +40,18 @@ describe("progress store", () => {
     expect(isFavorite(p, "2026-06-25")).toBe(true);
     p = toggleFavorite("2026-06-25");
     expect(isFavorite(p, "2026-06-25")).toBe(false);
+  });
+  it("saves, reads, and clears notes", () => {
+    let p = setNote("2026-06-25", "be still");
+    expect(getNote(p, "2026-06-25")).toBe("be still");
+    expect(notedDates(p)).toEqual(["2026-06-25"]);
+    p = setNote("2026-06-25", "   ");
+    expect(getNote(p, "2026-06-25")).toBe("");
+    expect(notedDates(p)).toEqual([]);
+  });
+  it("lists noted dates most recent first", () => {
+    setNote("2026-06-25", "a");
+    const p = setNote("2026-06-27", "b");
+    expect(notedDates(p)).toEqual(["2026-06-27", "2026-06-25"]);
   });
 });

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DEVOTIONS } from "@/lib/devotions/content";
 import { getTheme } from "@/lib/themes";
 import { getPlaylistId, getTodayDevotion } from "@/lib/devotions/select";
-import { computeStreak, loadProgress, markComplete, toggleFavorite, isFavorite } from "@/lib/progress";
+import { computeStreak, loadProgress, markComplete, toggleFavorite, isFavorite, setNote, getNote } from "@/lib/progress";
 import { formatDisplayDate, greetingForHour } from "@/lib/dates";
 import { Arrival } from "@/components/screens/Arrival";
 import { Verse } from "@/components/screens/Verse";
@@ -82,6 +82,8 @@ export function DevotionFlow() {
             streak={streak}
             favorite={isFavorite(progress, devotion.date)}
             onToggleFavorite={() => setProgress(toggleFavorite(devotion.date))}
+            note={getNote(progress, devotion.date)}
+            onChangeNote={(text) => setProgress(setNote(devotion.date, text))}
           />
         )}
         {step === "amen" && (

@@ -1,6 +1,7 @@
 export interface Progress {
   completedDates: string[];
   favorites: string[];
+  notes: Record<string, string>;
 }
 
 const KEY = "koino.progress.v1";
@@ -23,14 +24,18 @@ export function computeStreak(completedDates: string[], today: string): number {
 }
 
 export function loadProgress(): Progress {
-  if (typeof window === "undefined") return { completedDates: [], favorites: [] };
+  if (typeof window === "undefined") return { completedDates: [], favorites: [], notes: {} };
   try {
     const raw = window.localStorage.getItem(KEY);
-    if (!raw) return { completedDates: [], favorites: [] };
+    if (!raw) return { completedDates: [], favorites: [], notes: {} };
     const parsed = JSON.parse(raw) as Partial<Progress>;
-    return { completedDates: parsed.completedDates ?? [], favorites: parsed.favorites ?? [] };
+    return {
+      completedDates: parsed.completedDates ?? [],
+      favorites: parsed.favorites ?? [],
+      notes: parsed.notes ?? {},
+    };
   } catch {
-    return { completedDates: [], favorites: [] };
+    return { completedDates: [], favorites: [], notes: {} };
   }
 }
 
@@ -55,6 +60,25 @@ export function toggleFavorite(date: string): Progress {
 
 export function isFavorite(p: Progress, date: string): boolean {
   return p.favorites.includes(date);
+}
+
+/** Save (or clear, if blank) the personal note for a devotion date. */
+export function setNote(date: string, text: string): Progress {
+  const p = loadProgress();
+  const notes = { ...p.notes };
+  if (text.trim() === "") delete notes[date];
+  else notes[date] = text;
+  p.notes = notes;
+  return save(p);
+}
+
+export function getNote(p: Progress, date: string): string {
+  return p.notes[date] ?? "";
+}
+
+/** Devotion dates that have a note, most recent first. */
+export function notedDates(p: Progress): string[] {
+  return Object.keys(p.notes).sort().reverse();
 }
 
 /** The longest run of consecutive completed days, anywhere in the history. */

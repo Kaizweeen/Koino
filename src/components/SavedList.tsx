@@ -10,9 +10,12 @@ import { formatDisplayDate } from "@/lib/dates";
 
 export function SavedList() {
   const [saved, setSaved] = useState<ReturnType<typeof getSavedDevotions> | null>(null);
+  const [notes, setNotes] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    setSaved(getSavedDevotions(DEVOTIONS, loadProgress().favorites));
+    const p = loadProgress();
+    setSaved(getSavedDevotions(DEVOTIONS, p.favorites));
+    setNotes(p.notes);
   }, []);
 
   return (
@@ -54,6 +57,14 @@ export function SavedList() {
               <p className="mt-3 font-serif text-lg leading-snug text-ink">{d.verseText}</p>
               <p className="mt-1 text-[10px] uppercase tracking-widest text-ink-muted">{d.verseRef}</p>
               <p className="mt-3 text-sm leading-relaxed text-ink-secondary">{d.reflection}</p>
+              {notes[d.date] && (
+                <div className="mt-3 border-l-2 pl-3" style={{ borderColor: t.accentBorder }}>
+                  <p className="mb-1 flex items-center gap-1 text-[10px] uppercase tracking-wider text-ink-muted">
+                    <i className="ti ti-note" aria-hidden="true" /> Note
+                  </p>
+                  <p className="whitespace-pre-wrap font-serif text-sm leading-relaxed text-ink-secondary">{notes[d.date]}</p>
+                </div>
+              )}
             </article>
           );
         })
