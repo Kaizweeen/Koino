@@ -36,14 +36,14 @@ describe("Verse screen", () => {
 
 describe("Amen screen", () => {
   it("shows the streak count and a note field", () => {
-    render(<Amen theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} note="" onChangeNote={() => {}} />);
+    render(<Amen devotion={dev} theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} note="" onChangeNote={() => {}} />);
     expect(screen.getByText(/8-day streak/)).toBeInTheDocument();
     expect(screen.getByPlaceholderText("What is God stirring in you today?")).toBeInTheDocument();
   });
 
   it("emits typed note text", () => {
     const onChangeNote = vi.fn();
-    render(<Amen theme={getTheme("peace")} streak={1} favorite={false} onToggleFavorite={() => {}} note="" onChangeNote={onChangeNote} />);
+    render(<Amen devotion={dev} theme={getTheme("peace")} streak={1} favorite={false} onToggleFavorite={() => {}} note="" onChangeNote={onChangeNote} />);
     fireEvent.change(screen.getByPlaceholderText("What is God stirring in you today?"), { target: { value: "grace" } });
     expect(onChangeNote).toHaveBeenCalledWith("grace");
   });

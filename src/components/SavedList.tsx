@@ -7,6 +7,7 @@ import { getTheme } from "@/lib/themes";
 import { getSavedDevotions } from "@/lib/devotions/select";
 import { loadProgress } from "@/lib/progress";
 import { formatDisplayDate } from "@/lib/dates";
+import { ShareButton } from "@/components/ShareButton";
 
 export function SavedList() {
   const [saved, setSaved] = useState<ReturnType<typeof getSavedDevotions> | null>(null);
@@ -65,6 +66,14 @@ export function SavedList() {
                   <p className="whitespace-pre-wrap font-serif text-sm leading-relaxed text-ink-secondary">{notes[d.date]}</p>
                 </div>
               )}
+              <div className="mt-4 flex justify-end border-t border-black/5 pt-3">
+                <ShareButton
+                  devotion={d}
+                  theme={t}
+                  note={notes[d.date]}
+                  className="flex items-center gap-1.5 text-xs font-medium"
+                />
+              </div>
             </article>
           );
         })

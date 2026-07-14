@@ -78,6 +78,7 @@ export function DevotionFlow() {
         {step === "prayer" && <Prayer devotion={devotion} theme={theme} onContinue={complete} />}
         {step === "amen" && (
           <Amen
+            devotion={devotion}
             theme={theme}
             streak={streak}
             favorite={isFavorite(progress, devotion.date)}

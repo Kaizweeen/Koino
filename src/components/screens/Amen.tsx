@@ -1,6 +1,9 @@
 import type { Theme } from "@/lib/themes";
+import type { Devotion } from "@/lib/devotions/types";
+import { ShareButton } from "@/components/ShareButton";
 
 export function Amen({
+  devotion,
   theme,
   streak,
   favorite,
@@ -8,6 +11,7 @@ export function Amen({
   note,
   onChangeNote,
 }: {
+  devotion: Devotion;
   theme: Theme;
   streak: number;
   favorite: boolean;
@@ -47,14 +51,22 @@ export function Amen({
         </p>
       </div>
 
-      <button
-        onClick={onToggleFavorite}
-        className="flex items-center justify-center gap-1.5 rounded-full border py-2.5 text-sm"
-        style={{ borderColor: "rgba(0,0,0,0.18)", color: theme.accent }}
-      >
-        <i className="ti ti-heart" aria-hidden="true" />
-        {favorite ? "Saved" : "Save"}
-      </button>
+      <div className="flex gap-2.5">
+        <button
+          onClick={onToggleFavorite}
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border py-2.5 text-sm"
+          style={{ borderColor: "rgba(0,0,0,0.18)", color: theme.accent }}
+        >
+          <i className="ti ti-heart" aria-hidden="true" />
+          {favorite ? "Saved" : "Save"}
+        </button>
+        <ShareButton
+          devotion={devotion}
+          theme={theme}
+          note={note}
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border py-2.5 text-sm"
+        />
+      </div>
     </div>
   );
 }
