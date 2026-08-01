@@ -8,6 +8,7 @@ import { getDevotionShownOn } from "@/lib/devotions/select";
 import { loadProgress, getEntry, entryDates, isFavorite, toggleFavorite, soapText, type Progress } from "@/lib/progress";
 import { formatDisplayDate } from "@/lib/dates";
 import { ShareButton } from "@/components/ShareButton";
+import { BackupControls } from "@/components/BackupControls";
 
 const PARTS = [
   { key: "observation", label: "Observation" },
@@ -114,6 +115,8 @@ export function JournalView() {
           );
         })
       )}
+
+      <BackupControls onImported={() => setProgress(loadProgress())} />
     </div>
   );
 }

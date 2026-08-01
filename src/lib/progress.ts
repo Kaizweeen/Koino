@@ -54,6 +54,11 @@ function save(p: Progress): Progress {
   return p;
 }
 
+/** Overwrite the entire stored progress. Used by backup import. */
+export function replaceProgress(p: Progress): Progress {
+  return save(p);
+}
+
 export function markComplete(date: string): Progress {
   const p = loadProgress();
   if (!p.completedDates.includes(date)) p.completedDates = [...p.completedDates, date].sort();
