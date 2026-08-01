@@ -8,19 +8,19 @@ import { buildCardSvg, shareFilename, svgToPngBlob } from "@/lib/shareCard";
 export function ShareButton({
   devotion,
   theme,
-  note,
+  reflection,
   className,
 }: {
   devotion: Devotion;
   theme: Theme;
-  note?: string;
+  reflection?: string;
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [includeNote, setIncludeNote] = useState(false);
+  const [includeReflection, setIncludeReflection] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const hasNote = Boolean(note && note.trim() !== "");
+  const hasReflection = Boolean(reflection && reflection.trim() !== "");
 
   const svg = useMemo(
     () =>
@@ -30,9 +30,9 @@ export function ShareButton({
         themeName: theme.name,
         accent: theme.accent,
         accentSoft: theme.accentSoft,
-        note: includeNote && hasNote ? note : undefined,
+        note: includeReflection && hasReflection ? reflection : undefined,
       }),
-    [devotion, theme, includeNote, hasNote, note],
+    [devotion, theme, includeReflection, hasReflection, reflection],
   );
 
   const previewUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
@@ -70,15 +70,15 @@ export function ShareButton({
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Share this verse"
-        className={className ?? "flex items-center justify-center gap-1.5 rounded-full border py-2.5 text-sm"}
-        style={{ borderColor: "rgba(0,0,0,0.18)", color: theme.accent }}
+        className={className ?? "flex items-center justify-center gap-1.5 rounded-full border py-3 text-sm font-medium"}
+        style={{ borderColor: "var(--hairline)", color: theme.accent, background: "var(--paper)", borderWidth: 1, borderStyle: "solid" }}
       >
         <i className="ti ti-share" aria-hidden="true" /> Share
       </button>
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/55 p-6"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5 bg-black/60 p-6 backdrop-blur-sm"
           role="dialog"
           aria-label="Share verse card"
           onClick={() => setOpen(false)}
@@ -87,20 +87,20 @@ export function ShareButton({
           <img
             src={previewUrl}
             alt={`${theme.name} verse card`}
-            className="max-h-[62vh] w-auto rounded-2xl shadow-2xl"
+            className="max-h-[62vh] w-auto rounded-2xl shadow-2xl ring-1 ring-white/10"
             onClick={(e) => e.stopPropagation()}
           />
 
           <div className="w-full max-w-xs" onClick={(e) => e.stopPropagation()}>
-            {hasNote && (
+            {hasReflection && (
               <label className="mb-3 flex items-center justify-center gap-2 text-sm text-white/90">
                 <input
                   type="checkbox"
-                  checked={includeNote}
-                  onChange={(e) => setIncludeNote(e.target.checked)}
+                  checked={includeReflection}
+                  onChange={(e) => setIncludeReflection(e.target.checked)}
                   className="h-4 w-4 accent-white"
                 />
-                Include my note
+                Include my reflection
               </label>
             )}
             <div className="flex gap-2.5">

@@ -25,21 +25,21 @@ describe("ShareButton", () => {
     expect(decoded).toContain("PSALM 46:10"); // uppercased reference on the card
   });
 
-  it("offers the note toggle only when a note is present", () => {
+  it("offers the reflection toggle only when a reflection is present", () => {
     const { rerender } = render(<ShareButton devotion={dev} theme={getTheme("peace")} />);
     fireEvent.click(screen.getByRole("button", { name: "Share this verse" }));
-    expect(screen.queryByLabelText("Include my note")).toBeNull();
+    expect(screen.queryByLabelText("Include my reflection")).toBeNull();
 
-    rerender(<ShareButton devotion={dev} theme={getTheme("peace")} note="my response" />);
-    expect(screen.getByLabelText("Include my note")).toBeInTheDocument();
+    rerender(<ShareButton devotion={dev} theme={getTheme("peace")} reflection="my response" />);
+    expect(screen.getByLabelText("Include my reflection")).toBeInTheDocument();
   });
 
-  it("adds the note to the card when the toggle is checked", () => {
-    render(<ShareButton devotion={dev} theme={getTheme("peace")} note="my response" />);
+  it("adds the reflection to the card when the toggle is checked", () => {
+    render(<ShareButton devotion={dev} theme={getTheme("peace")} reflection="my response" />);
     fireEvent.click(screen.getByRole("button", { name: "Share this verse" }));
     const before = screen.getByAltText("Peace verse card") as HTMLImageElement;
     expect(decodeURIComponent(before.src)).not.toContain("my response");
-    fireEvent.click(screen.getByLabelText("Include my note"));
+    fireEvent.click(screen.getByLabelText("Include my reflection"));
     const after = screen.getByAltText("Peace verse card") as HTMLImageElement;
     expect(decodeURIComponent(after.src)).toContain("my response");
   });
