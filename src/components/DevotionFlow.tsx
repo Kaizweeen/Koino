@@ -4,17 +4,28 @@ import { useEffect, useMemo, useState } from "react";
 import { DEVOTIONS } from "@/lib/devotions/content";
 import { getTheme } from "@/lib/themes";
 import { getPlaylistId, getTodayDevotion } from "@/lib/devotions/select";
-import { computeStreak, loadProgress, markComplete, toggleFavorite, isFavorite, setNote, getNote } from "@/lib/progress";
+import { getSoapPrompts } from "@/lib/soap/prompts";
+import {
+  computeStreak,
+  loadProgress,
+  markComplete,
+  toggleFavorite,
+  isFavorite,
+  getEntry,
+  setSoapField,
+  soapText,
+  type SoapEntry,
+} from "@/lib/progress";
 import { formatDisplayDate, greetingForHour } from "@/lib/dates";
+import { Atmosphere } from "@/components/Atmosphere";
 import { Arrival } from "@/components/screens/Arrival";
-import { Verse } from "@/components/screens/Verse";
-import { Reflection } from "@/components/screens/Reflection";
-import { Prayer } from "@/components/screens/Prayer";
+import { Scripture } from "@/components/screens/Scripture";
+import { SoapStep } from "@/components/screens/SoapStep";
 import { Amen } from "@/components/screens/Amen";
 import { Linger } from "@/components/screens/Linger";
 import { Done } from "@/components/screens/Done";
 
-type Step = "arrival" | "verse" | "reflection" | "prayer" | "amen" | "linger" | "done";
+type Step = "arrival" | "scripture" | "observation" | "application" | "prayer" | "amen" | "linger" | "done";
 
 function localToday(): string {
   const d = new Date();
@@ -27,18 +38,18 @@ export function DevotionFlow() {
   const [today, setToday] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("arrival");
   const [progress, setProgress] = useState(() => loadProgress());
+  const [entry, setEntry] = useState<SoapEntry>({ observation: "", application: "", prayer: "" });
 
   useEffect(() => {
     const t = localToday();
     setToday(t);
-    if (loadProgress().completedDates.includes(t)) setStep("done");
+    const p = loadProgress();
+    setProgress(p);
+    setEntry(getEntry(p, t));
+    if (p.completedDates.includes(t)) setStep("done");
   }, []);
 
-  const devotion = useMemo(
-    () => (today ? getTodayDevotion(DEVOTIONS, today) : null),
-    [today],
-  );
-
+  const devotion = useMemo(() => (today ? getTodayDevotion(DEVOTIONS, today) : null), [today]);
   const streak = useMemo(
     () => (today ? computeStreak(progress.completedDates, today) : 0),
     [progress.completedDates, today],
@@ -46,36 +57,57 @@ export function DevotionFlow() {
 
   if (!devotion) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center border-x border-black/5 bg-paper">
-        <div className="breathe h-16 w-16 rounded-full border border-ink-muted/30 bg-white/60" aria-hidden="true" />
+      <main className="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center bg-paper shadow-column">
+        <div className="breathe h-16 w-16 rounded-full" style={{ ["--accent" as string]: "#0F6E56", background: "#E1F5EE", border: "1px solid #9FE1CB" }} aria-hidden="true" />
       </main>
     );
   }
 
   const theme = getTheme(devotion.theme);
   const playlistId = getPlaylistId(theme, devotion.date);
+  const prompts = getSoapPrompts(devotion.theme);
 
-  function complete() {
+  function writeField(field: keyof SoapEntry, text: string) {
+    if (!today) return;
+    setEntry((e) => ({ ...e, [field]: text }));
+    setProgress(setSoapField(today, field, text));
+  }
+
+  function finishPrayer() {
     if (!today) return;
     setProgress(markComplete(today));
     setStep("amen");
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col border-x border-black/5 bg-paper">
-      <div key={step} className="fade-in flex min-h-screen flex-col">
+    <main className="relative mx-auto flex min-h-screen max-w-sm flex-col bg-paper shadow-column" style={{ ["--accent" as string]: theme.accent }}>
+      <Atmosphere accent={theme.accent} tone={step === "prayer" ? "night" : "day"} />
+      <div key={step} className="fade-in relative z-10 flex min-h-screen flex-col">
         {step === "arrival" && (
           <Arrival
             theme={theme}
             today={formatDisplayDate(today ?? devotion.date)}
             streak={streak}
             greeting={greetingForHour(new Date().getHours())}
-            onBegin={() => setStep("verse")}
+            onBegin={() => setStep("scripture")}
           />
         )}
-        {step === "verse" && <Verse devotion={devotion} theme={theme} playlistId={playlistId} onContinue={() => setStep("reflection")} />}
-        {step === "reflection" && <Reflection devotion={devotion} theme={theme} onContinue={() => setStep("prayer")} />}
-        {step === "prayer" && <Prayer devotion={devotion} theme={theme} onContinue={complete} />}
+        {step === "scripture" && <Scripture devotion={devotion} theme={theme} playlistId={playlistId} onContinue={() => setStep("observation")} />}
+        {step === "observation" && (
+          <SoapStep theme={theme} step={2} label="Observation" prompt={prompts.observation}
+            value={entry.observation} onChange={(t) => writeField("observation", t)}
+            onContinue={() => setStep("application")} continueLabel="Continue" nudge={devotion.reflection} />
+        )}
+        {step === "application" && (
+          <SoapStep theme={theme} step={3} label="Application" prompt={prompts.application}
+            value={entry.application} onChange={(t) => writeField("application", t)}
+            onContinue={() => setStep("prayer")} continueLabel="Continue" />
+        )}
+        {step === "prayer" && (
+          <SoapStep theme={theme} step={4} label="Prayer" prompt={prompts.prayer}
+            value={entry.prayer} onChange={(t) => writeField("prayer", t)}
+            onContinue={finishPrayer} continueLabel="Amen" nudge={devotion.prayer} />
+        )}
         {step === "amen" && (
           <Amen
             devotion={devotion}
@@ -83,17 +115,21 @@ export function DevotionFlow() {
             streak={streak}
             favorite={isFavorite(progress, devotion.date)}
             onToggleFavorite={() => setProgress(toggleFavorite(devotion.date))}
-            note={getNote(progress, devotion.date)}
-            onChangeNote={(text) => setProgress(setNote(devotion.date, text))}
+            reflection={soapText(entry)}
           />
         )}
         {step === "amen" && (
-          <button onClick={() => setStep("linger")} className="mb-6 mx-auto flex items-center gap-1 text-sm font-medium" style={{ color: theme.accent }}>
-            Continue <i className="ti ti-arrow-right" aria-hidden="true" />
+          <button
+            onClick={() => setStep("linger")}
+            className="group mx-auto mb-7 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium"
+            style={{ color: theme.accent }}
+          >
+            Linger a while
+            <i className="ti ti-arrow-right transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
           </button>
         )}
         {step === "linger" && <Linger devotion={devotion} theme={theme} playlistId={playlistId} />}
-        {step === "done" && <Done theme={theme} streak={streak} onReadAgain={() => setStep("verse")} />}
+        {step === "done" && <Done theme={theme} streak={streak} onReadAgain={() => setStep("scripture")} />}
       </div>
     </main>
   );
