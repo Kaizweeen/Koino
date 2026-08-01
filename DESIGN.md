@@ -63,6 +63,7 @@ typography:
     lineHeight: 1.3
     letterSpacing: "-0.01em"
 rounded:
+  focus: "0.25rem"
   inset: "0.75rem"
   soft: "1rem"
   card: "1.25rem"
@@ -268,7 +269,8 @@ actions and status (`rounded-full` — buttons, theme chips, streak badges, step
 wells** for content (cards and articles at `1.75rem`, standard cards at `1.25rem`, insets and
 inputs at `0.75–1rem`), and **circles** for the breathing motifs (the arrival halo, completion
 marks, the loading orb). Borders are always a single 1px Hairline; the system never uses heavy or
-colored borders as structure. Corners are never sharp.
+colored borders as structure. Corners are never sharp. Keyboard focus outlines use a tight 4px
+(0.25rem) radius, the one small-radius exception.
 
 ## Components
 
