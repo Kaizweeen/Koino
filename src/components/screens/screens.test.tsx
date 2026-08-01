@@ -38,17 +38,19 @@ describe("Verse screen", () => {
 });
 
 describe("Amen screen", () => {
-  it("shows the streak count and a note field", () => {
-    render(<Amen devotion={dev} theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} note="" onChangeNote={() => {}} />);
+  it("shows the streak and the save/share actions, without a note field", () => {
+    render(<Amen devotion={dev} theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} reflection="my observation" />);
     expect(screen.getByText(/8-day streak/)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("What is God stirring in you today?")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Save/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Share this verse" })).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText("What is God stirring in you today?")).toBeNull();
   });
 
-  it("emits typed note text", () => {
-    const onChangeNote = vi.fn();
-    render(<Amen devotion={dev} theme={getTheme("peace")} streak={1} favorite={false} onToggleFavorite={() => {}} note="" onChangeNote={onChangeNote} />);
-    fireEvent.change(screen.getByPlaceholderText("What is God stirring in you today?"), { target: { value: "grace" } });
-    expect(onChangeNote).toHaveBeenCalledWith("grace");
+  it("toggles favorite", () => {
+    const onToggleFavorite = vi.fn();
+    render(<Amen devotion={dev} theme={getTheme("peace")} streak={1} favorite={false} onToggleFavorite={onToggleFavorite} reflection="" />);
+    fireEvent.click(screen.getByRole("button", { name: /Save/ }));
+    expect(onToggleFavorite).toHaveBeenCalledTimes(1);
   });
 });
 
