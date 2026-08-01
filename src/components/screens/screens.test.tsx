@@ -1,12 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { SpotifyEmbed } from "@/components/SpotifyEmbed";
-import { Verse } from "@/components/screens/Verse";
 import { Amen } from "@/components/screens/Amen";
-import { Prayer } from "@/components/screens/Prayer";
 import { Arrival } from "@/components/screens/Arrival";
 import { Done } from "@/components/screens/Done";
-import { Reflection } from "@/components/screens/Reflection";
 import { SoapProgress } from "@/components/screens/SoapProgress";
 import { Scripture } from "@/components/screens/Scripture";
 import { SoapStep } from "@/components/screens/SoapStep";
@@ -27,16 +24,6 @@ const dev: Devotion = {
   theme: "peace", reflection: "r", prayer: "p",
 };
 
-describe("Verse screen", () => {
-  it("shows the verse, reference, playlist, and progress", () => {
-    render(<Verse devotion={dev} theme={getTheme("peace")} playlistId="abc123" onContinue={() => {}} />);
-    expect(screen.getByText("Be still, and know that I am God.")).toBeInTheDocument();
-    expect(screen.getByText("Psalm 46:10")).toBeInTheDocument();
-    expect(screen.getByTitle("Peace playlist")).toBeInTheDocument();
-    expect(screen.getByLabelText("Step 1 of 3")).toBeInTheDocument();
-  });
-});
-
 describe("Amen screen", () => {
   it("shows the streak and the save/share actions, without a note field", () => {
     render(<Amen devotion={dev} theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} reflection="my observation" />);
@@ -54,22 +41,6 @@ describe("Amen screen", () => {
   });
 });
 
-describe("Prayer screen", () => {
-  it("exposes a real button and keeps the prayer as readable text", () => {
-    render(<Prayer devotion={dev} theme={getTheme("peace")} onContinue={() => {}} />);
-    const btn = screen.getByRole("button", { name: "Tap when you're ready" });
-    expect(btn).toBeInTheDocument();
-    expect(screen.getByText("p").tagName).toBe("P");
-  });
-
-  it("fires onContinue exactly once per button click", () => {
-    const onContinue = vi.fn();
-    render(<Prayer devotion={dev} theme={getTheme("peace")} onContinue={onContinue} />);
-    fireEvent.click(screen.getByRole("button", { name: "Tap when you're ready" }));
-    expect(onContinue).toHaveBeenCalledTimes(1);
-  });
-});
-
 describe("Arrival screen", () => {
   it("hides the streak at zero and shows the greeting", () => {
     render(<Arrival theme={getTheme("peace")} today="Saturday · July 11" streak={0} greeting="Good evening" onBegin={() => {}} />);
@@ -83,15 +54,6 @@ describe("Done screen", () => {
     render(<Done theme={getTheme("peace")} streak={3} onReadAgain={() => {}} />);
     expect(screen.getByText("You've already been here today.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Read it again" })).toBeInTheDocument();
-  });
-});
-
-describe("Reflection screen", () => {
-  it("shows the reflection text, theme, and step progress", () => {
-    render(<Reflection devotion={dev} theme={getTheme("peace")} onContinue={() => {}} />);
-    expect(screen.getByText("r")).toBeInTheDocument();
-    expect(screen.getByText("Peace")).toBeInTheDocument();
-    expect(screen.getByLabelText("Step 2 of 3")).toBeInTheDocument();
   });
 });
 
