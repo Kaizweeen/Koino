@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { computeStreak, longestStreak, loadProgress, markComplete, toggleFavorite, isFavorite, setNote, getNote, notedDates } from "@/lib/progress";
+import { computeStreak, longestStreak, loadProgress, markComplete, toggleFavorite, isFavorite, setNote, getNote, notedDates, setSoapField, getEntry, hasWrittenEntry, entryDates, soapText } from "@/lib/progress";
 
 beforeEach(() => localStorage.clear());
 
@@ -53,5 +53,46 @@ describe("progress store", () => {
     setNote("2026-06-25", "a");
     const p = setNote("2026-06-27", "b");
     expect(notedDates(p)).toEqual(["2026-06-27", "2026-06-25"]);
+  });
+});
+
+describe("SOAP entries", () => {
+  it("defaults to an empty entry map and empty entry", () => {
+    expect(loadProgress().entries).toEqual({});
+    expect(getEntry(loadProgress(), "2026-06-25")).toEqual({ observation: "", application: "", prayer: "" });
+  });
+
+  it("saves one field at a time and round-trips", () => {
+    setSoapField("2026-06-25", "observation", "God is near");
+    setSoapField("2026-06-25", "prayer", "quiet me");
+    const e = getEntry(loadProgress(), "2026-06-25");
+    expect(e.observation).toBe("God is near");
+    expect(e.prayer).toBe("quiet me");
+    expect(e.application).toBe("");
+  });
+
+  it("removes the entry when all fields are cleared", () => {
+    setSoapField("2026-06-25", "observation", "x");
+    setSoapField("2026-06-25", "observation", "");
+    expect(hasWrittenEntry(loadProgress(), "2026-06-25")).toBe(false);
+    expect(loadProgress().entries["2026-06-25"]).toBeUndefined();
+  });
+
+  it("tolerates a legacy store with notes and no entries, and lists legacy noted dates", () => {
+    localStorage.setItem("koino.progress.v1", JSON.stringify({ completedDates: [], favorites: [], notes: { "2026-06-20": "old note" } }));
+    const p = loadProgress();
+    expect(p.entries).toEqual({});
+    expect(entryDates(p)).toContain("2026-06-20");
+  });
+
+  it("lists entry dates most-recent first", () => {
+    setSoapField("2026-06-20", "observation", "a");
+    setSoapField("2026-06-25", "observation", "b");
+    expect(entryDates(loadProgress())).toEqual(["2026-06-25", "2026-06-20"]);
+  });
+
+  it("composes non-empty parts into shareable text", () => {
+    expect(soapText({ observation: "O", application: "", prayer: "P" })).toBe("O\n\nP");
+    expect(soapText({ observation: "", application: "", prayer: "" })).toBe("");
   });
 });
