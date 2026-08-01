@@ -7,7 +7,7 @@ export default function TodayPage() {
       <Link
         href="/"
         aria-label="Back to home"
-        className="absolute left-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/70 text-ink-secondary backdrop-blur transition-colors hover:text-ink"
+        className="absolute left-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-paper/80 text-ink-secondary shadow-card ring-1 ring-black/[0.05] backdrop-blur transition-colors hover:text-ink"
       >
         <i className="ti ti-chevron-left text-xl" aria-hidden="true" />
       </Link>
