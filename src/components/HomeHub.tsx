@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { DEVOTIONS } from "@/lib/devotions/content";
 import { getTheme, THEMES } from "@/lib/themes";
-import { getTodayDevotion, getSavedDevotions } from "@/lib/devotions/select";
-import { computeStreak, loadProgress } from "@/lib/progress";
+import { getTodayDevotion, getDevotionForDate } from "@/lib/devotions/select";
+import { computeStreak, loadProgress, entryDates, getEntry } from "@/lib/progress";
 import { formatDisplayDate, greetingForHour } from "@/lib/dates";
 import { lastNDays, weekdayInitial } from "@/lib/week";
+import { Atmosphere } from "@/components/Atmosphere";
 
 function localToday(): string {
   const d = new Date();
@@ -28,7 +29,11 @@ export function HomeHub() {
   if (!today) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center">
-        <div className="breathe h-14 w-14 rounded-full border border-ink-muted/30 bg-white/60" aria-hidden="true" />
+        <div
+          className="breathe h-14 w-14 rounded-full"
+          style={{ ["--accent" as string]: "#0F6E56", background: "#E1F5EE", border: "1px solid #9FE1CB" }}
+          aria-hidden="true"
+        />
       </div>
     );
   }
@@ -37,124 +42,150 @@ export function HomeHub() {
   const theme = getTheme(devotion.theme);
   const completedToday = progress.completedDates.includes(today);
   const streak = computeStreak(progress.completedDates, today);
-  const week = lastNDays(today, 7).map((date) => ({ date, done: progress.completedDates.includes(date) }));
-  const saved = getSavedDevotions(DEVOTIONS, progress.favorites).slice(0, 2);
+  const week = lastNDays(today, 7).map((date) => ({ date, done: progress.completedDates.includes(date), isToday: date === today }));
+  const recent = entryDates(progress)
+    .map((date) => ({ date, devotion: getDevotionForDate(DEVOTIONS, date), entry: getEntry(progress, date) }))
+    .filter((r) => r.devotion !== null)
+    .slice(0, 2);
   const exploreThemes = Object.values(THEMES).slice(0, 4);
 
   return (
-    <div className="fade-in flex flex-col gap-6 p-5 pb-4">
-      <header className="flex items-start justify-between">
-        <div>
-          <p className="text-base font-medium text-ink">{greetingForHour(new Date().getHours())}</p>
-          <p className="mt-0.5 text-xs text-ink-muted">{formatDisplayDate(today)}</p>
-        </div>
-        {streak > 0 && (
-          <span
-            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium"
-            style={{ background: theme.accentSoft, color: theme.accent }}
-          >
-            <i className="ti ti-plant-2" aria-hidden="true" /> {streak}
-          </span>
-        )}
-      </header>
+    <div className="relative min-h-screen" style={{ ["--accent" as string]: theme.accent }}>
+      <Atmosphere accent={theme.accent} className="opacity-70" />
 
-      <Link
-        href="/today"
-        className="block rounded-2xl border p-5 transition-transform active:scale-[0.99]"
-        style={{ background: theme.accentSoft, borderColor: theme.accentBorder }}
-      >
-        <span className="inline-flex items-center gap-1.5 text-xs font-medium" style={{ color: theme.accent }}>
-          <i className={`ti ti-${theme.icon}`} aria-hidden="true" /> Today · {theme.name}
-        </span>
-        <p className="mt-2.5 font-serif text-xl leading-snug" style={{ color: theme.accent }}>
-          {devotion.verseText}
-        </p>
-        <p className="mt-1 text-[10px] uppercase tracking-widest" style={{ color: theme.accent, opacity: 0.7 }}>
-          {devotion.verseRef}
-        </p>
-        <span
-          className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-medium text-white"
-          style={{ background: theme.accent }}
-        >
-          {completedToday ? "Revisit today" : "Begin today's devotion"}
-          <i className="ti ti-arrow-right" aria-hidden="true" />
-        </span>
-      </Link>
-
-      <section>
-        <div className="mb-2.5 flex items-center justify-between">
-          <h2 className="text-[11px] uppercase tracking-wider text-ink-muted">This week</h2>
-          <Link href="/history" className="text-[11px] text-ink-muted transition-colors hover:text-ink">
-            See all
-          </Link>
-        </div>
-        <div className="flex justify-between">
-          {week.map(({ date, done }) => (
+      <div className="fade-in relative z-10 flex flex-col gap-7 p-5 pb-6">
+        <header className="flex items-start justify-between pt-1">
+          <div>
+            <p className="font-serif text-[1.6rem] leading-tight text-ink">{greetingForHour(new Date().getHours())}</p>
+            <p className="mt-1 text-xs text-ink-muted">{formatDisplayDate(today)}</p>
+          </div>
+          {streak > 0 && (
             <span
-              key={date}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-[11px]"
-              style={
-                done
-                  ? { background: theme.accent, color: "#fff" }
-                  : { background: "#F1EFE8", color: "#B4B2A9", border: "1px dashed #D3D1C7" }
-              }
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium shadow-sm"
+              style={{ background: theme.accentSoft, color: theme.accent, border: `1px solid ${theme.accentBorder}` }}
             >
-              {weekdayInitial(date)}
+              <i className="ti ti-plant-2" aria-hidden="true" /> {streak}
             </span>
-          ))}
-        </div>
-      </section>
+          )}
+        </header>
 
-      <section>
-        <div className="mb-2.5 flex items-center justify-between">
-          <h2 className="text-[11px] uppercase tracking-wider text-ink-muted">Saved</h2>
-          {saved.length > 0 && (
-            <Link href="/saved" className="text-[11px] text-ink-muted transition-colors hover:text-ink">
+        <Link
+          href="/today"
+          className="group relative block overflow-hidden rounded-well p-6 shadow-card transition-transform active:scale-[0.99]"
+          style={{ background: theme.accentSoft, border: `1px solid ${theme.accentBorder}` }}
+        >
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full"
+            style={{ background: `radial-gradient(circle, color-mix(in srgb, ${theme.accent} 26%, transparent), transparent 70%)` }}
+          />
+          <div className="relative">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-widest2" style={{ color: theme.accent }}>
+              <i className={`ti ti-${theme.icon}`} aria-hidden="true" /> Today · {theme.name}
+            </span>
+            <p className="mt-3 font-serif text-[1.35rem] leading-snug text-balance" style={{ color: theme.accent }}>
+              {devotion.verseText}
+            </p>
+            <p className="mt-2 text-[10px] uppercase tracking-widest2" style={{ color: theme.accent, opacity: 0.65 }}>
+              {devotion.verseRef}
+            </p>
+            <span className="btn-primary mt-5 flex w-full items-center justify-center gap-1.5 rounded-full py-3 text-sm font-medium">
+              {completedToday ? "Revisit today" : "Begin today's devotion"}
+              <i className="ti ti-arrow-right transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+            </span>
+          </div>
+        </Link>
+
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-[11px] font-medium uppercase tracking-widest2 text-ink-muted">This week</h2>
+            <Link href="/history" className="text-[11px] text-ink-muted transition-colors hover:text-ink">
               See all
             </Link>
-          )}
-        </div>
-        {saved.length === 0 ? (
-          <p className="rounded-xl border border-black/10 p-4 text-center text-xs text-ink-muted">
-            Nothing saved yet. Tap the heart after a devotion to keep it here.
-          </p>
-        ) : (
-          <div className="flex gap-2.5">
-            {saved.map((d) => {
-              const t = getTheme(d.theme);
-              return (
-                <div key={d.date} className="flex-1 rounded-xl border border-black/10 p-3">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: t.accent }} />
-                  <p className="mt-1.5 line-clamp-2 font-serif text-sm leading-tight text-ink">{d.verseText}</p>
-                  <p className="mt-1 text-[10px] text-ink-muted">{d.verseRef}</p>
-                </div>
-              );
-            })}
           </div>
-        )}
-      </section>
+          <div className="flex justify-between">
+            {week.map(({ date, done, isToday }) => (
+              <span
+                key={date}
+                className="flex h-9 w-9 items-center justify-center rounded-full text-[11px] font-medium"
+                style={
+                  done
+                    ? { background: theme.accent, color: "#fff", boxShadow: `0 6px 14px -6px color-mix(in srgb, ${theme.accent} 70%, transparent)` }
+                    : {
+                        background: "var(--paper)",
+                        color: "var(--ink-muted)",
+                        border: isToday ? `1.5px solid ${theme.accent}` : "1px dashed color-mix(in srgb, var(--ink) 16%, transparent)",
+                      }
+                }
+              >
+                {weekdayInitial(date)}
+              </span>
+            ))}
+          </div>
+        </section>
 
-      <section>
-        <h2 className="mb-2.5 text-[11px] uppercase tracking-wider text-ink-muted">Explore themes</h2>
-        <div className="flex flex-wrap gap-1.5">
-          {exploreThemes.map((t) => (
-            <Link
-              key={t.slug}
-              href="/themes"
-              className="rounded-full px-3 py-1 text-xs transition-transform active:scale-95"
-              style={{ background: t.accentSoft, color: t.accent }}
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-[11px] font-medium uppercase tracking-widest2 text-ink-muted">Journal</h2>
+            {recent.length > 0 && (
+              <Link href="/journal" className="text-[11px] text-ink-muted transition-colors hover:text-ink">
+                See all
+              </Link>
+            )}
+          </div>
+          {recent.length === 0 ? (
+            <p
+              className="rounded-2xl border bg-paper p-4 text-center text-xs text-ink-muted"
+              style={{ borderColor: "var(--hairline)" }}
             >
-              {t.name}
+              Your journal is waiting. Finish today&apos;s devotion to write your first entry.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-2.5">
+              {recent.map(({ date, devotion: rd, entry }) => {
+                const rt = getTheme(rd!.theme);
+                const snippet = entry.observation || entry.application || entry.prayer;
+                return (
+                  <Link
+                    key={date}
+                    href="/journal"
+                    className="block rounded-2xl border bg-paper p-3.5 shadow-card transition-transform active:scale-[0.99]"
+                    style={{ borderColor: "var(--hairline)" }}
+                  >
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider" style={{ color: rt.accent }}>
+                      <i className={`ti ti-${rt.icon}`} aria-hidden="true" /> {rt.name}
+                    </span>
+                    <p className="mt-1.5 line-clamp-2 font-serif text-sm leading-snug text-ink">{snippet}</p>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-[11px] font-medium uppercase tracking-widest2 text-ink-muted">Explore themes</h2>
+          <div className="flex flex-wrap gap-2">
+            {exploreThemes.map((t) => (
+              <Link
+                key={t.slug}
+                href="/themes"
+                className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-transform active:scale-95"
+                style={{ background: t.accentSoft, color: t.accent }}
+              >
+                <i className={`ti ti-${t.icon}`} aria-hidden="true" /> {t.name}
+              </Link>
+            ))}
+            <Link
+              href="/themes"
+              className="inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-medium text-ink-secondary transition-transform active:scale-95"
+              style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)" }}
+            >
+              +8 more
             </Link>
-          ))}
-          <Link
-            href="/themes"
-            className="rounded-full bg-[#F1EFE8] px-3 py-1 text-xs text-ink-secondary transition-transform active:scale-95"
-          >
-            +8
-          </Link>
-        </div>
-      </section>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

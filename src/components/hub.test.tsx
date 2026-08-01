@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { HomeHub } from "@/components/HomeHub";
-import { SavedList } from "@/components/SavedList";
 import { ThemeExplorer } from "@/components/ThemeExplorer";
 
 vi.mock("next/link", () => ({
@@ -13,7 +12,6 @@ beforeEach(() => {
   vi.setSystemTime(new Date(2026, 6, 12, 9, 0, 0));
   localStorage.clear();
 });
-
 afterEach(() => {
   vi.useRealTimers();
   localStorage.clear();
@@ -28,22 +26,9 @@ describe("HomeHub", () => {
     expect(cta).toHaveAttribute("href", "/today");
   });
 
-  it("shows the empty saved state when nothing is saved", async () => {
+  it("shows the empty journal peek when nothing is written", async () => {
     render(<HomeHub />);
-    expect(await screen.findByText(/Nothing saved yet/)).toBeInTheDocument();
-  });
-});
-
-describe("SavedList", () => {
-  it("shows the empty state when there are no favorites", async () => {
-    render(<SavedList />);
-    expect(await screen.findByText("You haven't saved anything yet.")).toBeInTheDocument();
-  });
-
-  it("renders a saved devotion when one exists", async () => {
-    localStorage.setItem("koino.progress.v1", JSON.stringify({ completedDates: [], favorites: ["2026-06-25"] }));
-    render(<SavedList />);
-    expect(await screen.findByText("Be still, and know that I am God.")).toBeInTheDocument();
+    expect(await screen.findByText(/Your journal is waiting/)).toBeInTheDocument();
   });
 });
 
