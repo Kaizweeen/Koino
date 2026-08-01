@@ -14,6 +14,10 @@ export function getDevotionShownOn(devotions: Devotion[], date: string): Devotio
   if (devotions.length === 0) throw new Error("no devotions available");
   const exact = getDevotionForDate(devotions, date);
   if (exact) return exact;
+  const last = devotions[devotions.length - 1];
+  // Past the curated calendar, rotate deterministically through the whole pool by day-index so a
+  // fresh devotion appears every day and the app never "runs out" of content.
+  if (date > last.date) return devotions[dayIndex(date) % devotions.length];
   const past = devotions.filter((d) => d.date <= date);
   if (past.length > 0) return past[past.length - 1];
   return devotions[0];

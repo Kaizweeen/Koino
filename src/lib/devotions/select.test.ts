@@ -28,10 +28,19 @@ describe("devotion selection", () => {
     expect(() => getTodayDevotion([], "2026-06-25")).toThrow("no devotions available");
   });
 
-  it("resolves the devotion shown on a date to the exact match, or the most recent prior one", () => {
+  it("resolves an exact date, and a gap or pre-range date to the most recent prior (or first)", () => {
     expect(getDevotionShownOn(sample, "2026-06-25").date).toBe("2026-06-25");
     expect(getDevotionShownOn(sample, "2026-06-24").date).toBe("2026-06-23");
-    expect(getDevotionShownOn(sample, "2999-12-31").date).toBe("2026-06-25");
+    expect(getDevotionShownOn(sample, "2026-01-01").date).toBe("2026-06-23");
+  });
+
+  it("rotates deterministically past the last dated devotion so it never runs out", () => {
+    // sample's last date is 2026-06-25; later dates rotate through the pool by day-index.
+    const a = getDevotionShownOn(sample, "2026-06-26");
+    const b = getDevotionShownOn(sample, "2026-06-27");
+    expect(sample).toContain(a);
+    expect(a).not.toBe(b); // consecutive days rotate rather than repeating
+    expect(getDevotionShownOn(sample, "2026-06-26")).toBe(a); // deterministic per date
   });
 
   it("rotates playlists deterministically by date", () => {

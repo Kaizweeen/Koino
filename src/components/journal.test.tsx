@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { JournalView } from "@/components/JournalView";
 import { DEVOTIONS } from "@/lib/devotions/content";
+import { getDevotionShownOn } from "@/lib/devotions/select";
 
 beforeEach(() => localStorage.clear());
 afterEach(() => localStorage.clear());
@@ -24,14 +25,14 @@ describe("JournalView", () => {
   });
 
   it("shows an entry written on a day with no exact devotion, resolved to the one shown", async () => {
-    const last = DEVOTIONS[DEVOTIONS.length - 1];
+    const shown = getDevotionShownOn(DEVOTIONS, "2999-12-31");
     localStorage.setItem(
       "koino.progress.v1",
       JSON.stringify({ completedDates: [], favorites: [], entries: { "2999-12-31": { observation: "future thought", application: "", prayer: "" } } }),
     );
     render(<JournalView />);
     expect(await screen.findByText("future thought")).toBeInTheDocument();
-    expect(screen.getByText(last.verseText)).toBeInTheDocument();
+    expect(screen.getByText(shown.verseText)).toBeInTheDocument();
   });
 
   it("filters to favorites", async () => {
