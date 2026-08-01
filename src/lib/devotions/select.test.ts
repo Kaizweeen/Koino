@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getDevotionForDate, getTodayDevotion, getPlaylistId, getSavedDevotions } from "@/lib/devotions/select";
+import { getDevotionForDate, getTodayDevotion, getDevotionShownOn, getPlaylistId, getSavedDevotions } from "@/lib/devotions/select";
 import type { Devotion } from "@/lib/devotions/types";
 
 const sample: Devotion[] = [
@@ -26,6 +26,12 @@ describe("devotion selection", () => {
 
   it("throws when there are no devotions", () => {
     expect(() => getTodayDevotion([], "2026-06-25")).toThrow("no devotions available");
+  });
+
+  it("resolves the devotion shown on a date to the exact match, or the most recent prior one", () => {
+    expect(getDevotionShownOn(sample, "2026-06-25").date).toBe("2026-06-25");
+    expect(getDevotionShownOn(sample, "2026-06-24").date).toBe("2026-06-23");
+    expect(getDevotionShownOn(sample, "2999-12-31").date).toBe("2026-06-25");
   });
 
   it("rotates playlists deterministically by date", () => {

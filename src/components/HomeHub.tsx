@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { DEVOTIONS } from "@/lib/devotions/content";
 import { getTheme, THEMES } from "@/lib/themes";
-import { getTodayDevotion, getDevotionForDate } from "@/lib/devotions/select";
+import { getTodayDevotion, getDevotionShownOn } from "@/lib/devotions/select";
 import { computeStreak, loadProgress, entryDates, getEntry } from "@/lib/progress";
 import { formatDisplayDate, greetingForHour } from "@/lib/dates";
 import { lastNDays, weekdayInitial } from "@/lib/week";
@@ -44,9 +44,8 @@ export function HomeHub() {
   const streak = computeStreak(progress.completedDates, today);
   const week = lastNDays(today, 7).map((date) => ({ date, done: progress.completedDates.includes(date), isToday: date === today }));
   const recent = entryDates(progress)
-    .map((date) => ({ date, devotion: getDevotionForDate(DEVOTIONS, date), entry: getEntry(progress, date) }))
-    .filter((r) => r.devotion !== null)
-    .slice(0, 2);
+    .slice(0, 2)
+    .map((date) => ({ date, devotion: getDevotionShownOn(DEVOTIONS, date), entry: getEntry(progress, date) }));
   const exploreThemes = Object.values(THEMES).slice(0, 4);
 
   return (
@@ -143,7 +142,7 @@ export function HomeHub() {
           ) : (
             <div className="flex flex-col gap-2.5">
               {recent.map(({ date, devotion: rd, entry }) => {
-                const rt = getTheme(rd!.theme);
+                const rt = getTheme(rd.theme);
                 const snippet = entry.observation || entry.application || entry.prayer;
                 return (
                   <Link
