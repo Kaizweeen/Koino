@@ -11,6 +11,7 @@ beforeEach(() => {
   vi.useFakeTimers({ shouldAdvanceTime: true });
   vi.setSystemTime(new Date(2026, 6, 12, 9, 0, 0));
   localStorage.clear();
+  localStorage.setItem("koino.prefs.v1", JSON.stringify({ onboarded: true }));
 });
 afterEach(() => {
   vi.useRealTimers();
@@ -29,6 +30,18 @@ describe("HomeHub", () => {
   it("shows the empty journal peek when nothing is written", async () => {
     render(<HomeHub />);
     expect(await screen.findByText(/Your journal is waiting/)).toBeInTheDocument();
+  });
+
+  it("shows onboarding on the very first run", async () => {
+    localStorage.setItem("koino.prefs.v1", JSON.stringify({ onboarded: false }));
+    render(<HomeHub />);
+    expect(await screen.findByText("Welcome to Koino")).toBeInTheDocument();
+  });
+
+  it("nudges to keep the streak when today isn't done yet", async () => {
+    localStorage.setItem("koino.progress.v1", JSON.stringify({ completedDates: ["2026-07-11"], favorites: [], entries: {} }));
+    render(<HomeHub />);
+    expect(await screen.findByText(/Keep your 1-day streak going/)).toBeInTheDocument();
   });
 });
 

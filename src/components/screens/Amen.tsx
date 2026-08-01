@@ -1,5 +1,6 @@
 import type { Theme } from "@/lib/themes";
 import type { Devotion } from "@/lib/devotions/types";
+import { milestoneFor } from "@/lib/streak";
 import { ShareButton } from "@/components/ShareButton";
 
 export function Amen({
@@ -17,6 +18,7 @@ export function Amen({
   onToggleFavorite: () => void;
   reflection: string;
 }) {
+  const milestone = milestoneFor(streak);
   return (
     <div className="flex flex-1 flex-col gap-6 px-7 py-8">
       <div className="my-auto flex flex-col items-center gap-3 text-center">
@@ -30,6 +32,14 @@ export function Amen({
         <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
           <i className="ti ti-plant-2" style={{ color: theme.accent }} aria-hidden="true" /> {streak}-day streak
         </span>
+        {milestone && (
+          <span
+            className="rise-in mt-1 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium"
+            style={{ background: theme.accentSoft, color: theme.accent, border: `1px solid ${theme.accentBorder}` }}
+          >
+            <i className="ti ti-sparkles" aria-hidden="true" /> {milestone.title}
+          </span>
+        )}
       </div>
 
       <div className="flex gap-3">

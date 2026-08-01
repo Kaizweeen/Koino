@@ -8,7 +8,9 @@ import { getTodayDevotion, getDevotionShownOn } from "@/lib/devotions/select";
 import { computeStreak, loadProgress, entryDates, getEntry } from "@/lib/progress";
 import { formatDisplayDate, greetingForHour } from "@/lib/dates";
 import { lastNDays, weekdayInitial } from "@/lib/week";
+import { loadPrefs, setOnboarded } from "@/lib/prefs";
 import { Atmosphere } from "@/components/Atmosphere";
+import { Onboarding } from "@/components/Onboarding";
 
 function localToday(): string {
   const d = new Date();
@@ -20,10 +22,12 @@ function localToday(): string {
 export function HomeHub() {
   const [today, setToday] = useState<string | null>(null);
   const [progress, setProgress] = useState(() => loadProgress());
+  const [onboarded, setOnboardedState] = useState(true);
 
   useEffect(() => {
     setToday(localToday());
     setProgress(loadProgress());
+    setOnboardedState(loadPrefs().onboarded);
   }, []);
 
   if (!today) {
@@ -36,6 +40,10 @@ export function HomeHub() {
         />
       </div>
     );
+  }
+
+  if (!onboarded) {
+    return <Onboarding onDone={() => { setOnboarded(); setOnboardedState(true); }} />;
   }
 
   const devotion = getTodayDevotion(DEVOTIONS, today);
@@ -57,6 +65,11 @@ export function HomeHub() {
           <div>
             <p className="font-serif text-[1.6rem] leading-tight text-ink">{greetingForHour(new Date().getHours())}</p>
             <p className="mt-1 text-xs text-ink-muted">{formatDisplayDate(today)}</p>
+            {!completedToday && streak > 0 && (
+              <p className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium" style={{ color: theme.accent }}>
+                <i className="ti ti-flame" aria-hidden="true" /> Keep your {streak}-day streak going
+              </p>
+            )}
           </div>
           {streak > 0 && (
             <span

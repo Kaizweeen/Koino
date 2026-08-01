@@ -39,6 +39,13 @@ describe("Amen screen", () => {
     fireEvent.click(screen.getByRole("button", { name: /Save/ }));
     expect(onToggleFavorite).toHaveBeenCalledTimes(1);
   });
+
+  it("celebrates a streak milestone but stays quiet on ordinary days", () => {
+    const { rerender } = render(<Amen devotion={dev} theme={getTheme("peace")} streak={7} favorite={false} onToggleFavorite={() => {}} reflection="" />);
+    expect(screen.getByText("A full week with God.")).toBeInTheDocument();
+    rerender(<Amen devotion={dev} theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} reflection="" />);
+    expect(screen.queryByText("A full week with God.")).toBeNull();
+  });
 });
 
 describe("Arrival screen", () => {
