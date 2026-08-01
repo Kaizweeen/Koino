@@ -12,6 +12,7 @@ colors:
   driftwood-ink: "#6C6A5F"
   hairline: "rgba(38,37,33,0.09)"
   prayer-night: "#1C1B18"
+  on-accent: "#FFFFFF"
 typography:
   display:
     fontFamily: "Lora, Georgia, serif"
@@ -49,6 +50,18 @@ typography:
     fontWeight: 500
     lineHeight: 1.4
     letterSpacing: "0.22em"
+  micro:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "0.625rem"
+    fontWeight: 500
+    lineHeight: 1.4
+    letterSpacing: "0.1em"
+  card-verse:
+    fontFamily: "Lora, Georgia, serif"
+    fontSize: "1.35rem"
+    fontWeight: 500
+    lineHeight: 1.3
+    letterSpacing: "-0.01em"
 rounded:
   inset: "0.75rem"
   soft: "1rem"
@@ -146,6 +159,8 @@ theme. Neutrals carry the paper metaphor; one green anchors identity; the day su
 - **Stone Ink** (#55544D): Secondary and reflection body text on paper (7.3:1 on Warm Paper).
 - **Driftwood Ink** (#6C6A5F): Muted micro-labels, dates, metadata (5.2:1 on Warm Paper).
 - **Hairline** (rgba(38,37,33,0.09)): The only border weight. 1px, warm, barely there.
+- **On-Accent White** (#FFFFFF): Text and icons on an accent-filled surface: primary buttons,
+  the active SOAP step, and completed week cells. The only place pure white appears.
 
 ### Supporting (theme-derived, fixed instances)
 - **Green Mist** (#E1F5EE) / **Green Reed** (#9FE1CB): Koinonia Green's soft fill and border,
@@ -186,6 +201,11 @@ the interface around them.
   generous leading and a ~20rem measure for calm reading.
 - **Label** (Inter 500, 0.6875rem/11px, 0.22em tracking, UPPERCASE): Dates, section headers,
   and kickers. The recurring quiet metadata voice.
+- **Micro** (Inter 500, 0.625rem/10px, 0.1em): The smallest metadata, tighter than Label:
+  card dates, verse references inside cards, and the journal's O/A/P section labels, where 11px
+  would be too heavy for the density.
+- **Card Verse** (Lora 500, 1.35rem): The verse set inside a compact card (the Home "today"
+  card), one step down from the full-screen Verse; also the tab-bar glyph scale.
 
 ### Named Rules
 **The Serif-for-Scripture Rule.** Lora is reserved for the words that carry weight: the verse,

@@ -13,7 +13,8 @@
       "stone-ink": { "role": "neutral", "displayName": "Stone Ink", "canonical": "#55544D", "tonalRamp": ["#1E1D19", "#2C2B26", "#3E3D36", "#55544D", "#6F6D64", "#8D8B80", "#B2B0A5", "#D6D3C9"] },
       "driftwood-ink": { "role": "neutral", "displayName": "Driftwood Ink", "canonical": "#6C6A5F", "tonalRamp": ["#26251F", "#37352D", "#4C4A40", "#6C6A5F", "#87857A", "#A5A398", "#C6C4B9", "#E4E2D9"] },
       "hairline": { "role": "neutral", "displayName": "Hairline", "canonical": "rgba(38,37,33,0.09)", "tonalRamp": ["#262521", "#3E3D36", "#57554D", "#767368", "#9A988F", "#BFBDB3", "#DEDCD3", "#F0EEE8"] },
-      "prayer-night": { "role": "neutral", "displayName": "Prayer Night", "canonical": "#1C1B18", "tonalRamp": ["#0B0A09", "#121110", "#1C1B18", "#2A2825", "#3E3B36", "#57534B", "#7C7768", "#A6A192"] }
+      "prayer-night": { "role": "neutral", "displayName": "Prayer Night", "canonical": "#1C1B18", "tonalRamp": ["#0B0A09", "#121110", "#1C1B18", "#2A2825", "#3E3B36", "#57534B", "#7C7768", "#A6A192"] },
+      "on-accent": { "role": "neutral", "displayName": "On-Accent White", "canonical": "#FFFFFF", "tonalRamp": ["#2A2925", "#4A473F", "#6E6A5F", "#928D80", "#B8B3A6", "#D9D5C9", "#EFEDE6", "#FFFFFF"] }
     },
     "typographyMeta": {
       "display": { "displayName": "Display", "purpose": "The arrival greeting only; a single serif moment that opens the day." },
@@ -21,7 +22,9 @@
       "verse": { "displayName": "Verse", "purpose": "Scripture itself, centered and balanced; the luminous center of the flow." },
       "title": { "displayName": "Title", "purpose": "Card and theme-tile headings, and the 'Amen.' mark." },
       "body": { "displayName": "Body", "purpose": "Reflection prose, notes, and theme definitions at generous leading." },
-      "label": { "displayName": "Label", "purpose": "Uppercase dates, section headers, and kickers; the quiet metadata voice." }
+      "label": { "displayName": "Label", "purpose": "Uppercase dates, section headers, and kickers; the quiet metadata voice." },
+      "micro": { "displayName": "Micro", "purpose": "Smallest metadata (card dates, in-card references, journal O/A/P labels); tighter than Label." },
+      "card-verse": { "displayName": "Card Verse", "purpose": "The verse inside a compact card (Home 'today' card); one step below the full Verse." }
     },
     "shadows": [
       { "name": "card", "value": "0 1px 2px rgba(38,37,33,0.04), 0 14px 30px -14px rgba(38,37,33,0.14)", "purpose": "Default resting elevation for cards, tiles, and the floating back button." },
