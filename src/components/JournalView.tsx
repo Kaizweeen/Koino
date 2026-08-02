@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { DEVOTIONS } from "@/lib/devotions/content";
 import { getTheme } from "@/lib/themes";
@@ -19,8 +19,23 @@ const PARTS = [
 export function JournalView() {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [favOnly, setFavOnly] = useState(false);
+  const [query, setQuery] = useState("");
 
   useEffect(() => setProgress(loadProgress()), []);
+
+  const records = useMemo(() => {
+    if (!progress) return [];
+    return entryDates(progress).map((date) => {
+      const devotion = getDevotionShownOn(DEVOTIONS, date);
+      return {
+        date,
+        devotion,
+        theme: getTheme(devotion.theme),
+        entry: getEntry(progress, date),
+        legacyNote: progress.notes[date] ?? "",
+      };
+    });
+  }, [progress]);
 
   if (progress === null) {
     return (
@@ -30,8 +45,19 @@ export function JournalView() {
     );
   }
 
-  const dates = entryDates(progress).filter((d) => !favOnly || isFavorite(progress, d));
-  const hasFavorites = entryDates(progress).some((d) => isFavorite(progress, d));
+  const q = query.trim().toLowerCase();
+  const filtered = records.filter((r) => {
+    if (favOnly && !isFavorite(progress, r.date)) return false;
+    if (!q) return true;
+    const hay = [r.devotion.verseText, r.devotion.verseRef, r.theme.name, r.entry.observation, r.entry.application, r.entry.prayer, r.legacyNote]
+      .join(" ")
+      .toLowerCase();
+    return hay.includes(q);
+  });
+  const hasFavorites = records.some((r) => isFavorite(progress, r.date));
+
+  const emptyMessage =
+    records.length === 0 ? "Your journal is empty." : favOnly && !q ? "No favorites yet." : "No entries match your search.";
 
   return (
     <div className="fade-in flex flex-col gap-5 p-5 pb-6">
@@ -52,23 +78,42 @@ export function JournalView() {
         )}
       </header>
 
-      {dates.length === 0 ? (
-        <div className="mt-10 flex flex-col items-center gap-3 text-center">
+      {records.length > 0 && (
+        <div className="flex items-center gap-2 rounded-full border bg-paper px-4 py-2.5" style={{ borderColor: "var(--hairline)" }}>
+          <i className="ti ti-search text-ink-muted" aria-hidden="true" />
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search your journal"
+            aria-label="Search your journal"
+            className="w-full bg-transparent text-sm text-ink outline-none placeholder:text-ink-muted"
+          />
+          {query && (
+            <button onClick={() => setQuery("")} aria-label="Clear search" className="text-ink-muted transition-colors hover:text-ink">
+              <i className="ti ti-x" aria-hidden="true" />
+            </button>
+          )}
+        </div>
+      )}
+
+      {filtered.length === 0 ? (
+        <div className="mt-8 flex flex-col items-center gap-3 text-center">
           <span className="flex h-16 w-16 items-center justify-center rounded-full" style={{ background: "#E1F5EE", border: "1px solid #9FE1CB" }}>
             <i className="ti ti-book text-2xl text-brand" aria-hidden="true" />
           </span>
-          <p className="text-sm text-ink-secondary">{favOnly ? "No favorites yet." : "Your journal is empty."}</p>
-          <p className="max-w-[16rem] text-xs text-ink-muted">Finish a devotion and your Observation, Application, and Prayer will gather here.</p>
-          <Link href="/today" className="btn-quiet mt-2 rounded-full px-5 py-2.5 text-sm font-medium transition-transform active:scale-95" style={{ ["--accent" as string]: "#0F6E56" }}>
-            Go to today&apos;s devotion
-          </Link>
+          <p className="text-sm text-ink-secondary">{emptyMessage}</p>
+          {records.length === 0 && (
+            <>
+              <p className="max-w-[16rem] text-xs text-ink-muted">Finish a devotion and your Observation, Application, and Prayer will gather here.</p>
+              <Link href="/today" className="btn-quiet mt-2 rounded-full px-5 py-2.5 text-sm font-medium transition-transform active:scale-95" style={{ ["--accent" as string]: "#0F6E56" }}>
+                Go to today&apos;s devotion
+              </Link>
+            </>
+          )}
         </div>
       ) : (
-        dates.map((date) => {
-          const d = getDevotionShownOn(DEVOTIONS, date);
-          const t = getTheme(d.theme);
-          const entry = getEntry(progress, date);
-          const legacyNote = progress.notes[date];
+        filtered.map(({ date, devotion: d, theme: t, entry, legacyNote }) => {
           const accent = t.accent;
           return (
             <article key={date} className="rounded-well border bg-paper p-5 shadow-card" style={{ borderColor: "var(--hairline)", ["--accent" as string]: accent }}>

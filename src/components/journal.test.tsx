@@ -54,6 +54,25 @@ describe("JournalView", () => {
     expect(screen.getByText("faved")).toBeInTheDocument();
   });
 
+  it("filters entries by a search query", async () => {
+    localStorage.setItem(
+      "koino.progress.v1",
+      JSON.stringify({
+        completedDates: [],
+        favorites: [],
+        entries: {
+          "2026-06-25": { observation: "stillness and rest", application: "", prayer: "" },
+          "2026-06-26": { observation: "gratitude for gifts", application: "", prayer: "" },
+        },
+      }),
+    );
+    render(<JournalView />);
+    await screen.findByText("stillness and rest");
+    fireEvent.change(screen.getByLabelText("Search your journal"), { target: { value: "gratitude for" } });
+    expect(screen.queryByText("stillness and rest")).toBeNull();
+    expect(screen.getByText("gratitude for gifts")).toBeInTheDocument();
+  });
+
   it("shows a legacy note when present without a structured entry", async () => {
     localStorage.setItem(
       "koino.progress.v1",
