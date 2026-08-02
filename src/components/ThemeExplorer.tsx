@@ -26,7 +26,7 @@ export function ThemeExplorer() {
             <div className="relative flex items-start gap-4">
               <span
                 className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm"
-                style={{ color: t.accent, background: "color-mix(in srgb, var(--paper) 70%, transparent)" }}
+                style={{ color: "#fff", background: t.accent }}
               >
                 <i className={`ti ti-${t.icon} text-xl`} aria-hidden="true" />
               </span>
@@ -34,7 +34,7 @@ export function ThemeExplorer() {
                 <h2 className="font-serif text-lg" style={{ color: t.accent }}>
                   {t.name}
                 </h2>
-                <p className="mt-1 text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${t.accent} 40%, var(--ink))` }}>
+                <p className="mt-1 text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${t.accent} 40%, #262521)` }}>
                   {t.definition}
                 </p>
                 <p className="mt-2.5 inline-flex items-center gap-1.5 text-[11px]" style={{ color: t.accent, opacity: 0.78 }}>

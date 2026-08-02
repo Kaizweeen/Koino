@@ -53,7 +53,7 @@ export function Amen({
               : { background: "var(--paper)", color: theme.accent, border: "1px solid var(--hairline)" }
           }
         >
-          <i className={favorite ? "ti ti-heart-filled" : "ti ti-heart"} aria-hidden="true" />
+          <i className="ti ti-heart" aria-hidden="true" />
           {favorite ? "Saved" : "Save"}
         </button>
         <ShareButton

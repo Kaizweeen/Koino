@@ -73,7 +73,7 @@ export function JournalView() {
             className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
             style={favOnly ? { background: "#E1F5EE", color: "#0F6E56", border: "1px solid #9FE1CB" } : { background: "var(--paper)", color: "var(--ink-secondary)", border: "1px solid var(--hairline)" }}
           >
-            <i className={favOnly ? "ti ti-heart-filled" : "ti ti-heart"} aria-hidden="true" /> Favorites
+            <i className="ti ti-heart" aria-hidden="true" /> Favorites
           </button>
         )}
       </header>
@@ -132,14 +132,14 @@ export function JournalView() {
                   entry[key].trim() ? (
                     <div key={key} className="rounded-xl p-3.5" style={{ background: t.accentSoft }}>
                       <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider" style={{ color: accent }}>{label}</p>
-                      <p className="reading-text whitespace-pre-wrap font-serif text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${accent} 42%, var(--ink))` }}>{entry[key]}</p>
+                      <p className="reading-text whitespace-pre-wrap font-serif text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${accent} 42%, #262521)` }}>{entry[key]}</p>
                     </div>
                   ) : null,
                 )}
                 {legacyNote && (
                   <div className="rounded-xl p-3.5" style={{ background: t.accentSoft }}>
                     <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider" style={{ color: accent }}>Note</p>
-                    <p className="reading-text whitespace-pre-wrap font-serif text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${accent} 42%, var(--ink))` }}>{legacyNote}</p>
+                    <p className="reading-text whitespace-pre-wrap font-serif text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${accent} 42%, #262521)` }}>{legacyNote}</p>
                   </div>
                 )}
               </div>
@@ -150,9 +150,9 @@ export function JournalView() {
                   aria-pressed={isFavorite(progress, date)}
                   aria-label={isFavorite(progress, date) ? "Remove from favorites" : "Add to favorites"}
                   className="text-lg"
-                  style={{ color: accent }}
+                  style={{ color: isFavorite(progress, date) ? accent : "var(--ink-muted)" }}
                 >
-                  <i className={isFavorite(progress, date) ? "ti ti-heart-filled" : "ti ti-heart"} aria-hidden="true" />
+                  <i className="ti ti-heart" aria-hidden="true" />
                 </button>
                 <ShareButton devotion={d} theme={t} reflection={soapText(entry)} className="flex items-center gap-1.5 text-xs font-medium" />
               </div>

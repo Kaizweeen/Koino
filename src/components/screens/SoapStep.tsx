@@ -52,7 +52,7 @@ export function SoapStep({
             <summary className="cursor-pointer list-none text-sm font-medium" style={{ color: theme.accent }}>
               Need a nudge?
             </summary>
-            <p className="mt-2 text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${theme.accent} 42%, var(--ink))` }}>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${theme.accent} 42%, #262521)` }}>
               {nudge}
             </p>
           </details>
