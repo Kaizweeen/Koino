@@ -62,6 +62,18 @@ typography:
     fontWeight: 500
     lineHeight: 1.3
     letterSpacing: "-0.01em"
+  verse-large:
+    fontFamily: "Lora, Georgia, serif"
+    fontSize: "2.5rem"
+    fontWeight: 500
+    lineHeight: 1.4
+    letterSpacing: "-0.01em"
+  reading-large:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "1.0625rem"
+    fontWeight: 400
+    lineHeight: 1.7
+    letterSpacing: "normal"
 rounded:
   focus: "0.25rem"
   inset: "0.75rem"
@@ -178,6 +190,11 @@ element to a static hex. Change the day, and the whole screen re-lights from one
 that hue toward ink (`color-mix(in srgb, var(--accent) 40%, var(--ink))`), never flat gray. Gray
 secondary text is only for the neutral paper surface.
 
+**The Paper-at-Night Rule.** Dark mode is warm "paper at night", not a cold gray theme. Only the
+neutral tokens flip (`:root[data-theme="dark"]`: paper `#211F1B`, canvas `#151311`, ink `#EDEAE2`
+and its tints); Koinonia Green and every per-day accent stay exactly as they are, so a day's
+light still reads the same over the darker paper.
+
 ## Typography
 
 **Display / Reading Font:** Lora (with Georgia, serif) — carries all Scripture, prayer,
@@ -207,6 +224,8 @@ the interface around them.
   would be too heavy for the density.
 - **Card Verse** (Lora 500, 1.35rem): The verse set inside a compact card (the Home "today"
   card), one step down from the full-screen Verse; also the tab-bar glyph scale.
+- **Large mode** (accessibility): a "Large" text preference (`:root[data-text="large"]`) scales
+  the Verse to ~2.5rem and the reading/writing body (`.reading-text`) to 1.0625rem (17px).
 
 ### Named Rules
 **The Serif-for-Scripture Rule.** Lora is reserved for the words that carry weight: the verse,

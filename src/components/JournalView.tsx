@@ -132,14 +132,14 @@ export function JournalView() {
                   entry[key].trim() ? (
                     <div key={key} className="rounded-xl p-3.5" style={{ background: t.accentSoft }}>
                       <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider" style={{ color: accent }}>{label}</p>
-                      <p className="whitespace-pre-wrap font-serif text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${accent} 42%, var(--ink))` }}>{entry[key]}</p>
+                      <p className="reading-text whitespace-pre-wrap font-serif text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${accent} 42%, var(--ink))` }}>{entry[key]}</p>
                     </div>
                   ) : null,
                 )}
                 {legacyNote && (
                   <div className="rounded-xl p-3.5" style={{ background: t.accentSoft }}>
                     <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wider" style={{ color: accent }}>Note</p>
-                    <p className="whitespace-pre-wrap font-serif text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${accent} 42%, var(--ink))` }}>{legacyNote}</p>
+                    <p className="reading-text whitespace-pre-wrap font-serif text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${accent} 42%, var(--ink))` }}>{legacyNote}</p>
                   </div>
                 )}
               </div>

@@ -32,7 +32,7 @@ export function PlanView({ slug }: { slug: string }) {
             </span>
             <p className="mt-3 font-serif text-lg leading-snug text-ink">{d.verseText}</p>
             <p className="mt-1.5 text-[10px] uppercase tracking-widest2 text-ink-muted">{d.verseRef}</p>
-            <p className="mt-3 text-sm leading-relaxed text-ink-secondary">{d.reflection}</p>
+            <p className="reading-text mt-3 text-sm leading-relaxed text-ink-secondary">{d.reflection}</p>
           </li>
         ))}
       </ol>

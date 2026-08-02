@@ -5,6 +5,7 @@
 :root {
   --paper: #FBFAF7;        /* raised surface: cards, the reading column */
   --canvas: #EEEBE3;       /* page base the column floats on */
+  --canvas-glow: #F6F3EC;  /* warm light at the top of the page */
   --ink: #262521;
   --ink-secondary: #55544D;
   --ink-muted: #6C6A5F;
@@ -14,13 +15,28 @@
   --accent-border: #9FE1CB;
 }
 
+/* Dark theme: warm "paper at night". Neutral tokens flip; brand green and per-day accents stay. */
+:root[data-theme="dark"] {
+  --paper: #211F1B;
+  --canvas: #151311;
+  --canvas-glow: #221F1A;
+  --ink: #EDEAE2;
+  --ink-secondary: #BAB6AA;
+  --ink-muted: #97948A;
+  --hairline: rgba(237, 234, 226, 0.13);
+}
+
+/* Larger reading size for the verse and the reading/writing text. */
+:root[data-text="large"] .text-verse { font-size: clamp(1.85rem, 7.2vw, 2.5rem); }
+:root[data-text="large"] .reading-text { font-size: 1.0625rem; line-height: 1.7; }
+
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 
 body {
   min-height: 100%;
   background:
-    radial-gradient(120% 80% at 50% -10%, #F6F3EC 0%, var(--canvas) 60%);
+    radial-gradient(120% 80% at 50% -10%, var(--canvas-glow) 0%, var(--canvas) 60%);
   background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;

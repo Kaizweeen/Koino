@@ -73,14 +73,24 @@ export function HomeHub() {
               </p>
             )}
           </div>
-          {streak > 0 && (
-            <span
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium shadow-sm"
-              style={{ background: theme.accentSoft, color: theme.accent, border: `1px solid ${theme.accentBorder}` }}
+          <div className="flex shrink-0 items-center gap-2">
+            {streak > 0 && (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium shadow-sm"
+                style={{ background: theme.accentSoft, color: theme.accent, border: `1px solid ${theme.accentBorder}` }}
+              >
+                <i className="ti ti-plant-2" aria-hidden="true" /> {streak}
+              </span>
+            )}
+            <Link
+              href="/settings"
+              aria-label="Settings"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:text-ink"
+              style={{ background: "var(--paper)", border: "1px solid var(--hairline)" }}
             >
-              <i className="ti ti-plant-2" aria-hidden="true" /> {streak}
-            </span>
-          )}
+              <i className="ti ti-settings" aria-hidden="true" />
+            </Link>
+          </div>
         </header>
 
         <Link

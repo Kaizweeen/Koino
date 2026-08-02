@@ -42,7 +42,7 @@ export function SoapStep({
           onChange={(e) => onChange(e.target.value)}
           rows={5}
           placeholder="Write your own…"
-          className="w-full resize-none rounded-2xl border bg-paper p-3.5 font-serif text-[15px] leading-relaxed text-ink shadow-sm outline-none transition-colors placeholder:font-sans placeholder:text-ink-muted"
+          className="reading-text w-full resize-none rounded-2xl border bg-paper p-3.5 font-serif text-[15px] leading-relaxed text-ink shadow-sm outline-none transition-colors placeholder:font-sans placeholder:text-ink-muted"
           style={{ borderColor: "var(--hairline)" }}
           onFocus={(e) => (e.currentTarget.style.borderColor = theme.accent)}
           onBlur={(e) => (e.currentTarget.style.borderColor = "var(--hairline)")}

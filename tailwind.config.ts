@@ -5,10 +5,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: "#FBFAF7",
-        canvas: "#EEEBE3",
+        // Neutral surfaces and ink are CSS-variable-backed so they flip in dark mode
+        // (values live in globals.css :root and :root[data-theme="dark"]).
+        paper: "var(--paper)",
+        canvas: "var(--canvas)",
         brand: { DEFAULT: "#0F6E56", soft: "#E1F5EE", border: "#9FE1CB" },
-        ink: { DEFAULT: "#262521", secondary: "#55544D", muted: "#6C6A5F" },
+        ink: { DEFAULT: "var(--ink)", secondary: "var(--ink-secondary)", muted: "var(--ink-muted)" },
       },
       fontFamily: {
         sans: ["var(--font-sans)"],

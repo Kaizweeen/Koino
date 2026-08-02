@@ -25,8 +25,8 @@ export function ThemeExplorer() {
             />
             <div className="relative flex items-start gap-4">
               <span
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-paper/70 shadow-sm"
-                style={{ color: t.accent }}
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm"
+                style={{ color: t.accent, background: "color-mix(in srgb, var(--paper) 70%, transparent)" }}
               >
                 <i className={`ti ti-${t.icon} text-xl`} aria-hidden="true" />
               </span>
