@@ -11,10 +11,23 @@
 */
 
 import Link from "next/link";
-import { THEMES } from "@/lib/themes";
+import { THEMES, type ThemeSlug } from "@/lib/themes";
 import { Atmosphere } from "@/components/Atmosphere";
 
-const GREEN = "#0F6E56";
+const GREEN = THEMES.peace.accent;
+
+// A spectrum of the day's light, drifting down the page, coloured by real theme accents.
+const GLOWS: { top: string; side: "left" | "right"; off: string; size: string; theme: ThemeSlug; strength: string }[] = [
+  { top: "-14%", side: "left", off: "-6%", size: "64vw", theme: "peace", strength: "52%" },
+  { top: "10%", side: "right", off: "-8%", size: "58vw", theme: "gratitude", strength: "42%" },
+  { top: "29%", side: "left", off: "-10%", size: "66vw", theme: "hope", strength: "46%" },
+  { top: "49%", side: "right", off: "-6%", size: "60vw", theme: "love", strength: "44%" },
+  { top: "69%", side: "left", off: "-8%", size: "64vw", theme: "longing", strength: "46%" },
+  { top: "88%", side: "right", off: "-6%", size: "58vw", theme: "peace", strength: "48%" },
+];
+
+const GRAIN =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
 function SoapDots({ current, accent }: { current: 1 | 2 | 3 | 4; accent: string }) {
   return (
@@ -63,7 +76,25 @@ export function Landing() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-canvas">
-      <Atmosphere accent={GREEN} className="opacity-70" />
+      {/* Backdrop: a drifting spectrum of the day's light, plus faint paper grain. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        {GLOWS.map((g, i) => (
+          <div
+            key={i}
+            className="koino-float absolute rounded-full"
+            style={{
+              top: g.top,
+              width: g.size,
+              height: g.size,
+              ...(g.side === "left" ? { left: g.off } : { right: g.off }),
+              background: `radial-gradient(circle, color-mix(in srgb, ${THEMES[g.theme].accent} ${g.strength}, transparent), transparent 70%)`,
+              animationDelay: `${i * -3.5}s`,
+              animationDuration: `${18 + i * 2}s`,
+            }}
+          />
+        ))}
+        <div className="absolute inset-0 opacity-[0.055]" style={{ backgroundImage: GRAIN, backgroundSize: "140px 140px" }} />
+      </div>
 
       <div className="relative z-10">
         {/* Nav */}

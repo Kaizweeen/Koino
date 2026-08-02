@@ -184,6 +184,13 @@ main iframe {
   transition: box-shadow 250ms ease;
 }
 
+/* Landing backdrop: soft coloured light drifting very slowly behind the page. */
+@keyframes koino-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(2%, -3%) scale(1.07); }
+}
+.koino-float { animation: koino-float 20s ease-in-out infinite; }
+
 /* Landing: one orchestrated scroll reveal. Content is visible by default; this only enhances
    where scroll-driven animations are supported, and never runs under reduced-motion. */
 @keyframes koino-reveal {
@@ -201,7 +208,7 @@ main iframe {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fade-in, .stagger > *, .rise-in, .breathe, .bloom, .bloom-ring,
+  .fade-in, .stagger > *, .rise-in, .breathe, .bloom, .bloom-ring, .koino-float,
   .koino-atmo::before, .koino-atmo::after {
     animation: none !important;
   }
