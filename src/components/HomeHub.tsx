@@ -9,6 +9,7 @@ import { computeStreak, loadProgress, entryDates, getEntry } from "@/lib/progres
 import { formatDisplayDate, greetingForHour } from "@/lib/dates";
 import { lastNDays, weekdayInitial } from "@/lib/week";
 import { loadPrefs, setOnboarded } from "@/lib/prefs";
+import { availablePlans } from "@/lib/plans";
 import { Atmosphere } from "@/components/Atmosphere";
 import { Onboarding } from "@/components/Onboarding";
 
@@ -55,6 +56,7 @@ export function HomeHub() {
     .slice(0, 2)
     .map((date) => ({ date, devotion: getDevotionShownOn(DEVOTIONS, date), entry: getEntry(progress, date) }));
   const exploreThemes = Object.values(THEMES).slice(0, 4);
+  const plans = availablePlans().slice(0, 3);
 
   return (
     <div className="relative min-h-screen" style={{ ["--accent" as string]: theme.accent }}>
@@ -173,6 +175,32 @@ export function HomeHub() {
               })}
             </div>
           )}
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-[11px] font-medium uppercase tracking-widest2 text-ink-muted">Reading plans</h2>
+          <div className="flex flex-col gap-2.5">
+            {plans.map((p) => {
+              const pt = getTheme(p.theme);
+              return (
+                <Link
+                  key={p.slug}
+                  href={`/plans/${p.slug}`}
+                  className="flex items-center gap-3 rounded-2xl border bg-paper p-3.5 shadow-card transition-transform active:scale-[0.99]"
+                  style={{ borderColor: "var(--hairline)" }}
+                >
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ background: pt.accentSoft, color: pt.accent }}>
+                    <i className={`ti ti-${pt.icon}`} aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-ink">{p.title}</p>
+                    <p className="truncate text-xs text-ink-muted">{p.subtitle}</p>
+                  </div>
+                  <i className="ti ti-chevron-right ml-auto shrink-0 text-ink-muted" aria-hidden="true" />
+                </Link>
+              );
+            })}
+          </div>
         </section>
 
         <section>
