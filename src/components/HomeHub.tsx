@@ -83,7 +83,7 @@ export function HomeHub() {
               </span>
             )}
             <Link
-              href="/settings"
+              href="/app/settings"
               aria-label="Settings"
               className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:text-ink"
               style={{ background: "var(--paper)", border: "1px solid var(--hairline)" }}
@@ -94,7 +94,7 @@ export function HomeHub() {
         </header>
 
         <Link
-          href="/today"
+          href="/app/today"
           className="group relative block overflow-hidden rounded-well p-6 shadow-card transition-transform active:scale-[0.99]"
           style={{ background: theme.accentSoft, border: `1px solid ${theme.accentBorder}` }}
         >
@@ -123,7 +123,7 @@ export function HomeHub() {
         <section>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-[11px] font-medium uppercase tracking-widest2 text-ink-muted">This week</h2>
-            <Link href="/history" className="text-[11px] text-ink-muted transition-colors hover:text-ink">
+            <Link href="/app/history" className="text-[11px] text-ink-muted transition-colors hover:text-ink">
               See all
             </Link>
           </div>
@@ -152,7 +152,7 @@ export function HomeHub() {
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-[11px] font-medium uppercase tracking-widest2 text-ink-muted">Journal</h2>
             {recent.length > 0 && (
-              <Link href="/journal" className="text-[11px] text-ink-muted transition-colors hover:text-ink">
+              <Link href="/app/journal" className="text-[11px] text-ink-muted transition-colors hover:text-ink">
                 See all
               </Link>
             )}
@@ -172,7 +172,7 @@ export function HomeHub() {
                 return (
                   <Link
                     key={date}
-                    href="/journal"
+                    href="/app/journal"
                     className="block rounded-2xl border bg-paper p-3.5 shadow-card transition-transform active:scale-[0.99]"
                     style={{ borderColor: "var(--hairline)" }}
                   >
@@ -195,7 +195,7 @@ export function HomeHub() {
               return (
                 <Link
                   key={p.slug}
-                  href={`/plans/${p.slug}`}
+                  href={`/app/plans/${p.slug}`}
                   className="flex items-center gap-3 rounded-2xl border bg-paper p-3.5 shadow-card transition-transform active:scale-[0.99]"
                   style={{ borderColor: "var(--hairline)" }}
                 >
@@ -219,7 +219,7 @@ export function HomeHub() {
             {exploreThemes.map((t) => (
               <Link
                 key={t.slug}
-                href="/themes"
+                href="/app/themes"
                 className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-transform active:scale-95"
                 style={{ background: t.accentSoft, color: t.accent }}
               >
@@ -227,7 +227,7 @@ export function HomeHub() {
               </Link>
             ))}
             <Link
-              href="/themes"
+              href="/app/themes"
               className="inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-medium text-ink-secondary transition-transform active:scale-95"
               style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)" }}
             >

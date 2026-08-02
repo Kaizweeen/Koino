@@ -106,7 +106,7 @@ export function JournalView() {
           {records.length === 0 && (
             <>
               <p className="max-w-[16rem] text-xs text-ink-muted">Finish a devotion and your Observation, Application, and Prayer will gather here.</p>
-              <Link href="/today" className="btn-quiet mt-2 rounded-full px-5 py-2.5 text-sm font-medium transition-transform active:scale-95" style={{ ["--accent" as string]: "#0F6E56" }}>
+              <Link href="/app/today" className="btn-quiet mt-2 rounded-full px-5 py-2.5 text-sm font-medium transition-transform active:scale-95" style={{ ["--accent" as string]: "#0F6E56" }}>
                 Go to today&apos;s devotion
               </Link>
             </>

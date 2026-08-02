@@ -17,7 +17,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
       </div>
       <div className="flex flex-col items-center gap-3">
         <button onClick={reset} className="btn-primary rounded-full px-6 py-3 text-sm font-medium">Try again</button>
-        <Link href="/" className="text-xs text-ink-muted transition-colors hover:text-ink">Back to home</Link>
+        <Link href="/app" className="text-xs text-ink-muted transition-colors hover:text-ink">Back to home</Link>
       </div>
     </main>
   );

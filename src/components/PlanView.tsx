@@ -11,7 +11,7 @@ export function PlanView({ slug }: { slug: string }) {
 
   return (
     <div className="fade-in flex flex-col gap-5 p-5 pb-6" style={{ ["--accent" as string]: t.accent }}>
-      <Link href="/" className="inline-flex w-fit items-center gap-1 text-xs text-ink-muted transition-colors hover:text-ink">
+      <Link href="/app" className="inline-flex w-fit items-center gap-1 text-xs text-ink-muted transition-colors hover:text-ink">
         <i className="ti ti-chevron-left" aria-hidden="true" /> Home
       </Link>
 
@@ -37,7 +37,7 @@ export function PlanView({ slug }: { slug: string }) {
         ))}
       </ol>
 
-      <Link href="/today" className="btn-primary block rounded-full py-3.5 text-center text-[15px] font-medium">
+      <Link href="/app/today" className="btn-primary block rounded-full py-3.5 text-center text-[15px] font-medium">
         Begin today&apos;s devotion
       </Link>
     </div>

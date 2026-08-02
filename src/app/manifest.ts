@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Koino",
     description:
       "A calm daily devotion: read the Scripture, then write your Observation, Application, and Prayer, set to music that matches the day.",
-    start_url: "/",
+    start_url: "/app",
     display: "standalone",
     orientation: "portrait",
     background_color: "#FBFAF7",

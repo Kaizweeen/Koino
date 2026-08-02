@@ -24,7 +24,7 @@ describe("HomeHub", () => {
     expect(await screen.findByText("Good morning")).toBeInTheDocument();
     expect(screen.getByText("Create in me a clean heart, O God. Renew a right spirit within me.")).toBeInTheDocument();
     const cta = screen.getByText("Begin today's devotion").closest("a");
-    expect(cta).toHaveAttribute("href", "/today");
+    expect(cta).toHaveAttribute("href", "/app/today");
   });
 
   it("shows the empty journal peek when nothing is written", async () => {

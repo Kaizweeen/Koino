@@ -31,7 +31,7 @@ export function SettingsView() {
 
   return (
     <div className="fade-in flex flex-col gap-6 p-5 pb-6" style={{ ["--accent" as string]: BRAND }}>
-      <Link href="/" className="inline-flex w-fit items-center gap-1 text-xs text-ink-muted transition-colors hover:text-ink">
+      <Link href="/app" className="inline-flex w-fit items-center gap-1 text-xs text-ink-muted transition-colors hover:text-ink">
         <i className="ti ti-chevron-left" aria-hidden="true" /> Home
       </Link>
 

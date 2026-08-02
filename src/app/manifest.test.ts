@@ -6,7 +6,7 @@ describe("PWA manifest", () => {
     const m = manifest();
     expect(m.display).toBe("standalone");
     expect(m.name).toMatch(/Koino/);
-    expect(m.start_url).toBe("/");
+    expect(m.start_url).toBe("/app");
     expect(m.icons?.length ?? 0).toBeGreaterThan(0);
     expect(m.icons?.some((i) => i.purpose === "maskable")).toBe(true);
   });
