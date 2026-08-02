@@ -36,7 +36,7 @@ const themeScript = `(function(){try{var p=JSON.parse(localStorage.getItem('koin
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${lora.variable}`} suppressHydrationWarning>
+    <html lang="en" data-theme="light" data-text="regular" className={`${inter.variable} ${lora.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link
