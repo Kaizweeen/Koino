@@ -150,7 +150,7 @@ export function HistoryView() {
               <div className="flex flex-col gap-1 pr-1">
                 <span className="h-3" aria-hidden="true" />
                 {WEEKDAY_LABELS.map((lab, i) => (
-                  <span key={i} className="flex h-4 w-7 items-center text-[9px] leading-none text-ink-muted lg:h-5">
+                  <span key={i} className="flex h-4 w-7 items-center text-[10px] leading-none text-ink-muted lg:h-5">
                     {lab}
                   </span>
                 ))}
@@ -158,7 +158,7 @@ export function HistoryView() {
               {/* Week columns */}
               {weeks.map((col, wi) => (
                 <div key={wi} className="flex flex-col gap-1">
-                  <span className="h-3 whitespace-nowrap text-[9px] leading-none text-ink-muted">{monthLabels[wi]}</span>
+                  <span className="h-3 whitespace-nowrap text-[10px] leading-none text-ink-muted">{monthLabels[wi]}</span>
                   {col.map((cell) =>
                     cell.future ? (
                       <span key={cell.date} className="h-4 w-4 lg:h-5 lg:w-5" aria-hidden="true" />
