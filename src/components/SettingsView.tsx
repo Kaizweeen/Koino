@@ -30,12 +30,12 @@ export function SettingsView() {
   }, []);
 
   return (
-    <div className="fade-in flex flex-col gap-6 p-5 pb-6" style={{ ["--accent" as string]: BRAND }}>
-      <Link href="/app" className="inline-flex w-fit items-center gap-1 text-xs text-ink-muted transition-colors hover:text-ink">
+    <div className="fade-in mx-auto flex w-full max-w-2xl flex-col gap-6 p-5 pb-6 lg:gap-8 lg:px-10 lg:py-12" style={{ ["--accent" as string]: BRAND }}>
+      <Link href="/app" className="inline-flex w-fit items-center gap-1 text-xs text-ink-muted transition-colors hover:text-ink lg:hidden">
         <i className="ti ti-chevron-left" aria-hidden="true" /> Home
       </Link>
 
-      <h1 className="font-serif text-3xl text-ink">Settings</h1>
+      <h1 className="font-serif text-3xl text-ink lg:text-4xl">Settings</h1>
 
       <section className="flex flex-col gap-4">
         <h2 className="text-[11px] font-medium uppercase tracking-widest2 text-ink-muted">Appearance</h2>

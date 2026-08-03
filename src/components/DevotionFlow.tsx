@@ -80,9 +80,12 @@ export function DevotionFlow() {
   }
 
   return (
-    <main className="relative mx-auto flex min-h-screen max-w-sm flex-col bg-paper shadow-column" style={{ ["--accent" as string]: theme.accent }}>
-      <Atmosphere accent={theme.accent} tone={step === "prayer" ? "night" : "day"} />
-      <div key={step} className="fade-in relative z-10 flex min-h-screen flex-col">
+    <div className="relative flex min-h-screen flex-col" style={{ ["--accent" as string]: theme.accent }}>
+      {/* Desktop-only ambient light that fills the whole canvas behind the floating column */}
+      <Atmosphere accent={theme.accent} tone={step === "prayer" ? "night" : "day"} className="hidden lg:block" />
+      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-sm flex-col bg-paper shadow-column lg:max-w-lg">
+        <Atmosphere accent={theme.accent} tone={step === "prayer" ? "night" : "day"} />
+        <div key={step} className="fade-in relative z-10 flex min-h-screen flex-col">
         {step === "arrival" && (
           <Arrival
             theme={theme}
@@ -130,7 +133,8 @@ export function DevotionFlow() {
         )}
         {step === "linger" && <Linger devotion={devotion} theme={theme} playlistId={playlistId} />}
         {step === "done" && <Done theme={theme} streak={streak} onReadAgain={() => setStep("scripture")} />}
-      </div>
-    </main>
+        </div>
+      </main>
+    </div>
   );
 }

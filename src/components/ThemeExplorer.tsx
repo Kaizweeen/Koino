@@ -3,19 +3,19 @@ import { THEMES } from "@/lib/themes";
 export function ThemeExplorer() {
   const themes = Object.values(THEMES);
   return (
-    <div className="fade-in flex flex-col gap-5 p-5 pb-6">
+    <div className="fade-in mx-auto flex w-full max-w-6xl flex-col gap-5 p-5 pb-6 lg:gap-8 lg:px-10 lg:py-12">
       <header>
-        <h1 className="font-serif text-3xl text-ink">Themes</h1>
-        <p className="mt-1 max-w-[20rem] text-xs text-ink-muted">
+        <h1 className="font-serif text-3xl text-ink lg:text-4xl">Themes</h1>
+        <p className="mt-1 max-w-[20rem] text-xs text-ink-muted lg:mt-2 lg:max-w-[34rem] lg:text-sm">
           Every day is drawn from one of these. Each carries its own verses and its own music.
         </p>
       </header>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:gap-4 xl:grid-cols-3">
         {themes.map((t) => (
           <article
             key={t.slug}
-            className="relative overflow-hidden rounded-well p-5"
+            className="relative overflow-hidden rounded-well p-5 lg:p-6"
             style={{ background: t.accentSoft, border: `1px solid ${t.accentBorder}` }}
           >
             <span

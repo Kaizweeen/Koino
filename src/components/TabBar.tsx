@@ -14,7 +14,7 @@ export function TabBar() {
   const pathname = usePathname();
   return (
     <nav
-      className="sticky bottom-0 z-20 flex backdrop-blur-md"
+      className="sticky bottom-0 z-20 flex backdrop-blur-md lg:hidden"
       style={{ background: "color-mix(in srgb, var(--paper) 90%, transparent)", borderTop: "1px solid var(--hairline)", paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       {TABS.map((tab) => {

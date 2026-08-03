@@ -3,7 +3,7 @@ import { DevotionFlow } from "@/components/DevotionFlow";
 
 export default function TodayPage() {
   return (
-    <div className="relative mx-auto max-w-sm">
+    <div className="relative mx-auto max-w-sm lg:max-w-none">
       <Link
         href="/app"
         aria-label="Back to home"

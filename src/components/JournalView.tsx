@@ -60,11 +60,11 @@ export function JournalView() {
     records.length === 0 ? "Your journal is empty." : favOnly && !q ? "No favorites yet." : "No entries match your search.";
 
   return (
-    <div className="fade-in flex flex-col gap-5 p-5 pb-6">
+    <div className="fade-in mx-auto flex w-full max-w-6xl flex-col gap-5 p-5 pb-6 lg:gap-7 lg:px-10 lg:py-12">
       <header className="flex items-end justify-between">
         <div>
-          <h1 className="font-serif text-3xl text-ink">Journal</h1>
-          <p className="mt-1 text-xs text-ink-muted">What you wrote, kept with the verse that stirred it.</p>
+          <h1 className="font-serif text-3xl text-ink lg:text-4xl">Journal</h1>
+          <p className="mt-1 text-xs text-ink-muted lg:mt-2 lg:text-sm">What you wrote, kept with the verse that stirred it.</p>
         </div>
         {hasFavorites && (
           <button
@@ -79,7 +79,7 @@ export function JournalView() {
       </header>
 
       {records.length > 0 && (
-        <div className="flex items-center gap-2 rounded-full border bg-paper px-4 py-2.5" style={{ borderColor: "var(--hairline)" }}>
+        <div className="flex items-center gap-2 rounded-full border bg-paper px-4 py-2.5 lg:max-w-lg" style={{ borderColor: "var(--hairline)" }}>
           <i className="ti ti-search text-ink-muted" aria-hidden="true" />
           <input
             type="search"
@@ -113,10 +113,11 @@ export function JournalView() {
           )}
         </div>
       ) : (
-        filtered.map(({ date, devotion: d, theme: t, entry, legacyNote }) => {
+        <div className="flex flex-col gap-5 lg:block lg:columns-2 lg:gap-x-4 xl:columns-3">
+          {filtered.map(({ date, devotion: d, theme: t, entry, legacyNote }) => {
           const accent = t.accent;
           return (
-            <article key={date} className="rounded-well border bg-paper p-5 shadow-card" style={{ borderColor: "var(--hairline)", ["--accent" as string]: accent }}>
+            <article key={date} className="rounded-well border bg-paper p-5 shadow-card lg:mb-4 lg:break-inside-avoid" style={{ borderColor: "var(--hairline)", ["--accent" as string]: accent }}>
               <div className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ background: t.accentSoft, color: t.accent }}>
                   <i className={`ti ti-${t.icon}`} aria-hidden="true" /> {t.name}
@@ -158,7 +159,8 @@ export function JournalView() {
               </div>
             </article>
           );
-        })
+          })}
+        </div>
       )}
 
       <BackupControls onImported={() => setProgress(loadProgress())} />
