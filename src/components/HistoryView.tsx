@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { computeStreak, longestStreak, loadProgress } from "@/lib/progress";
 
 const BRAND = "#0F6E56";
@@ -54,10 +54,19 @@ export function HistoryView() {
   const [today, setToday] = useState<string | null>(null);
   const [completed, setCompleted] = useState<string[]>([]);
 
+  const rhythmRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     setToday(localToday());
     setCompleted(loadProgress().completedDates);
   }, []);
+
+  // Open the rhythm graph on the most recent weeks (the right edge), so today's
+  // streak is what you see first when the history is wide enough to scroll.
+  useEffect(() => {
+    const el = rhythmRef.current;
+    if (el) el.scrollLeft = el.scrollWidth;
+  }, [today, completed]);
 
   if (!today) {
     return (
@@ -123,7 +132,13 @@ export function HistoryView() {
               <div className="mt-1.5 flex items-baseline gap-2">
                 <span className="font-serif text-5xl leading-none lg:text-6xl" style={{ color: BRAND }}>{current}</span>
                 <span className="text-lg" style={{ color: BRAND, opacity: 0.7 }}>{current === 1 ? "day" : "days"}</span>
-                <i className="ti ti-plant-2 breathe ml-auto text-2xl lg:text-3xl" style={{ color: BRAND, ["--accent" as string]: BRAND }} aria-hidden="true" />
+                <span
+                className="breathe ml-auto flex h-11 w-11 shrink-0 items-center justify-center self-center rounded-full lg:h-12 lg:w-12"
+                style={{ background: "color-mix(in srgb, var(--brand) 14%, transparent)", ["--accent" as string]: BRAND }}
+                aria-hidden="true"
+              >
+                <i className="ti ti-plant-2 text-xl lg:text-2xl" style={{ color: BRAND }} />
+              </span>
               </div>
               <p className="mt-4 text-xs lg:text-sm" style={{ color: `color-mix(in srgb, ${BRAND} 45%, var(--ink))` }}>
                 {current > 0 ? "Keep the rhythm going tomorrow morning." : "Begin today to start a new streak."}
@@ -144,7 +159,7 @@ export function HistoryView() {
             <span className="text-[11px] text-ink-muted">Last {weeksToShow} weeks</span>
           </div>
 
-          <div className="overflow-x-auto pb-1">
+          <div ref={rhythmRef} className="no-scrollbar overflow-x-auto pb-1">
             <div className="flex min-w-max gap-1">
               {/* Weekday gutter */}
               <div className="flex flex-col gap-1 pr-1">

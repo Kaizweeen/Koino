@@ -184,6 +184,11 @@ main iframe {
   transition: box-shadow 250ms ease;
 }
 
+/* Keep a container horizontally scrollable but hide the native scrollbar (the
+   rhythm graph scrolls by touch/trackpad; the chunky OS bar is too loud here). */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
 /* Landing backdrop: soft coloured light drifting very slowly behind the page. */
 @keyframes koino-float {
   0%, 100% { transform: translate(0, 0) scale(1); }
