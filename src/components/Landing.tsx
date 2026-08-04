@@ -162,6 +162,17 @@ export function Landing() {
 
           <div className="mt-16 flex flex-col gap-20">
             <Step
+              n={1}
+              letter="Scripture"
+              accent={GREEN}
+              reverse
+              title="Begin with the verse."
+              body="Each morning opens on a single verse, set to music matched to the day's theme. You read slowly and let it land before you write a word."
+              verse="Be still, and know that I am God."
+              verseRef="Psalm 46:10"
+              music="Ambient, slow, soft worship"
+            />
+            <Step
               n={2}
               letter="Observation"
               accent={GREEN}
@@ -327,16 +338,22 @@ function Step({
   body,
   prompt,
   answer,
+  verse,
+  verseRef,
+  music,
   accent,
   tone = "day",
   reverse = false,
 }: {
-  n: 2 | 3 | 4;
+  n: 1 | 2 | 3 | 4;
   letter: string;
   title: string;
   body: string;
-  prompt: string;
-  answer: string;
+  prompt?: string;
+  answer?: string;
+  verse?: string;
+  verseRef?: string;
+  music?: string;
   accent: string;
   tone?: "day" | "night";
   reverse?: boolean;
@@ -351,19 +368,38 @@ function Step({
           </span>
           <SoapDots current={n} accent={accent} />
         </div>
-        <div className="my-auto flex flex-col gap-4">
-          <p className="text-center font-serif text-lg leading-snug" style={{ color: night ? "#EDE9DF" : "var(--ink)" }}>{prompt}</p>
-          <div
-            className="rounded-2xl border p-3.5 font-serif text-[15px] leading-relaxed"
-            style={
-              night
-                ? { borderColor: "rgba(237,233,223,0.18)", color: "#EDE9DF", background: "rgba(255,255,255,0.04)" }
-                : { borderColor: "var(--hairline)", color: "var(--ink)", background: "var(--paper)" }
-            }
-          >
-            {answer}
+        {verse ? (
+          // Scripture (S): a reading screen, not a writing one — verse, reference, matched music.
+          <>
+            <div className="my-auto flex flex-col items-center gap-5 text-center">
+              <p className="font-serif text-2xl leading-[1.4] text-ink text-balance">{verse}</p>
+              <span className="h-px w-8 rounded-full" style={{ background: "#9FE1CB" }} aria-hidden="true" />
+              <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink-muted">{verseRef}</span>
+            </div>
+            {music && (
+              <div className="flex items-center gap-2.5 rounded-xl px-3 py-2.5" style={{ background: "#E1F5EE" }}>
+                <span className="flex h-8 w-8 items-center justify-center rounded-full" style={{ background: accent, color: "#fff" }}>
+                  <i className="ti ti-music text-sm" aria-hidden="true" />
+                </span>
+                <span className="text-xs font-medium" style={{ color: accent }}>{music}</span>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="my-auto flex flex-col gap-4">
+            <p className="text-center font-serif text-lg leading-snug" style={{ color: night ? "#EDE9DF" : "var(--ink)" }}>{prompt}</p>
+            <div
+              className="rounded-2xl border p-3.5 font-serif text-[15px] leading-relaxed"
+              style={
+                night
+                  ? { borderColor: "rgba(237,233,223,0.18)", color: "#EDE9DF", background: "rgba(255,255,255,0.04)" }
+                  : { borderColor: "var(--hairline)", color: "var(--ink)", background: "var(--paper)" }
+              }
+            >
+              {answer}
+            </div>
           </div>
-        </div>
+        )}
         <div className="mt-1 flex items-center justify-center gap-1.5 text-xs font-medium" style={{ color: night ? "#B4AFA2" : accent }}>
           {n === 4 ? "Amen" : "Continue"} <i className="ti ti-arrow-right" aria-hidden="true" />
         </div>
