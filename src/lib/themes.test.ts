@@ -10,10 +10,9 @@ describe("theme registry", () => {
     }
   });
 
-  it("gives every theme a non-empty accent hex and at least one playlist", () => {
+  it("gives every theme a non-empty accent hex", () => {
     for (const theme of Object.values(THEMES)) {
       expect(theme.accent).toMatch(/^#[0-9A-Fa-f]{6}$/);
-      expect(theme.playlistIds.length).toBeGreaterThan(0);
     }
   });
 

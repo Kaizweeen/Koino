@@ -113,8 +113,7 @@ export function Landing() {
             </h1>
             <p className="mt-6 max-w-md text-[1.0625rem] leading-relaxed text-ink-secondary">
               Koino is a daily devotion built on the SOAP path. Read one verse, then write what you
-              notice, how it lands, and a prayer. Short, finishable, and set to music that matches
-              the day.
+              notice, how it lands, and a prayer. Short, finishable, and quietly yours.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <Link href="/app/today" className="btn-primary rounded-full px-7 py-3.5 text-[15px] font-medium" style={{ ["--accent" as string]: GREEN }}>
@@ -141,12 +140,6 @@ export function Landing() {
               <span className="h-px w-8 rounded-full" style={{ background: "#9FE1CB" }} />
               <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink-muted">Psalm 46:10</span>
             </div>
-            <div className="flex items-center gap-2.5 rounded-xl px-3 py-2.5" style={{ background: "#E1F5EE" }}>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full" style={{ background: GREEN, color: "#fff" }}>
-                <i className="ti ti-music text-sm" aria-hidden="true" />
-              </span>
-              <span className="text-xs font-medium" style={{ color: GREEN }}>Ambient, slow, soft worship</span>
-            </div>
           </Phone>
         </section>
 
@@ -167,10 +160,9 @@ export function Landing() {
               accent={GREEN}
               reverse
               title="Begin with the verse."
-              body="Each morning opens on a single verse, set to music matched to the day's theme. You read slowly and let it land before you write a word."
+              body="Each morning opens on a single verse drawn from the day's theme. You read slowly and let it land before you write a word."
               verse="Be still, and know that I am God."
               verseRef="Psalm 46:10"
-              music="Ambient, slow, soft worship"
             />
             <Step
               n={2}
@@ -225,7 +217,7 @@ export function Landing() {
                 <h2 className="font-serif text-[clamp(2rem,5vw,2.75rem)] leading-tight tracking-[-0.01em] text-ink">The day meets you where you are.</h2>
                 <p className="mt-4 text-[1.0625rem] leading-relaxed text-ink-secondary">
                   Some mornings you arrive grateful. Some in grief, or longing, or awe. Koino draws
-                  each day from an emotional theme, with its own verses and its own music. You do
+                  each day from an emotional theme, with its own verses and its own colour of light. You do
                   not have to feel a certain way to begin.
                 </p>
               </div>
@@ -340,7 +332,6 @@ function Step({
   answer,
   verse,
   verseRef,
-  music,
   accent,
   tone = "day",
   reverse = false,
@@ -353,7 +344,6 @@ function Step({
   answer?: string;
   verse?: string;
   verseRef?: string;
-  music?: string;
   accent: string;
   tone?: "day" | "night";
   reverse?: boolean;
@@ -369,22 +359,12 @@ function Step({
           <SoapDots current={n} accent={accent} />
         </div>
         {verse ? (
-          // Scripture (S): a reading screen, not a writing one — verse, reference, matched music.
-          <>
-            <div className="my-auto flex flex-col items-center gap-5 text-center">
-              <p className="font-serif text-2xl leading-[1.4] text-ink text-balance">{verse}</p>
-              <span className="h-px w-8 rounded-full" style={{ background: "#9FE1CB" }} aria-hidden="true" />
-              <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink-muted">{verseRef}</span>
-            </div>
-            {music && (
-              <div className="flex items-center gap-2.5 rounded-xl px-3 py-2.5" style={{ background: "#E1F5EE" }}>
-                <span className="flex h-8 w-8 items-center justify-center rounded-full" style={{ background: accent, color: "#fff" }}>
-                  <i className="ti ti-music text-sm" aria-hidden="true" />
-                </span>
-                <span className="text-xs font-medium" style={{ color: accent }}>{music}</span>
-              </div>
-            )}
-          </>
+          // Scripture (S): a reading screen, not a writing one — verse and reference.
+          <div className="my-auto flex flex-col items-center gap-5 text-center">
+            <p className="font-serif text-2xl leading-[1.4] text-ink text-balance">{verse}</p>
+            <span className="h-px w-8 rounded-full" style={{ background: "#9FE1CB" }} aria-hidden="true" />
+            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-ink-muted">{verseRef}</span>
+          </div>
         ) : (
           <div className="my-auto flex flex-col gap-4">
             <p className="text-center font-serif text-lg leading-snug" style={{ color: night ? "#EDE9DF" : "var(--ink)" }}>{prompt}</p>

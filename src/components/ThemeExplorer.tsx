@@ -7,7 +7,7 @@ export function ThemeExplorer() {
       <header>
         <h1 className="font-serif text-3xl text-ink lg:text-4xl">Themes</h1>
         <p className="mt-1 max-w-[20rem] text-xs text-ink-muted lg:mt-2 lg:max-w-[34rem] lg:text-sm">
-          Every day is drawn from one of these. Each carries its own verses and its own music.
+          Every day is drawn from one of these, each with its own verses and its own colour of light.
         </p>
       </header>
 
@@ -36,9 +36,6 @@ export function ThemeExplorer() {
                 </h2>
                 <p className="mt-1 text-sm leading-relaxed" style={{ color: `color-mix(in srgb, ${t.accent} 40%, #262521)` }}>
                   {t.definition}
-                </p>
-                <p className="mt-2.5 inline-flex items-center gap-1.5 text-[11px]" style={{ color: t.accent, opacity: 0.78 }}>
-                  <i className="ti ti-music" aria-hidden="true" /> {t.moodProfile}
                 </p>
               </div>
             </div>

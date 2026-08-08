@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getDevotionForDate, getTodayDevotion, getDevotionShownOn, getPlaylistId, getSavedDevotions } from "@/lib/devotions/select";
+import { getDevotionForDate, getTodayDevotion, getDevotionShownOn, getSavedDevotions } from "@/lib/devotions/select";
 import type { Devotion } from "@/lib/devotions/types";
 
 const sample: Devotion[] = [
@@ -41,16 +41,6 @@ describe("devotion selection", () => {
     expect(sample).toContain(a);
     expect(a).not.toBe(b); // consecutive days rotate rather than repeating
     expect(getDevotionShownOn(sample, "2026-06-26")).toBe(a); // deterministic per date
-  });
-
-  it("rotates playlists deterministically by date", () => {
-    const theme = { playlistIds: ["x", "y"] } as any;
-    expect(getPlaylistId(theme, "2026-06-24")).toBe(getPlaylistId(theme, "2026-06-24"));
-    expect(getPlaylistId({ playlistIds: ["only"] } as any, "2026-06-24")).toBe("only");
-  });
-
-  it("throws when a theme has no playlists", () => {
-    expect(() => getPlaylistId({ playlistIds: [] } as any, "2026-06-24")).toThrow("no playlists for theme");
   });
 
   it("maps saved dates to devotions, most recent first, skipping unknowns", () => {

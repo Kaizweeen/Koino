@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   applicationName: "Koino",
   title: { default: "Koino — Daily SOAP Devotion", template: "%s · Koino" },
   description:
-    "A calm daily devotion. Read the Scripture, then write your Observation, Application, and Prayer, set to music that matches the day.",
+    "A calm daily devotion. Read the Scripture, then write your Observation, Application, and Prayer.",
   appleWebApp: { capable: true, title: "Koino", statusBarStyle: "default" },
   openGraph: {
     title: "Koino — Daily SOAP Devotion",

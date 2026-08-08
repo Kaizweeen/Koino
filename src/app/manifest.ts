@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Koino — Daily SOAP Devotion",
     short_name: "Koino",
     description:
-      "A calm daily devotion: read the Scripture, then write your Observation, Application, and Prayer, set to music that matches the day.",
+      "A calm daily devotion: read the Scripture, then write your Observation, Application, and Prayer.",
     start_url: "/app",
     display: "standalone",
     orientation: "portrait",

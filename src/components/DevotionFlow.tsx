@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { DEVOTIONS } from "@/lib/devotions/content";
 import { getTheme } from "@/lib/themes";
-import { getPlaylistId, getTodayDevotion } from "@/lib/devotions/select";
+import { getTodayDevotion } from "@/lib/devotions/select";
 import { getSoapPrompts } from "@/lib/soap/prompts";
 import {
   computeStreak,
@@ -64,7 +64,6 @@ export function DevotionFlow() {
   }
 
   const theme = getTheme(devotion.theme);
-  const playlistId = getPlaylistId(theme, devotion.date);
   const prompts = getSoapPrompts(devotion.theme);
 
   function writeField(field: keyof SoapEntry, text: string) {
@@ -95,7 +94,7 @@ export function DevotionFlow() {
             onBegin={() => setStep("scripture")}
           />
         )}
-        {step === "scripture" && <Scripture devotion={devotion} theme={theme} playlistId={playlistId} onContinue={() => setStep("observation")} />}
+        {step === "scripture" && <Scripture devotion={devotion} theme={theme} onContinue={() => setStep("observation")} />}
         {step === "observation" && (
           <SoapStep theme={theme} step={2} label="Observation" prompt={prompts.observation}
             value={entry.observation} onChange={(t) => writeField("observation", t)}
@@ -131,7 +130,7 @@ export function DevotionFlow() {
             <i className="ti ti-arrow-right transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
           </button>
         )}
-        {step === "linger" && <Linger devotion={devotion} theme={theme} playlistId={playlistId} />}
+        {step === "linger" && <Linger devotion={devotion} theme={theme} />}
         {step === "done" && <Done theme={theme} streak={streak} onReadAgain={() => setStep("scripture")} />}
         </div>
       </main>

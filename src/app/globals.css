@@ -179,11 +179,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 }
 .btn-quiet:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--hairline)); }
 
-main iframe {
-  box-shadow: 0 14px 32px -20px rgba(38, 37, 33, 0.4);
-  transition: box-shadow 250ms ease;
-}
-
 /* Keep a container horizontally scrollable but hide the native scrollbar (the
    rhythm graph scrolls by touch/trackpad; the chunky OS bar is too loud here). */
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }

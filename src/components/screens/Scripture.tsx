@@ -1,9 +1,8 @@
 import type { Theme } from "@/lib/themes";
 import type { Devotion } from "@/lib/devotions/types";
-import { SpotifyEmbed } from "@/components/SpotifyEmbed";
 import { SoapProgress } from "@/components/screens/SoapProgress";
 
-export function Scripture({ devotion, theme, playlistId, onContinue }: { devotion: Devotion; theme: Theme; playlistId: string; onContinue: () => void }) {
+export function Scripture({ devotion, theme, onContinue }: { devotion: Devotion; theme: Theme; onContinue: () => void }) {
   return (
     <div className="flex flex-1 flex-col px-7 py-7">
       <div className="flex items-center justify-between">
@@ -22,17 +21,14 @@ export function Scripture({ devotion, theme, playlistId, onContinue }: { devotio
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        <SpotifyEmbed playlistId={playlistId} title={`${theme.name} playlist`} />
-        <button
-          onClick={onContinue}
-          className="group mx-auto inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium"
-          style={{ color: theme.accent }}
-        >
-          Continue
-          <i className="ti ti-arrow-right transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
-        </button>
-      </div>
+      <button
+        onClick={onContinue}
+        className="group mx-auto inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium"
+        style={{ color: theme.accent }}
+      >
+        Continue
+        <i className="ti ti-arrow-right transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+      </button>
     </div>
   );
 }
