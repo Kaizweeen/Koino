@@ -1,4 +1,5 @@
 import type { Theme } from "@/lib/themes";
+import { Icon } from "@/components/Icon";
 
 export function Arrival({ theme, today, streak, greeting, onBegin }: { theme: Theme; today: string; streak: number; greeting: string; onBegin: () => void }) {
   return (
@@ -12,7 +13,7 @@ export function Arrival({ theme, today, streak, greeting, onBegin }: { theme: Th
             style={{ background: theme.accentSoft, border: `1px solid ${theme.accentBorder}` }}
             aria-hidden="true"
           />
-          <i className={`ti ti-${theme.icon} relative text-4xl`} style={{ color: theme.accent }} aria-hidden="true" />
+          <Icon name={theme.icon} className="relative text-4xl" style={{ color: theme.accent }} />
         </div>
 
         <div className="flex flex-col items-center gap-3">
@@ -21,7 +22,7 @@ export function Arrival({ theme, today, streak, greeting, onBegin }: { theme: Th
             className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium"
             style={{ background: theme.accentSoft, color: theme.accent }}
           >
-            <i className={`ti ti-${theme.icon}`} aria-hidden="true" /> {theme.name}
+            <Icon name={theme.icon} /> {theme.name}
           </span>
         </div>
       </div>
@@ -32,7 +33,7 @@ export function Arrival({ theme, today, streak, greeting, onBegin }: { theme: Th
         </button>
         {streak > 0 && (
           <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
-            <i className="ti ti-plant-2" style={{ color: theme.accent }} aria-hidden="true" /> {streak}-day streak
+            <Icon name="plant-2" style={{ color: theme.accent }} /> {streak}-day streak
           </span>
         )}
       </div>

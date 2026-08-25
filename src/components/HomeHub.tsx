@@ -12,6 +12,7 @@ import { loadPrefs, setOnboarded } from "@/lib/prefs";
 import { availablePlans } from "@/lib/plans";
 import { Atmosphere } from "@/components/Atmosphere";
 import { Onboarding } from "@/components/Onboarding";
+import { Icon } from "@/components/Icon";
 
 function localToday(): string {
   const d = new Date();
@@ -69,7 +70,7 @@ export function HomeHub() {
             <p className="mt-1 text-xs text-ink-muted lg:mt-1.5 lg:text-sm">{formatDisplayDate(today)}</p>
             {!completedToday && streak > 0 && (
               <p className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium lg:text-sm" style={{ color: theme.accent }}>
-                <i className="ti ti-flame" aria-hidden="true" /> Keep your {streak}-day streak going
+                <Icon name="flame" /> Keep your {streak}-day streak going
               </p>
             )}
           </div>
@@ -79,7 +80,7 @@ export function HomeHub() {
                 className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium shadow-sm lg:px-4 lg:py-2 lg:text-sm"
                 style={{ background: theme.accentSoft, color: theme.accent, border: `1px solid ${theme.accentBorder}` }}
               >
-                <i className="ti ti-plant-2" aria-hidden="true" /> {streak}
+                <Icon name="plant-2" /> {streak}
               </span>
             )}
             <Link
@@ -88,7 +89,7 @@ export function HomeHub() {
               className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:text-ink lg:hidden"
               style={{ background: "var(--paper)", border: "1px solid var(--hairline)" }}
             >
-              <i className="ti ti-settings" aria-hidden="true" />
+              <Icon name="settings" />
             </Link>
           </div>
         </header>
@@ -107,7 +108,7 @@ export function HomeHub() {
             />
             <div className="relative">
               <span className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-widest2" style={{ color: theme.accent }}>
-                <i className={`ti ti-${theme.icon}`} aria-hidden="true" /> Today · {theme.name}
+                <Icon name={theme.icon} /> Today · {theme.name}
               </span>
               <p className="mt-3 font-serif text-[1.35rem] leading-snug text-balance lg:mt-4 lg:max-w-[26rem] lg:text-verse" style={{ color: theme.accent }}>
                 {devotion.verseText}
@@ -117,7 +118,7 @@ export function HomeHub() {
               </p>
               <span className="btn-primary mt-5 flex w-full items-center justify-center gap-1.5 rounded-full py-3 text-sm font-medium lg:mt-8 lg:inline-flex lg:w-auto lg:px-8 lg:py-3.5">
                 {completedToday ? "Revisit today" : "Begin today's devotion"}
-                <i className="ti ti-arrow-right transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+                <Icon name="arrow-right" className="transition-transform duration-200 group-hover:translate-x-0.5" />
               </span>
             </div>
           </Link>
@@ -185,7 +186,7 @@ export function HomeHub() {
                       style={{ borderColor: "var(--hairline)" }}
                     >
                       <span className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider" style={{ color: rt.accent }}>
-                        <i className={`ti ti-${rt.icon}`} aria-hidden="true" /> {rt.name}
+                        <Icon name={rt.icon} /> {rt.name}
                       </span>
                       <p className="mt-1.5 line-clamp-2 font-serif text-sm leading-snug text-ink lg:mt-2 lg:line-clamp-3 lg:text-base">{snippet}</p>
                     </Link>
@@ -208,13 +209,13 @@ export function HomeHub() {
                     style={{ borderColor: "var(--hairline)" }}
                   >
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ background: pt.accentSoft, color: pt.accent }}>
-                      <i className={`ti ti-${pt.icon}`} aria-hidden="true" />
+                      <Icon name={pt.icon} />
                     </span>
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-ink">{p.title}</p>
                       <p className="truncate text-xs text-ink-muted">{p.subtitle}</p>
                     </div>
-                    <i className="ti ti-chevron-right ml-auto shrink-0 text-ink-muted" aria-hidden="true" />
+                    <Icon name="chevron-right" className="ml-auto shrink-0 text-ink-muted" />
                   </Link>
                 );
               })}
@@ -233,7 +234,7 @@ export function HomeHub() {
                 className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-transform active:scale-95 lg:px-4 lg:py-2 lg:text-sm"
                 style={{ background: t.accentSoft, color: t.accent }}
               >
-                <i className={`ti ti-${t.icon}`} aria-hidden="true" /> {t.name}
+                <Icon name={t.icon} /> {t.name}
               </Link>
             ))}
             <Link

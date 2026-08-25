@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Atmosphere } from "@/components/Atmosphere";
+import { Icon } from "@/components/Icon";
 
 const BRAND = "#0F6E56";
 
@@ -33,7 +34,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           {step === 0 && (
             <>
               <div className="breathe flex h-24 w-24 items-center justify-center rounded-full" style={{ background: "#E1F5EE", border: "1px solid #9FE1CB" }}>
-                <i className="ti ti-plant-2 text-4xl text-brand" aria-hidden="true" />
+                <Icon name="plant-2" className="text-4xl text-brand" />
               </div>
               <div className="flex flex-col gap-3">
                 <h1 className="font-serif text-display text-ink">Welcome to Koino</h1>
@@ -66,7 +67,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           {step === 2 && (
             <>
               <div className="breathe flex h-24 w-24 items-center justify-center rounded-full" style={{ background: "#E1F5EE", border: "1px solid #9FE1CB" }}>
-                <i className="ti ti-lock text-4xl text-brand" aria-hidden="true" />
+                <Icon name="lock" className="text-4xl text-brand" />
               </div>
               <div className="flex flex-col gap-3">
                 <h1 className="font-serif text-3xl text-ink">Yours, and private</h1>

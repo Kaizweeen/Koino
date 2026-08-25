@@ -12,9 +12,14 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#FBFAF7",
     theme_color: "#FBFAF7",
     categories: ["lifestyle", "books", "health"],
+    // Android's installer requires a raster icon of at least 192px and ignores SVG entirely, so the
+    // PNGs are what actually make the app installable; the SVG stays as the scalable "any" entry.
     icons: [
       { src: "/icon-maskable.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
-      { src: "/icon-maskable.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" },
+      { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
+      { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }

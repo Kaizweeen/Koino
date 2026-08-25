@@ -2,6 +2,7 @@ import type { Theme } from "@/lib/themes";
 import type { Devotion } from "@/lib/devotions/types";
 import { milestoneFor } from "@/lib/streak";
 import { ShareButton } from "@/components/ShareButton";
+import { Icon } from "@/components/Icon";
 
 export function Amen({
   devotion,
@@ -25,19 +26,19 @@ export function Amen({
         <div className="relative flex h-[78px] w-[78px] items-center justify-center">
           <span className="bloom-ring absolute inset-0 rounded-full border" style={{ borderColor: theme.accentBorder }} aria-hidden="true" />
           <span className="bloom flex h-[78px] w-[78px] items-center justify-center rounded-full" style={{ background: theme.accentSoft, border: `1px solid ${theme.accentBorder}` }}>
-            <i className="ti ti-check text-3xl" style={{ color: theme.accent }} aria-hidden="true" />
+            <Icon name="check" className="text-3xl" style={{ color: theme.accent }} />
           </span>
         </div>
         <span className="font-serif text-2xl text-ink">Amen.</span>
         <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
-          <i className="ti ti-plant-2" style={{ color: theme.accent }} aria-hidden="true" /> {streak}-day streak
+          <Icon name="plant-2" style={{ color: theme.accent }} /> {streak}-day streak
         </span>
         {milestone && (
           <span
             className="rise-in mt-1 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium"
             style={{ background: theme.accentSoft, color: theme.accent, border: `1px solid ${theme.accentBorder}` }}
           >
-            <i className="ti ti-sparkles" aria-hidden="true" /> {milestone.title}
+            <Icon name="sparkles" /> {milestone.title}
           </span>
         )}
       </div>
@@ -53,7 +54,7 @@ export function Amen({
               : { background: "var(--paper)", color: theme.accent, border: "1px solid var(--hairline)" }
           }
         >
-          <i className="ti ti-heart" aria-hidden="true" />
+          <Icon name="heart" />
           {favorite ? "Saved" : "Save"}
         </button>
         <ShareButton

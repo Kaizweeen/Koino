@@ -1,12 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Lora } from "next/font/google";
+import { ServiceWorker } from "@/components/ServiceWorker";
+import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const lora = Lora({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-serif" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl()),
   applicationName: "Koino",
   title: { default: "Koino — Daily SOAP Devotion", template: "%s · Koino" },
   description:
@@ -17,8 +19,16 @@ export const metadata: Metadata = {
     description: "Read the Scripture, then write your Observation, Application, and Prayer.",
     siteName: "Koino",
     type: "website",
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "Koino — a calm daily devotion" }],
   },
-  icons: { apple: "/icon-maskable.svg" },
+  twitter: {
+    card: "summary_large_image",
+    title: "Koino — Daily SOAP Devotion",
+    description: "Read the Scripture, then write your Observation, Application, and Prayer.",
+    images: ["/opengraph-image.png"],
+  },
+  // iOS only accepts a raster apple-touch-icon; an SVG here leaves a blank home-screen tile.
+  icons: { icon: "/icon.svg", apple: "/apple-icon.png" },
 };
 
 export const viewport: Viewport = {
@@ -39,12 +49,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" data-theme="light" data-text="regular" className={`${inter.variable} ${lora.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css"
-        />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ServiceWorker />
+      </body>
     </html>
   );
 }

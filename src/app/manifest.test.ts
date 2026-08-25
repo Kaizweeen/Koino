@@ -10,4 +10,11 @@ describe("PWA manifest", () => {
     expect(m.icons?.length ?? 0).toBeGreaterThan(0);
     expect(m.icons?.some((i) => i.purpose === "maskable")).toBe(true);
   });
+
+  it("ships a raster icon of at least 192px, which installers require", () => {
+    const raster = manifest().icons?.filter((i) => i.type === "image/png") ?? [];
+    expect(raster.map((i) => i.sizes)).toContain("192x192");
+    expect(raster.map((i) => i.sizes)).toContain("512x512");
+    expect(raster.some((i) => i.purpose === "maskable")).toBe(true);
+  });
 });

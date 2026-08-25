@@ -1,3 +1,5 @@
+import { markStorageFailed, readRaw, writeRaw } from "@/lib/storage";
+
 export interface SoapEntry {
   observation: string;
   application: string;
@@ -32,11 +34,12 @@ export function computeStreak(completedDates: string[], today: string): number {
   return streak;
 }
 
+const empty = (): Progress => ({ completedDates: [], favorites: [], entries: {}, notes: {} });
+
 export function loadProgress(): Progress {
-  if (typeof window === "undefined") return { completedDates: [], favorites: [], entries: {}, notes: {} };
+  const raw = readRaw(KEY);
+  if (!raw) return empty();
   try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) return { completedDates: [], favorites: [], entries: {}, notes: {} };
     const parsed = JSON.parse(raw) as Partial<Progress>;
     return {
       completedDates: parsed.completedDates ?? [],
@@ -45,12 +48,12 @@ export function loadProgress(): Progress {
       notes: parsed.notes ?? {},
     };
   } catch {
-    return { completedDates: [], favorites: [], entries: {}, notes: {} };
+    return empty();
   }
 }
 
 function save(p: Progress): Progress {
-  if (typeof window !== "undefined") window.localStorage.setItem(KEY, JSON.stringify(p));
+  if (!writeRaw(KEY, JSON.stringify(p))) markStorageFailed();
   return p;
 }
 

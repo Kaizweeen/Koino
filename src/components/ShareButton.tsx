@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import type { Theme } from "@/lib/themes";
 import type { Devotion } from "@/lib/devotions/types";
 import { buildCardSvg, shareFilename, svgToPngBlob } from "@/lib/shareCard";
+import { Icon } from "@/components/Icon";
 
 export function ShareButton({
   devotion,
@@ -73,7 +74,7 @@ export function ShareButton({
         className={className ?? "flex items-center justify-center gap-1.5 rounded-full border py-3 text-sm font-medium"}
         style={{ borderColor: "var(--hairline)", color: theme.accent, background: "var(--paper)", borderWidth: 1, borderStyle: "solid" }}
       >
-        <i className="ti ti-share" aria-hidden="true" /> Share
+        <Icon name="share" /> Share
       </button>
 
       {open && (
@@ -110,7 +111,7 @@ export function ShareButton({
                 disabled={busy}
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-white py-2.5 text-sm font-medium text-ink disabled:opacity-60"
               >
-                <i className="ti ti-download" aria-hidden="true" /> {busy ? "Preparing…" : "Save image"}
+                <Icon name="download" /> {busy ? "Preparing…" : "Save image"}
               </button>
               <button
                 type="button"

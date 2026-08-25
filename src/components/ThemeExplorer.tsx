@@ -1,4 +1,5 @@
 import { THEMES } from "@/lib/themes";
+import { Icon } from "@/components/Icon";
 
 export function ThemeExplorer() {
   const themes = Object.values(THEMES);
@@ -28,7 +29,7 @@ export function ThemeExplorer() {
                 className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-sm"
                 style={{ color: "#fff", background: t.accent }}
               >
-                <i className={`ti ti-${t.icon} text-xl`} aria-hidden="true" />
+                <Icon name={t.icon} className="text-xl" />
               </span>
               <div className="min-w-0">
                 <h2 className="font-serif text-lg" style={{ color: t.accent }}>

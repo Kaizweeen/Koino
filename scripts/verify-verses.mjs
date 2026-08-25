@@ -27,3 +27,6 @@ for (const { ref, text } of entries) {
   await new Promise((r) => setTimeout(r, 300));
 }
 console.log(`\n${flagged} of ${entries.length} flagged`);
+// Verse text matching the WEB translation is a product constraint, so a mismatch has to fail
+// loudly rather than scroll past in a log.
+if (flagged > 0) process.exitCode = 1;

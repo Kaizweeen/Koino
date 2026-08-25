@@ -7,8 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "verify:verses": "node scripts/verify-verses.mjs"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

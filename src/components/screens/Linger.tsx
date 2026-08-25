@@ -1,5 +1,6 @@
 import type { Theme } from "@/lib/themes";
 import type { Devotion } from "@/lib/devotions/types";
+import { Icon } from "@/components/Icon";
 
 export function Linger({ devotion, theme }: { devotion: Devotion; theme: Theme }) {
   return (
@@ -17,7 +18,7 @@ export function Linger({ devotion, theme }: { devotion: Devotion; theme: Theme }
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
           style={{ background: theme.accentSoft, border: `1px solid ${theme.accentBorder}` }}
         >
-          <i className="ti ti-check text-lg" style={{ color: theme.accent }} aria-hidden="true" />
+          <Icon name="check" className="text-lg" style={{ color: theme.accent }} />
         </span>
         <div>
           <p className="text-sm font-medium text-ink">{theme.name} — completed</p>
@@ -26,7 +27,7 @@ export function Linger({ devotion, theme }: { devotion: Devotion; theme: Theme }
       </div>
 
       <span className="mt-auto flex items-center justify-center gap-1.5 text-center text-xs text-ink-muted">
-        <i className="ti ti-sunrise" style={{ color: theme.accent }} aria-hidden="true" /> New devotion tomorrow morning
+        <Icon name="sunrise" style={{ color: theme.accent }} /> New devotion tomorrow morning
       </span>
     </div>
   );

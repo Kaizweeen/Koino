@@ -1,80 +1,112 @@
 # Koino
 
-Mobile-first web app that helps newcomers feel known before they walk into a church.
+A calm daily devotion. One Scripture a day, then you write your Observation,
+Application, and Prayer — a short arc you can actually finish, on a phone, in a
+quiet moment.
 
-This repo is the **real** build — Next.js (App Router) + Supabase. The first
-slice wired up is **authentication** and the `profiles` table that everything
-personal hangs off of.
+See [PRODUCT.md](PRODUCT.md) for what Koino is and what it commits to, and
+[DESIGN.md](DESIGN.md) for the visual system.
 
 ## Stack
 
-- Next.js 14 (App Router) + TypeScript
-- Tailwind CSS (Koino design tokens in `tailwind.config.ts`)
-- Supabase: Postgres + GoTrue auth, via `@supabase/ssr` (cookie sessions)
+- Next.js 14 (App Router) + TypeScript, fully statically rendered
+- Tailwind CSS, with the Koino design tokens in `tailwind.config.ts`
+- Vitest + Testing Library
+- No backend, no accounts, no analytics, no third-party runtime requests
 
-## Setup
+Everything a person writes stays in their own browser (`localStorage`), which is
+the privacy position and also the main constraint: progress is per-device, and
+the Settings screen offers an export/import file so it can be moved or backed up.
 
-1. **Install dependencies**
+## Getting started
 
-   ```bash
-   npm install
-   ```
+```bash
+npm ci
+npm run dev
+```
 
-2. **Create a Supabase project** at https://supabase.com, then copy your
-   project URL and publishable/anon key from Settings → API.
+Open http://localhost:3000 for the landing page, or
+http://localhost:3000/app for the app itself.
 
-3. **Environment variables** — copy the example and fill it in:
+## Scripts
 
-   ```bash
-   cp .env.local.example .env.local
-   # then edit .env.local
-   ```
+| Command                 | What it does                                      |
+| ----------------------- | ------------------------------------------------- |
+| `npm run dev`           | Dev server                                        |
+| `npm run build`         | Production build                                  |
+| `npm start`             | Serve the production build                        |
+| `npm run lint`          | ESLint                                            |
+| `npm run typecheck`     | `tsc --noEmit`                                    |
+| `npm test`              | Vitest, once                                      |
+| `npm run test:watch`    | Vitest, watching                                  |
+| `npm run verify:verses` | Check every verse against the WEB translation     |
 
-4. **Run the database migration** — open the Supabase SQL editor and run
-   `supabase/migrations/0001_profiles.sql` (or use the Supabase CLI:
-   `supabase db push`). This creates the `profiles` table, the trigger that
-   auto-creates a profile on signup, and the RLS policies.
+CI runs lint, typecheck, test, and build on every pull request. Verse
+verification runs weekly on its own schedule, because it calls a live Bible API
+and an outage there should never block a merge.
 
-5. **Email confirmation redirect** — in Supabase, set the email template's
-   confirmation URL to point at `/auth/confirm` (Authentication → URL
-   Configuration / email templates). For local dev the default site URL is
-   `http://localhost:3000`.
+## Deploying
 
-6. **Run it**
+The app builds to fully static output and needs no runtime services.
 
-   ```bash
-   npm run dev
-   ```
+Set one environment variable:
 
-   Open http://localhost:3000 — you'll be redirected to `/login`. Create an
-   account, confirm via the emailed link, and you'll land on the protected
-   home page showing your profile.
+```
+NEXT_PUBLIC_SITE_URL=https://your-domain
+```
 
-## What's here
+It is the canonical origin used for `metadataBase`, `robots.txt`, and
+`sitemap.xml`. Without it those fall back to `http://localhost:3000`, which
+would publish wrong link previews and a wrong sitemap — so set it before going
+live. Security headers and the Content-Security-Policy are defined in
+`next.config.mjs`; a host that strips or overrides response headers will need
+them configured there instead.
+
+## Layout
 
 ```
 src/
-  middleware.ts                 session refresh + route protection
-  lib/supabase/
-    client.ts                   browser client (Client Components, realtime)
-    server.ts                   server client (RSC, actions, route handlers)
-    middleware.ts               updateSession helper
   app/
-    login/
-      page.tsx                  login + signup UI
-      actions.ts                login / signup server actions
-    auth/
-      confirm/route.ts          email confirmation -> session
-      signout/route.ts          sign out
-    page.tsx                    protected home (proves auth works)
-    layout.tsx                  fonts + globals
-supabase/migrations/
-  0001_profiles.sql             profiles table, signup trigger, RLS
+    page.tsx                marketing landing (a walkthrough of the real screens)
+    app/                    the app itself
+      page.tsx              hub: today, plans, themes
+      today/                the guided SOAP devotion
+      journal/  history/  themes/  settings/  plans/[slug]/
+    layout.tsx              fonts, metadata, theme bootstrap
+    manifest.ts  robots.ts  sitemap.ts
+    error.tsx  global-error.tsx  not-found.tsx
+  components/
+    DevotionFlow.tsx        the devotion arc
+    screens/                Arrival, Scripture, SOAP steps, Amen, Linger, Done
+    Icon.tsx                self-hosted inline SVG icon set
+    ...
+  lib/
+    devotions/content.ts    the curated devotions (WEB verse text)
+    themes.ts  plans.ts     twelve emotional themes; curated series over them
+    progress.ts  prefs.ts   what a person writes, and their settings
+    storage.ts              localStorage that cannot throw
+    backup.ts               export / import of a person's journal
+    shareCard.ts            the shareable verse card (SVG rendered to PNG)
+public/
+  sw.js                     offline service worker
+  icon-*.png / *.svg        app + install icons
+  opengraph-image.png       link preview card
 ```
 
-## Next slices
+## Content
 
-- Vibe Check: `churches`, `vibe_dimensions`, `vibe_options`, `vibe_votes` +
-  an aggregate RPC, wired to the panel UI from the prototype.
-- Daily Alignment: `verses`, `songs`, thematic tags.
-- PewBuddy messaging (needs a safety/moderation design first).
+Devotions live in `src/lib/devotions/content.ts`: a date, a verse, its theme, a
+reflection, and a prayer. Verse text is the World English Bible (WEB), and
+keeping it accurate is a maintained constraint — run `npm run verify:verses`
+after touching any verse.
+
+The curated calendar currently covers a fixed range of dates. Past its end, the
+day's devotion rotates deterministically through the whole pool by day index, so
+the app never runs out; the practical effect is that the set repeats once a
+person gets past it. Adding devotions is the way to lengthen that cycle.
+
+## Credits
+
+Icon geometry is from [Tabler Icons](https://tabler.io/icons) (MIT), extracted
+into `src/components/Icon.tsx` so the app carries only the glyphs it draws and
+depends on no icon CDN.

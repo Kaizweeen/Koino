@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Icon } from "@/components/Icon";
 
 export default function NotFound() {
   return (
@@ -7,7 +8,7 @@ export default function NotFound() {
       style={{ ["--accent" as string]: "#0F6E56" }}
     >
       <div className="breathe flex h-20 w-20 items-center justify-center rounded-full" style={{ background: "#E1F5EE", border: "1px solid #9FE1CB" }}>
-        <i className="ti ti-compass text-3xl text-brand" aria-hidden="true" />
+        <Icon name="compass" className="text-3xl text-brand" />
       </div>
       <div>
         <h1 className="font-serif text-2xl text-ink">This page wandered off.</h1>

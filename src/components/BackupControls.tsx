@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { exportProgress, backupFilename, importProgress } from "@/lib/backup";
+import { Icon } from "@/components/Icon";
 
 export function BackupControls({ onImported }: { onImported?: () => void }) {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -42,16 +43,16 @@ export function BackupControls({ onImported }: { onImported?: () => void }) {
       </p>
       <div className="mt-3 flex gap-2.5">
         <button onClick={download} className="btn-quiet flex flex-1 items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-medium">
-          <i className="ti ti-download" aria-hidden="true" /> Export
+          <Icon name="download" /> Export
         </button>
         <button onClick={() => fileRef.current?.click()} className="btn-quiet flex flex-1 items-center justify-center gap-1.5 rounded-full py-2.5 text-sm font-medium">
-          <i className="ti ti-upload" aria-hidden="true" /> Import
+          <Icon name="upload" /> Import
         </button>
         <input ref={fileRef} type="file" accept="application/json,.json" onChange={onFile} className="hidden" aria-label="Import a Koino backup file" />
       </div>
       {msg && (
         <p className="mt-2.5 flex items-center gap-1.5 text-xs text-ink-secondary">
-          <i className={msg.ok ? "ti ti-circle-check" : "ti ti-alert-triangle"} style={{ color: msg.ok ? "#0F6E56" : "var(--ink-secondary)" }} aria-hidden="true" />
+          <Icon name={msg.ok ? "circle-check" : "alert-triangle"} style={{ color: msg.ok ? "#0F6E56" : "var(--ink-secondary)" }} />
           {msg.text}
         </p>
       )}

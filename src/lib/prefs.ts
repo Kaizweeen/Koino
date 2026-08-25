@@ -1,3 +1,5 @@
+import { markStorageFailed, readRaw, writeRaw } from "@/lib/storage";
+
 const KEY = "koino.prefs.v1";
 
 export type ThemePref = "system" | "light" | "dark";
@@ -12,10 +14,9 @@ export interface Prefs {
 const DEFAULT: Prefs = { onboarded: false, theme: "system", textSize: "regular" };
 
 export function loadPrefs(): Prefs {
-  if (typeof window === "undefined") return { ...DEFAULT };
+  const raw = readRaw(KEY);
+  if (!raw) return { ...DEFAULT };
   try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) return { ...DEFAULT };
     const p = JSON.parse(raw) as Partial<Prefs>;
     return {
       onboarded: p.onboarded === true,
@@ -28,7 +29,7 @@ export function loadPrefs(): Prefs {
 }
 
 function save(p: Prefs): Prefs {
-  if (typeof window !== "undefined") window.localStorage.setItem(KEY, JSON.stringify(p));
+  if (!writeRaw(KEY, JSON.stringify(p))) markStorageFailed();
   return p;
 }
 

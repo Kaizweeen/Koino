@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Icon } from "@/components/Icon";
 
 /**
  * SideRail — the desktop navigation (lg and up). Mirrors the mobile TabBar's
@@ -38,7 +39,7 @@ export function SideRail() {
           className="flex h-9 w-9 items-center justify-center rounded-2xl text-white shadow-card"
           style={{ background: "var(--brand)" }}
         >
-          <i className="ti ti-leaf text-lg" aria-hidden="true" />
+          <Icon name="leaf" className="text-lg" />
         </span>
         <span className="font-serif text-xl leading-none text-ink">Koino</span>
       </Link>
@@ -56,7 +57,7 @@ export function SideRail() {
               }`}
               style={active ? activeStyle : undefined}
             >
-              <i className={`ti ti-${item.icon} text-xl`} aria-hidden="true" />
+              <Icon name={item.icon} className="text-xl" />
               {item.label}
             </Link>
           );
@@ -71,7 +72,7 @@ export function SideRail() {
         }`}
         style={isActive("/app/settings") ? activeStyle : undefined}
       >
-        <i className="ti ti-settings text-xl" aria-hidden="true" />
+        <Icon name="settings" className="text-xl" />
         Settings
       </Link>
     </aside>
