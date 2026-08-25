@@ -3,3 +3,10 @@ node_modules
 .env.local
 .DS_Store
 tsconfig.tsbuildinfo
+
+# Static export consumed by the native iOS shell — a build artifact, rebuilt by npm run build:native
+out
+
+# Capacitor's generated native project. Created by `npx cap add ios` on a Mac; it contains
+# machine-specific Pods and build state, so it is regenerated rather than tracked.
+ios

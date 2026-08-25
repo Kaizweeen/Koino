@@ -42,17 +42,39 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
 ];
 
+/**
+ * Static export mode (`npm run build:native`) emits a plain folder of files into out/ for the
+ * Capacitor iOS shell to bundle. It is a separate mode rather than the default because a static
+ * export has no server to send response headers: `headers()` is silently ignored there, so the
+ * security headers below would vanish from the web deploy. Inside the native shell that costs
+ * nothing — the WebView loads local files, with no origin to protect — but on the web those
+ * headers have to keep coming from a real server, which is what the default build targets.
+ */
+const isStaticExport = process.env.NEXT_OUTPUT === "export";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  async headers() {
-    return [
-      { source: "/:path*", headers: securityHeaders },
-      // The worker must not be cached, or a stale one keeps serving an old app after a deploy.
-      { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }] },
-    ];
-  },
+
+  ...(isStaticExport
+    ? {
+        output: "export",
+        // No image optimiser exists without a server.
+        images: { unoptimized: true },
+        // Emits out/app/today/index.html rather than out/app/today.html, which is what Capacitor's
+        // local file server resolves for a nested route.
+        trailingSlash: true,
+      }
+    : {
+        async headers() {
+          return [
+            { source: "/:path*", headers: securityHeaders },
+            // The worker must not be cached, or a stale one keeps serving an old app after a deploy.
+            { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }] },
+          ];
+        },
+      }),
 };
 
 export default nextConfig;

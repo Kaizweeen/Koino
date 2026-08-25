@@ -2,6 +2,11 @@
 
 import { useEffect } from "react";
 
+/** True inside the Capacitor iOS/Android shell, which injects this global before the app runs. */
+function isNativeShell(): boolean {
+  return typeof window !== "undefined" && "Capacitor" in window;
+}
+
 /**
  * Registers the offline service worker after the page has settled, so it never competes with
  * first paint. Registration is best-effort: unsupported browsers and blocked registrations
@@ -11,6 +16,10 @@ export function ServiceWorker() {
   useEffect(() => {
     if (process.env.NODE_ENV !== "production") return;
     if (!("serviceWorker" in navigator)) return;
+    // In the native shell every asset is already on the device, so a worker would add nothing —
+    // and could pin an old bundle after an app update, since the shell replaces files wholesale
+    // rather than serving a new URL the worker would notice.
+    if (isNativeShell()) return;
     const register = () => {
       navigator.serviceWorker
         .register("/sw.js")

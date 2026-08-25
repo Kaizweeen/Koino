@@ -1,0 +1,17 @@
+{
+  "appId": "app.koino.devotion",
+  "appName": "Koino",
+  "webDir": "out",
+  "ios": {
+    "backgroundColor": "#FBFAF7",
+    "contentInset": "never"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 300,
+      "launchAutoHide": true,
+      "backgroundColor": "#FBFAF7",
+      "showSpinner": false
+    }
+  }
+}
