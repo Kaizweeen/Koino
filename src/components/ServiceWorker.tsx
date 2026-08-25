@@ -12,7 +12,18 @@ export function ServiceWorker() {
     if (process.env.NODE_ENV !== "production") return;
     if (!("serviceWorker" in navigator)) return;
     const register = () => {
-      navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then(() => navigator.serviceWorker.ready)
+        .then((reg) => {
+          // The stylesheet, fonts, and chunks for this very page were requested before the worker
+          // took control, so they never passed through its fetch handler. Report what the browser
+          // actually loaded and let the worker store it, otherwise the first-ever visit is the one
+          // that comes back unstyled offline.
+          const urls = performance.getEntriesByType("resource").map((e) => e.name);
+          reg.active?.postMessage({ type: "PRECACHE", urls });
+        })
+        .catch(() => undefined);
     };
     if (document.readyState === "complete") register();
     else {

@@ -11,14 +11,19 @@
  * 'unsafe-inline' on style-src is required by Tailwind's arbitrary inline styles and the many
  * theme-colour style props the UI sets per devotion.
  */
+// React Refresh and the webpack HMR client evaluate strings, so `next dev` cannot run under the
+// production policy. This allowance is scoped to development and never reaches a deployed build.
+const devScript = process.env.NODE_ENV === "production" ? "" : " 'unsafe-eval'";
+
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${devScript}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   // Verse cards are built as inline SVG and rasterised through a blob/data URL before sharing.
   "img-src 'self' data: blob:",
-  "connect-src 'self'",
+  // Dev additionally needs the HMR websocket back to the local server.
+  `connect-src 'self'${process.env.NODE_ENV === "production" ? "" : " ws:"}`,
   "manifest-src 'self'",
   "base-uri 'self'",
   "form-action 'self'",

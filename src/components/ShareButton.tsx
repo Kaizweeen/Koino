@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Theme } from "@/lib/themes";
 import type { Devotion } from "@/lib/devotions/types";
 import { buildCardSvg, shareFilename, svgToPngBlob } from "@/lib/shareCard";
@@ -20,6 +20,26 @@ export function ShareButton({
   const [open, setOpen] = useState(false);
   const [includeReflection, setIncludeReflection] = useState(false);
   const [busy, setBusy] = useState(false);
+  const openerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  // The dialog can be dismissed by clicking the backdrop, which leaves a keyboard or screen-reader
+  // user with no way out. Escape closes it, and focus moves in on open and back to the Share
+  // button on close so the reading position is never lost.
+  useEffect(() => {
+    if (!open) return;
+    closeRef.current?.focus();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
+  const close = () => {
+    setOpen(false);
+    openerRef.current?.focus();
+  };
 
   const hasReflection = Boolean(reflection && reflection.trim() !== "");
 
@@ -68,6 +88,7 @@ export function ShareButton({
   return (
     <>
       <button
+        ref={openerRef}
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Share this verse"
@@ -81,8 +102,9 @@ export function ShareButton({
         <div
           className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5 bg-black/60 p-6 backdrop-blur-sm"
           role="dialog"
+          aria-modal="true"
           aria-label="Share verse card"
-          onClick={() => setOpen(false)}
+          onClick={close}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- preview of a generated data-URL SVG; next/image can't optimize an inline data URI */}
           <img
@@ -114,8 +136,9 @@ export function ShareButton({
                 <Icon name="download" /> {busy ? "Preparing…" : "Save image"}
               </button>
               <button
+                ref={closeRef}
                 type="button"
-                onClick={() => setOpen(false)}
+                onClick={close}
                 className="rounded-full border border-white/40 px-5 py-2.5 text-sm text-white"
               >
                 Close

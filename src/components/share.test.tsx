@@ -43,4 +43,23 @@ describe("ShareButton", () => {
     const after = screen.getByAltText("Peace verse card") as HTMLImageElement;
     expect(decodeURIComponent(after.src)).toContain("my response");
   });
+
+  it("can be dismissed with Escape, since the backdrop click is mouse-only", () => {
+    render(<ShareButton devotion={dev} theme={getTheme("peace")} />);
+    fireEvent.click(screen.getByRole("button", { name: "Share this verse" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("moves focus into the dialog and returns it to the Share button on close", () => {
+    render(<ShareButton devotion={dev} theme={getTheme("peace")} />);
+    const opener = screen.getByRole("button", { name: "Share this verse" });
+    fireEvent.click(opener);
+    expect(screen.getByRole("button", { name: "Close" })).toHaveFocus();
+
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    expect(opener).toHaveFocus();
+  });
 });
