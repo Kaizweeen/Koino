@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPlan, getPlanDevotions } from "@/lib/plans";
 import { getTheme } from "@/lib/themes";
+import { Icon } from "@/components/Icon";
 
 export function PlanView({ slug }: { slug: string }) {
   const plan = getPlan(slug);
@@ -12,12 +13,12 @@ export function PlanView({ slug }: { slug: string }) {
   return (
     <div className="fade-in mx-auto flex w-full max-w-5xl flex-col gap-5 p-5 pb-6 lg:gap-7 lg:px-10 lg:py-12" style={{ ["--accent" as string]: t.accent }}>
       <Link href="/app" className="inline-flex w-fit items-center gap-1 text-xs text-ink-muted transition-colors hover:text-ink lg:hidden">
-        <i className="ti ti-chevron-left" aria-hidden="true" /> Home
+        <Icon name="chevron-left" /> Home
       </Link>
 
       <header>
         <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ background: t.accentSoft, color: t.accent }}>
-          <i className={`ti ti-${t.icon}`} aria-hidden="true" /> {t.name}
+          <Icon name={t.icon} /> {t.name}
         </span>
         <h1 className="mt-3 font-serif text-3xl leading-tight text-ink lg:text-4xl">{plan.title}</h1>
         <p className="mt-1.5 text-sm text-ink-secondary">{plan.subtitle}</p>

@@ -9,6 +9,7 @@ import { loadProgress, getEntry, entryDates, isFavorite, toggleFavorite, soapTex
 import { formatDisplayDate } from "@/lib/dates";
 import { ShareButton } from "@/components/ShareButton";
 import { BackupControls } from "@/components/BackupControls";
+import { Icon } from "@/components/Icon";
 
 const PARTS = [
   { key: "observation", label: "Observation" },
@@ -73,14 +74,14 @@ export function JournalView() {
             className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
             style={favOnly ? { background: "#E1F5EE", color: "#0F6E56", border: "1px solid #9FE1CB" } : { background: "var(--paper)", color: "var(--ink-secondary)", border: "1px solid var(--hairline)" }}
           >
-            <i className="ti ti-heart" aria-hidden="true" /> Favorites
+            <Icon name="heart" /> Favorites
           </button>
         )}
       </header>
 
       {records.length > 0 && (
         <div className="flex items-center gap-2 rounded-full border bg-paper px-4 py-2.5 lg:max-w-lg" style={{ borderColor: "var(--hairline)" }}>
-          <i className="ti ti-search text-ink-muted" aria-hidden="true" />
+          <Icon name="search" className="text-ink-muted" />
           <input
             type="search"
             value={query}
@@ -91,7 +92,7 @@ export function JournalView() {
           />
           {query && (
             <button onClick={() => setQuery("")} aria-label="Clear search" className="text-ink-muted transition-colors hover:text-ink">
-              <i className="ti ti-x" aria-hidden="true" />
+              <Icon name="x" />
             </button>
           )}
         </div>
@@ -100,7 +101,7 @@ export function JournalView() {
       {filtered.length === 0 ? (
         <div className="mt-8 flex flex-col items-center gap-3 text-center">
           <span className="flex h-16 w-16 items-center justify-center rounded-full" style={{ background: "#E1F5EE", border: "1px solid #9FE1CB" }}>
-            <i className="ti ti-book text-2xl text-brand" aria-hidden="true" />
+            <Icon name="book" className="text-2xl text-brand" />
           </span>
           <p className="text-sm text-ink-secondary">{emptyMessage}</p>
           {records.length === 0 && (
@@ -120,7 +121,7 @@ export function JournalView() {
             <article key={date} className="rounded-well border bg-paper p-5 shadow-card lg:mb-4 lg:break-inside-avoid" style={{ borderColor: "var(--hairline)", ["--accent" as string]: accent }}>
               <div className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ background: t.accentSoft, color: t.accent }}>
-                  <i className={`ti ti-${t.icon}`} aria-hidden="true" /> {t.name}
+                  <Icon name={t.icon} /> {t.name}
                 </span>
                 <span className="text-[10px] text-ink-muted">{formatDisplayDate(date)}</span>
               </div>
@@ -153,7 +154,7 @@ export function JournalView() {
                   className="text-lg"
                   style={{ color: isFavorite(progress, date) ? accent : "var(--ink-muted)" }}
                 >
-                  <i className="ti ti-heart" aria-hidden="true" />
+                  <Icon name="heart" />
                 </button>
                 <ShareButton devotion={d} theme={t} reflection={soapText(entry)} className="flex items-center gap-1.5 text-xs font-medium" />
               </div>

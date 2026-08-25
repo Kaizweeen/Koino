@@ -1,0 +1,19 @@
+name: Verify verse text
+
+# Scripture accuracy against the WEB translation is a product constraint, so it is checked on a
+# schedule rather than on every pull request: the check calls a live third-party Bible API, and a
+# rate limit or an outage there must never block a merge.
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: npm run verify:verses

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { loadPrefs, setThemePref, setTextSize, applyPrefs, type ThemePref, type TextSize } from "@/lib/prefs";
 import { BackupControls } from "@/components/BackupControls";
+import { Icon } from "@/components/Icon";
 
 const BRAND = "#0F6E56";
 
@@ -32,7 +33,7 @@ export function SettingsView() {
   return (
     <div className="fade-in mx-auto flex w-full max-w-2xl flex-col gap-6 p-5 pb-6 lg:gap-8 lg:px-10 lg:py-12" style={{ ["--accent" as string]: BRAND }}>
       <Link href="/app" className="inline-flex w-fit items-center gap-1 text-xs text-ink-muted transition-colors hover:text-ink lg:hidden">
-        <i className="ti ti-chevron-left" aria-hidden="true" /> Home
+        <Icon name="chevron-left" /> Home
       </Link>
 
       <h1 className="font-serif text-3xl text-ink lg:text-4xl">Settings</h1>
@@ -53,7 +54,7 @@ export function SettingsView() {
                   className="flex flex-1 items-center justify-center gap-1.5 rounded-full py-2 text-sm font-medium transition-colors"
                   style={active ? { background: BRAND, color: "#fff" } : { color: "var(--ink-secondary)" }}
                 >
-                  <i className={`ti ti-${o.icon}`} aria-hidden="true" /> {o.label}
+                  <Icon name={o.icon} /> {o.label}
                 </button>
               );
             })}

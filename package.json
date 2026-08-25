@@ -5,10 +5,17 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:native": "NEXT_OUTPUT=export next build",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "verify:verses": "node scripts/verify-verses.mjs",
+    "generate:splash": "node scripts/generate-splash.mjs"
+  },
+  "engines": {
+    "node": ">=20.9.0"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

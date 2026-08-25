@@ -1,6 +1,7 @@
 import type { Theme } from "@/lib/themes";
 import type { Devotion } from "@/lib/devotions/types";
 import { SoapProgress } from "@/components/screens/SoapProgress";
+import { Icon } from "@/components/Icon";
 
 export function Scripture({ devotion, theme, onContinue }: { devotion: Devotion; theme: Theme; onContinue: () => void }) {
   return (
@@ -27,7 +28,7 @@ export function Scripture({ devotion, theme, onContinue }: { devotion: Devotion;
         style={{ color: theme.accent }}
       >
         Continue
-        <i className="ti ti-arrow-right transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+        <Icon name="arrow-right" className="transition-transform duration-200 group-hover:translate-x-0.5" />
       </button>
     </div>
   );

@@ -13,6 +13,7 @@
 import Link from "next/link";
 import { THEMES, type ThemeSlug } from "@/lib/themes";
 import { Atmosphere } from "@/components/Atmosphere";
+import { Icon } from "@/components/Icon";
 
 const GREEN = THEMES.peace.accent;
 
@@ -121,7 +122,7 @@ export function Landing() {
               </Link>
               <a href="#practice" className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink-secondary transition-colors hover:text-ink">
                 See the practice
-                <i className="ti ti-arrow-down transition-transform duration-200 group-hover:translate-y-0.5" aria-hidden="true" />
+                <Icon name="arrow-down" className="transition-transform duration-200 group-hover:translate-y-0.5" />
               </a>
             </div>
             <p className="mt-6 text-xs text-ink-muted">Free. Nothing to sign up for. Your writing stays on your device.</p>
@@ -199,7 +200,7 @@ export function Landing() {
           <div className="reveal-on-scroll mx-auto mt-24 flex max-w-md flex-col items-center gap-4 text-center">
             <div className="relative flex h-20 w-20 items-center justify-center">
               <span className="breathe absolute inset-0 rounded-full" style={{ background: "#E1F5EE", border: "1px solid #9FE1CB", ["--accent" as string]: GREEN }} />
-              <i className="ti ti-check relative text-3xl" style={{ color: GREEN }} aria-hidden="true" />
+              <Icon name="check" className="relative text-3xl" style={{ color: GREEN }} />
             </div>
             <p className="font-serif text-2xl text-ink">Amen.</p>
             <p className="text-[1.0625rem] leading-relaxed text-ink-secondary">
@@ -228,7 +229,7 @@ export function Landing() {
                     className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium"
                     style={{ background: m.accentSoft, color: m.accent }}
                   >
-                    <i className={`ti ti-${m.icon}`} aria-hidden="true" /> {m.name}
+                    <Icon name={m.icon} /> {m.name}
                   </span>
                 ))}
               </div>
@@ -254,7 +255,7 @@ export function Landing() {
                 ].map((f) => (
                   <div key={f.icon} className="flex items-center gap-3">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ background: "#E1F5EE", color: GREEN }}>
-                      <i className={`ti ti-${f.icon}`} aria-hidden="true" />
+                      <Icon name={f.icon} />
                     </span>
                     <span className="text-[15px] text-ink-secondary">{f.text}</span>
                   </div>
@@ -267,7 +268,7 @@ export function Landing() {
               <div className="h-2" style={{ background: GREEN }} />
               <div className="flex flex-col items-center gap-5 px-8 py-12 text-center">
                 <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium" style={{ background: "#E1F5EE", color: GREEN }}>
-                  <i className="ti ti-ripple" aria-hidden="true" /> Peace
+                  <Icon name="ripple" /> Peace
                 </span>
                 <p className="font-serif text-2xl leading-[1.35] text-ink text-balance">
                   Weeping may stay for the night, but joy comes in the morning.
@@ -381,7 +382,7 @@ function Step({
           </div>
         )}
         <div className="mt-1 flex items-center justify-center gap-1.5 text-xs font-medium" style={{ color: night ? "#B4AFA2" : accent }}>
-          {n === 4 ? "Amen" : "Continue"} <i className="ti ti-arrow-right" aria-hidden="true" />
+          {n === 4 ? "Amen" : "Continue"} <Icon name="arrow-right" />
         </div>
       </Phone>
 

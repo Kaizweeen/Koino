@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Icon } from "@/components/Icon";
 
 export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
@@ -9,7 +10,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
       style={{ ["--accent" as string]: "#0F6E56" }}
     >
       <div className="breathe flex h-20 w-20 items-center justify-center rounded-full" style={{ background: "#E1F5EE", border: "1px solid #9FE1CB" }}>
-        <i className="ti ti-cloud-off text-3xl text-brand" aria-hidden="true" />
+        <Icon name="cloud-off" className="text-3xl text-brand" />
       </div>
       <div>
         <h1 className="font-serif text-2xl text-ink">Something interrupted the quiet.</h1>

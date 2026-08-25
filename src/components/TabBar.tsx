@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Icon } from "@/components/Icon";
 
 const TABS = [
   { href: "/app", label: "Home", icon: "home" },
@@ -31,7 +32,7 @@ export function TabBar() {
             {active && (
               <span className="absolute top-0 h-[2.5px] w-7 rounded-full bg-brand" aria-hidden="true" />
             )}
-            <i className={`ti ti-${tab.icon} text-[1.35rem]`} aria-hidden="true" />
+            <Icon name={tab.icon} className="text-[1.35rem]" />
             {tab.label}
           </Link>
         );

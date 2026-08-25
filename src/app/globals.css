@@ -33,6 +33,52 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 
+/* ————————————————————————————————————————————————
+   iOS
+   ———————————————————————————————————————————————— */
+
+/*
+ * iOS Safari zooms the whole viewport when a focused form control's text is smaller than 16px,
+ * and does not zoom back out. The SOAP fields are the heart of the app, so at the default text
+ * size tapping to write made the screen lurch. Raising the floor to 16px is the fix Apple leaves
+ * open; the alternative — locking maximum-scale in the viewport — would disable pinch-zoom for
+ * everyone, which is not a trade worth making.
+ *
+ * Scoped to touch devices so the desktop type scale is untouched. A 16px control is the right
+ * default on any touch screen, so this is not narrowed further to iOS.
+ *
+ * !important is deliberate: a bare element selector loses to any Tailwind text-size utility on the
+ * control (text-[15px] on the SOAP field, text-sm on the journal search), which is exactly how the
+ * zoom got in. This is a platform guarantee, not a style preference, so it has to outrank them —
+ * and it keeps the next input someone adds from quietly reintroducing the bug.
+ */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  :root[data-text="large"] input,
+  :root[data-text="large"] textarea,
+  :root[data-text="large"] select {
+    font-size: 17px !important;
+  }
+}
+
+/*
+ * Installed to the Home Screen there is no browser chrome, and viewport-fit=cover puts the page
+ * under the status bar and Dynamic Island. These insets resolve to 0 in a normal browser tab, so
+ * they can be applied unconditionally.
+ */
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Suppresses the rubber-band bounce that exposes bare background above the paper column. */
+@media (display-mode: standalone) {
+  html, body { overscroll-behavior-y: none; }
+}
+
 body {
   min-height: 100%;
   background:

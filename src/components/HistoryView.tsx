@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { computeStreak, longestStreak, loadProgress } from "@/lib/progress";
+import { Icon } from "@/components/Icon";
 
 const BRAND = "#0F6E56";
 
@@ -40,7 +41,7 @@ function StatTile({ label, value, unit, icon }: { label: string; value: number; 
     <div className="rounded-well border bg-paper p-4 shadow-card lg:p-5" style={{ borderColor: "var(--hairline)" }}>
       <div className="flex items-center justify-between">
         <p className="text-[10px] font-medium uppercase tracking-widest2 text-ink-muted lg:text-[11px]">{label}</p>
-        <i className={`ti ti-${icon} text-sm`} style={{ color: BRAND }} aria-hidden="true" />
+        <Icon name={icon} className="text-sm" style={{ color: BRAND }} />
       </div>
       <div className="mt-2 flex items-baseline gap-1.5">
         <span className="font-serif text-3xl leading-none text-ink lg:text-4xl">{value}</span>
@@ -137,7 +138,7 @@ export function HistoryView() {
                 style={{ background: "color-mix(in srgb, var(--brand) 14%, transparent)", ["--accent" as string]: BRAND }}
                 aria-hidden="true"
               >
-                <i className="ti ti-plant-2 text-xl lg:text-2xl" style={{ color: BRAND }} />
+                <Icon name="plant-2" className="text-xl lg:text-2xl" style={{ color: BRAND }} />
               </span>
               </div>
               <p className="mt-4 text-xs lg:text-sm" style={{ color: `color-mix(in srgb, ${BRAND} 45%, var(--ink))` }}>

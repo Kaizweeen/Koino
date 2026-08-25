@@ -1,4 +1,5 @@
 import type { Theme } from "@/lib/themes";
+import { Icon } from "@/components/Icon";
 
 export function Done({ theme, streak, onReadAgain }: { theme: Theme; streak: number; onReadAgain: () => void }) {
   return (
@@ -10,12 +11,12 @@ export function Done({ theme, streak, onReadAgain }: { theme: Theme; streak: num
             style={{ background: theme.accentSoft, border: `1px solid ${theme.accentBorder}` }}
             aria-hidden="true"
           />
-          <i className="ti ti-check relative text-3xl" style={{ color: theme.accent }} aria-hidden="true" />
+          <Icon name="check" className="relative text-3xl" style={{ color: theme.accent }} />
         </div>
         <span className="max-w-[16rem] font-serif text-2xl leading-snug text-ink">You&apos;ve already been here today.</span>
         {streak > 0 && (
           <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
-            <i className="ti ti-plant-2" style={{ color: theme.accent }} aria-hidden="true" /> {streak}-day streak
+            <Icon name="plant-2" style={{ color: theme.accent }} /> {streak}-day streak
           </span>
         )}
       </div>
@@ -25,7 +26,7 @@ export function Done({ theme, streak, onReadAgain }: { theme: Theme; streak: num
           Read it again
         </button>
         <span className="flex items-center gap-1.5 text-xs text-ink-muted">
-          <i className="ti ti-sunrise" style={{ color: theme.accent }} aria-hidden="true" /> New devotion tomorrow morning
+          <Icon name="sunrise" style={{ color: theme.accent }} /> New devotion tomorrow morning
         </span>
       </div>
     </div>

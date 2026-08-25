@@ -24,6 +24,7 @@ import { SoapStep } from "@/components/screens/SoapStep";
 import { Amen } from "@/components/screens/Amen";
 import { Linger } from "@/components/screens/Linger";
 import { Done } from "@/components/screens/Done";
+import { Icon } from "@/components/Icon";
 
 type Step = "arrival" | "scripture" | "observation" | "application" | "prayer" | "amen" | "linger" | "done";
 
@@ -127,7 +128,7 @@ export function DevotionFlow() {
             style={{ color: theme.accent }}
           >
             Linger a while
-            <i className="ti ti-arrow-right transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+            <Icon name="arrow-right" className="transition-transform duration-200 group-hover:translate-x-0.5" />
           </button>
         )}
         {step === "linger" && <Linger devotion={devotion} theme={theme} />}
