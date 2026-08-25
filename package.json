@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify:verses": "node scripts/verify-verses.mjs"
+    "verify:verses": "node scripts/verify-verses.mjs",
+    "generate:splash": "node scripts/generate-splash.mjs"
   },
   "engines": {
     "node": ">=20.9.0"

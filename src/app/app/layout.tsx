@@ -14,7 +14,7 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
       <SideRail />
       <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-sm flex-col bg-paper shadow-column lg:mx-0 lg:max-w-none lg:flex-1 lg:bg-transparent lg:shadow-none">
         <StorageNotice />
-        <div className="flex-1">{children}</div>
+        <div className="pt-safe flex-1">{children}</div>
         <TabBar />
       </div>
     </div>

@@ -6,7 +6,11 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Koino",
     description:
       "A calm daily devotion: read the Scripture, then write your Observation, Application, and Prayer.",
+    id: "/app",
     start_url: "/app",
+    // Confines the installed app to the app itself: the marketing page at / is not part of it, so
+    // a stray link there opens in the browser rather than inside the installed window.
+    scope: "/app",
     display: "standalone",
     orientation: "portrait",
     background_color: "#FBFAF7",

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Lora } from "next/font/google";
 import { ServiceWorker } from "@/components/ServiceWorker";
+import { APPLE_LAUNCH_IMAGES } from "@/app/appleLaunchImages";
 import { siteUrl } from "@/lib/site";
 import "./globals.css";
 
@@ -49,6 +50,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" data-theme="light" data-text="regular" className={`${inter.variable} ${lora.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {APPLE_LAUNCH_IMAGES.map(({ media, href }) => (
+          <link key={href} rel="apple-touch-startup-image" media={media} href={href} />
+        ))}
       </head>
       <body>
         {children}
