@@ -84,6 +84,28 @@ export/import file for moving or backing it up.
 `/app` is the whole installed app: the manifest scopes it there, so the
 marketing page at `/` opens in Safari rather than inside the installed window.
 
+#### Edge to edge
+
+Installed, Koino owns the entire screen: `apple-mobile-web-app-status-bar-style`
+is `black-translucent` and the viewport is `viewport-fit=cover`, so the page
+runs under the status bar and Dynamic Island instead of iOS reserving a band
+above it. Three pieces keep that honest, and any new full-screen surface needs
+them too:
+
+- `pt-safe` / `pb-safe` (`env(safe-area-inset-*)`) hold content clear of the
+  status bar and the home indicator. Anything `position: fixed` — a sheet, an
+  overlay — sits outside the layout's padding and must apply them itself.
+- `.status-bar-scrim` in the hub layout frosts whatever scrolls behind the
+  clock, so passing text never tangles with it.
+- All three resolve to zero outside a standalone window, so a browser tab and
+  the desktop layout are unaffected.
+
+One iOS constraint to know: the status bar glyphs are drawn by the system and
+follow the *device* appearance, not Koino's theme setting. Someone running the
+phone in light mode but Koino forced to the dark theme (or the reverse) can get
+a low-contrast clock; leaving the theme on **System**, the default, always
+matches.
+
 ### App Store
 
 The same codebase ships to the App Store wrapped in Capacitor. `npm run

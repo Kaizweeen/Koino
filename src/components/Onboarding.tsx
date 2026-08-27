@@ -17,9 +17,11 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
   const last = step === 2;
 
+  // Fixed to the viewport, so it sits outside HubLayout's padding and has to clear the status bar
+  // and home indicator itself.
   return (
     <div
-      className="fixed inset-0 z-50 mx-auto flex max-w-sm flex-col bg-paper shadow-column"
+      className="pt-safe pb-safe fixed inset-0 z-50 mx-auto flex max-w-sm flex-col bg-paper shadow-column"
       style={{ ["--accent" as string]: BRAND }}
       role="dialog"
       aria-label="Welcome to Koino"

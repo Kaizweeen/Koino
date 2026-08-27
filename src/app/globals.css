@@ -76,6 +76,27 @@ html, body { margin: 0; padding: 0; }
 .pt-safe { padding-top: env(safe-area-inset-top); }
 .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
 
+/*
+ * Running edge to edge, the page scrolls *under* the clock and Dynamic Island. This frosts the
+ * status-bar strip so passing text never collides with them — a mirror of the tab bar's blur at the
+ * other end of the screen. It tints nothing: only a blur, faded out along its lower edge, so at
+ * rest (nothing scrolled beneath it) it is invisible over the page's own background rather than a
+ * bar of a slightly wrong colour. Zero-height wherever there is no inset, i.e. every browser tab.
+ */
+.status-bar-scrim {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  height: env(safe-area-inset-top);
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+}
+
 /* Suppresses the rubber-band bounce that exposes bare background above the paper column. */
 @media (display-mode: standalone) {
   html, body { overscroll-behavior-y: none; }
