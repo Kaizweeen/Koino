@@ -128,11 +128,30 @@ function parse(xml) {
   let book = null;
   let chapter = null;
   let verse = null;
-  /** Text runs of the verse being read, each flagged for whether it sits inside <wj>. */
+  /**
+   * Runs of the verse being read. A run is either text (flagged for whether it sits inside <wj>)
+   * or a marker opening a new poetic line.
+   */
   let segments = [];
   let wjDepth = 0;
   let skipDepth = 0;
   let cursor = 0;
+  /** Indent level of the <q> currently open, or 0 in prose. */
+  let qLevel = 0;
+  /** A <b/> stanza break seen but not yet attached to the line that follows it. */
+  let pendingBreak = false;
+  /**
+   * Headings that sit outside the numbered verses, keyed "BOOK.chapter", each tagged with the
+   * verse it introduces.
+   *
+   * Nearly always this is a psalm's superscription ("A Psalm by David…") standing before verse 1.
+   * Psalm 119 is the exception that shapes the model: it carries twenty-two of them, one per
+   * Hebrew-letter stanza, so a single title per chapter would label the whole psalm "Taw".
+   */
+  const headings = new Map();
+  let pendingHeadings = [];
+  let titleDepth = 0;
+  let titleBuffer = "";
 
   /**
    * Locates the words of Jesus inside the finished verse text.
@@ -148,7 +167,7 @@ function parse(xml) {
     const ranges = [];
     let searchFrom = 0;
     for (const segment of segments) {
-      if (!segment.wj) continue;
+      if (segment.marker || !segment.wj) continue;
       const piece = tidy(segment.text);
       if (!piece) continue;
       const start = text.indexOf(piece, searchFrom);
@@ -162,11 +181,60 @@ function parse(xml) {
     return ranges;
   };
 
+  /**
+   * Locates each poetic line inside the finished verse text.
+   *
+   * Roughly two thirds of the Bible's poetry — the Psalms, Proverbs, Job, much of the prophets —
+   * is written in <q> lines, and running those together as prose loses the parallelism the poetry
+   * is built on. Lines are found the same way the words of Jesus are: tidy the line's own text and
+   * find it in the tidied verse, throwing rather than guessing if the two disagree.
+   *
+   * Returns [offset, indentLevel] pairs, plus a third element when a stanza break precedes the
+   * line. An empty result means the verse is prose.
+   */
+  const poetryLines = (text) => {
+    const lines = [];
+    let current = null;
+    for (const segment of segments) {
+      if (segment.marker) {
+        if (current) lines.push(current);
+        current = { level: segment.level, spaced: segment.spaced, text: "" };
+      } else if (current) {
+        current.text += segment.text;
+      }
+    }
+    if (current) lines.push(current);
+
+    const result = [];
+    let searchFrom = 0;
+    let previousLevel = null;
+    let previousEnd = -1;
+    for (const line of lines) {
+      const piece = tidy(line.text);
+      if (!piece) continue;
+      const start = text.indexOf(piece, searchFrom);
+      if (start === -1) throw new Error(`poetic line not located in verse: ${piece.slice(0, 60)}`);
+      const end = start + piece.length;
+      searchFrom = end;
+      // A same-level line resuming exactly where the previous one ended is one visual line split
+      // by markup (a dropped footnote, an inline element), not a new one.
+      if (previousLevel === line.level && start === previousEnd && !line.spaced) {
+        previousEnd = end;
+        continue;
+      }
+      result.push(line.spaced ? [start, line.level, 1] : [start, line.level]);
+      previousLevel = line.level;
+      previousEnd = end;
+    }
+    return result;
+  };
+
   const flush = () => {
     if (book && chapter && verse !== null) {
-      const text = tidy(segments.map((s) => s.text).join(""));
+      const text = tidy(segments.map((s) => (s.marker ? "" : s.text)).join(""));
       if (text) {
         const ranges = redLetters(text);
+        const lines = poetryLines(text);
         const chapters = books.get(book);
         const verses = chapters.get(chapter) ?? [];
         // A verse can be interrupted and resumed (poetry, a chapter of mixed prose), so append
@@ -176,8 +244,9 @@ function parse(xml) {
           const offset = existing.t.length + 1;
           existing.t = `${existing.t} ${text}`.trim();
           existing.w.push(...ranges.map(([a, b]) => [a + offset, b + offset]));
+          existing.q.push(...lines.map((line) => [line[0] + offset, ...line.slice(1)]));
         } else {
-          verses.push({ n: verse, t: text, w: ranges });
+          verses.push({ n: verse, t: text, w: ranges, q: lines });
         }
         chapters.set(chapter, verses);
       }
@@ -187,11 +256,16 @@ function parse(xml) {
 
   while (cursor < xml.length) {
     const open = xml.indexOf("<", cursor);
+    const take = (text) => {
+      if (skipDepth > 0) return;
+      if (titleDepth > 0) titleBuffer += text;
+      else segments.push({ text, wj: wjDepth > 0 });
+    };
     if (open === -1) {
-      if (skipDepth === 0) segments.push({ text: xml.slice(cursor), wj: wjDepth > 0 });
+      take(xml.slice(cursor));
       break;
     }
-    if (skipDepth === 0) segments.push({ text: xml.slice(cursor, open), wj: wjDepth > 0 });
+    take(xml.slice(cursor, open));
 
     const close = xml.indexOf(">", open);
     if (close === -1) break;
@@ -217,6 +291,41 @@ function parse(xml) {
       continue;
     }
 
+    // A psalm's superscription ("A Psalm by David…"), which sits outside the numbered verses.
+    if (name === "d") {
+      if (closing) {
+        titleDepth = Math.max(0, titleDepth - 1);
+        const text = tidy(titleBuffer);
+        // Held until the next verse opens, which is the verse this heading introduces.
+        if (text) pendingHeadings.push(text);
+        titleBuffer = "";
+      } else if (!selfClosing) {
+        titleDepth += 1;
+        titleBuffer = "";
+      }
+      continue;
+    }
+
+    // Poetic lines. Each <q> opens a line; level 2 is the indented half of a couplet.
+    if (name === "q") {
+      if (closing) {
+        qLevel = 0;
+      } else if (!selfClosing) {
+        qLevel = Number.parseInt(/level="(\d+)"/.exec(raw)?.[1] ?? "1", 10);
+        if (verse !== null) {
+          segments.push({ marker: true, level: qLevel, spaced: pendingBreak });
+          pendingBreak = false;
+        }
+      }
+      continue;
+    }
+
+    // A stanza break, attached to whichever line comes next.
+    if (name === "b") {
+      pendingBreak = true;
+      continue;
+    }
+
     if (name === "book") {
       flush();
       const id = /id="([^"]+)"/.exec(raw)?.[1] ?? null;
@@ -224,12 +333,19 @@ function parse(xml) {
       chapter = null;
       verse = null;
       wjDepth = 0;
+      qLevel = 0;
+      pendingBreak = false;
+      titleDepth = 0;
+      pendingHeadings = [];
       if (book && !books.has(book)) books.set(book, new Map());
       continue;
     }
     if (name === "c") {
       flush();
       verse = null;
+      qLevel = 0;
+      pendingBreak = false;
+      pendingHeadings = [];
       const id = /id="([^"]+)"/.exec(raw)?.[1];
       chapter = id ? Number.parseInt(id, 10) : null;
       if (book && chapter && !books.get(book).has(chapter)) books.get(book).set(chapter, []);
@@ -241,6 +357,19 @@ function parse(xml) {
       // Merged verses appear as "1-2"; anchor them at the first number.
       const n = Number.parseInt(id, 10);
       verse = Number.isNaN(n) ? null : n;
+      if (pendingHeadings.length > 0 && book && chapter && verse !== null) {
+        const key = `${book}.${chapter}`;
+        const list = headings.get(key) ?? [];
+        list.push(...pendingHeadings.map((t) => ({ v: verse, t })));
+        headings.set(key, list);
+      }
+      pendingHeadings = [];
+      // A verse opening inside a <q> begins on that line, so it needs the marker the <q> could
+      // not push while there was no verse in progress to attach it to.
+      if (verse !== null && qLevel > 0) {
+        segments.push({ marker: true, level: qLevel, spaced: pendingBreak });
+        pendingBreak = false;
+      }
       continue;
     }
     if (name === "ve") {
@@ -252,11 +381,11 @@ function parse(xml) {
     // here beyond letting the tag itself fall away.
   }
   flush();
-  return books;
+  return { books, headings };
 }
 
 const xml = await loadSource();
-const parsed = parse(xml);
+const { books: parsed, headings } = parse(xml);
 
 rmSync(OUT_DIR, { recursive: true, force: true });
 mkdirSync(OUT_DIR, { recursive: true });
@@ -265,6 +394,8 @@ const manifest = [];
 let fileCount = 0;
 let verseCount = 0;
 let redLetterCount = 0;
+let poetryCount = 0;
+let titleCount = 0;
 
 for (const [id, name, testament] of BOOKS) {
   const chapters = parsed.get(id);
@@ -279,17 +410,20 @@ for (const [id, name, testament] of BOOKS) {
   for (const number of numbers) {
     const verses = chapters.get(number)
       .sort((a, b) => a.n - b.n)
-      // Most verses carry no words of Jesus, and an empty array in each of 31,098 of them is pure
-      // weight on the wire; the field is present only where there is something to mark.
-      .map(({ n, t, w }) => (w.length > 0 ? { n, t, w } : { n, t }));
+      // Most verses carry no words of Jesus and are not poetry; empty arrays in each of 31,098 of
+      // them are pure weight on the wire, so each field appears only where there is something in it.
+      .map(({ n, t, w, q }) => ({ n, t, ...(w.length > 0 && { w }), ...(q.length > 0 && { q }) }));
     if (verses.length === 0) throw new Error(`${id} ${number}: no verses`);
+    const chapterHeadings = headings.get(`${id}.${number}`);
     writeFileSync(
       join(OUT_DIR, id, `${number}.json`),
-      JSON.stringify({ book: id, chapter: number, verses }),
+      JSON.stringify({ book: id, chapter: number, ...(chapterHeadings && { headings: chapterHeadings }), verses }),
     );
     fileCount += 1;
     verseCount += verses.length;
     redLetterCount += verses.filter((v) => v.w).length;
+    poetryCount += verses.filter((v) => v.q).length;
+    titleCount += chapterHeadings?.length ?? 0;
   }
   manifest.push({ id, name, testament, section: SECTION_BY_BOOK.get(id), chapters: expected });
 }
@@ -341,5 +475,6 @@ mkdirSync(dirname(BOOKS_MODULE), { recursive: true });
 writeFileSync(BOOKS_MODULE, generated);
 
 process.stdout.write(
-  `wrote ${fileCount} chapter files (${verseCount} verses, ${redLetterCount} with words of Jesus) across ${manifest.length} books\n`,
+  `wrote ${fileCount} chapter files across ${manifest.length} books: ${verseCount} verses, ` +
+    `${redLetterCount} with words of Jesus, ${poetryCount} poetic, ${titleCount} headings\n`,
 );

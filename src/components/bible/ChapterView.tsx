@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { loadChapter, verseRuns, type BibleChapter } from "@/lib/bible/chapter";
+import { loadChapter, verseLines, type BibleChapter } from "@/lib/bible/chapter";
 import { TRANSLATION } from "@/lib/bible/books";
 
 interface ChapterViewProps {
@@ -91,31 +91,64 @@ export function ChapterView({
       <div className="flex flex-col gap-3">
         {data.verses.map((verse) => {
           const marked = highlight ? verse.n >= highlight.from && verse.n <= highlight.to : false;
+          const lines = verseLines(verse);
+          const headings = data.headings?.filter((heading) => heading.v === verse.n) ?? [];
           return (
-            <p
-              key={verse.n}
-              ref={marked && verse.n === highlight?.from ? highlightRef : undefined}
-              className={`font-serif text-[1.0625rem] leading-[1.85] transition-colors ${
-                marked ? "rounded-2xl px-3.5 py-2.5 text-ink" : "text-ink-secondary"
-              }`}
-              style={marked ? { background: "color-mix(in srgb, var(--accent) 12%, transparent)" } : undefined}
-            >
-              <span
-                className="mr-2 select-none align-baseline text-[0.6875rem] font-medium tabular-nums text-ink-muted"
-                aria-hidden="true"
+            <div key={verse.n}>
+              {headings.map((heading, i) => (
+                <p
+                  key={i}
+                  className="mb-2 mt-4 font-serif text-[0.9375rem] italic text-ink-muted first:mt-0"
+                >
+                  {heading.t}
+                </p>
+              ))}
+              <p
+                ref={marked && verse.n === highlight?.from ? highlightRef : undefined}
+                className={`font-serif text-[1.0625rem] leading-[1.85] transition-colors ${
+                  marked ? "rounded-2xl px-3.5 py-2.5 text-ink" : "text-ink-secondary"
+                }`}
+                style={marked ? { background: "color-mix(in srgb, var(--accent) 12%, transparent)" } : undefined}
               >
-                {verse.n}
-              </span>
-              {verseRuns(verse).map((run, i) =>
-                run.wj ? (
-                  <span key={i} style={{ color: "var(--wj)" }}>
-                    {run.text}
+                {lines.map((line, lineIndex) => (
+                  <span
+                    key={lineIndex}
+                    // Poetry sets each line on its own row, with the second half of a couplet
+                    // indented; prose stays a single flowing block.
+                    className={line.level > 0 ? "block" : undefined}
+                    style={
+                      line.level > 0
+                        ? {
+                            // Hanging indent: a line that runs past the column wraps deeper than
+                            // it started, so a wrap never reads as a new line of the poem.
+                            paddingLeft: line.level > 1 ? "2.5rem" : "1.25rem",
+                            textIndent: "-1.25rem",
+                            marginTop: line.spaced ? "0.75rem" : undefined,
+                          }
+                        : undefined
+                    }
+                  >
+                    {lineIndex === 0 && (
+                      <span
+                        className="mr-2 select-none align-baseline text-[0.6875rem] font-medium tabular-nums text-ink-muted"
+                        aria-hidden="true"
+                      >
+                        {verse.n}
+                      </span>
+                    )}
+                    {line.runs.map((run, i) =>
+                      run.wj ? (
+                        <span key={i} style={{ color: "var(--wj)" }}>
+                          {run.text}
+                        </span>
+                      ) : (
+                        <span key={i}>{run.text}</span>
+                      ),
+                    )}
                   </span>
-                ) : (
-                  <span key={i}>{run.text}</span>
-                ),
-              )}
-            </p>
+                ))}
+              </p>
+            </div>
           );
         })}
       </div>

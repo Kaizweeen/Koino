@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { verseRuns, type BibleVerse } from "@/lib/bible/chapter";
+import { verseLines, verseRuns, type BibleVerse } from "@/lib/bible/chapter";
 import { BIBLE_BOOKS, BIBLE_SECTIONS } from "@/lib/bible/books";
 
 describe("verseRuns", () => {
@@ -46,6 +46,52 @@ describe("verseRuns", () => {
       { text: "de", wj: true },
       { text: "f", wj: false },
     ]);
+  });
+});
+
+describe("verseLines", () => {
+  it("returns prose as a single level-0 line", () => {
+    expect(verseLines({ n: 1, t: "In the beginning." })).toEqual([
+      { level: 0, spaced: false, runs: [{ text: "In the beginning.", wj: false }] },
+    ]);
+  });
+
+  it("splits poetry into indented lines", () => {
+    const verse: BibleVerse = { n: 1, t: "first half second half", q: [[0, 1], [11, 2]] };
+    expect(verseLines(verse)).toEqual([
+      { level: 1, spaced: false, runs: [{ text: "first half ", wj: false }] },
+      { level: 2, spaced: false, runs: [{ text: "second half", wj: false }] },
+    ]);
+  });
+
+  it("carries the stanza break flag", () => {
+    const verse: BibleVerse = { n: 1, t: "aaaa bbbb", q: [[0, 1], [5, 1, 1]] };
+    expect(verseLines(verse).map((l) => l.spaced)).toEqual([false, true]);
+  });
+
+  it("resolves poetry and red letters together when they overlap", () => {
+    // Jesus quoting a psalm: the red span runs across a line break.
+    const verse: BibleVerse = { n: 1, t: "he said come to me", w: [[8, 18]], q: [[0, 1], [8, 2]] };
+    expect(verseLines(verse)).toEqual([
+      { level: 1, spaced: false, runs: [{ text: "he said ", wj: false }] },
+      { level: 2, spaced: false, runs: [{ text: "come to me", wj: true }] },
+    ]);
+  });
+
+  it("keeps text that precedes the first line mark", () => {
+    const verse: BibleVerse = { n: 2, t: "tail start", q: [[5, 1]] };
+    expect(verseLines(verse).map((l) => l.runs.map((r) => r.text).join(""))).toEqual([
+      "tail ",
+      "start",
+    ]);
+  });
+
+  it("always reconstructs the verse text exactly", () => {
+    const verse: BibleVerse = { n: 1, t: "alpha beta gamma delta", w: [[6, 10]], q: [[0, 1], [11, 2]] };
+    const rebuilt = verseLines(verse)
+      .flatMap((line) => line.runs.map((run) => run.text))
+      .join("");
+    expect(rebuilt).toBe(verse.t);
   });
 });
 
@@ -134,6 +180,69 @@ describe("generated red-letter data", () => {
       for (const verse of chapter.verses) {
         for (const [start, end] of verse.w ?? []) {
           expect(verse.t.slice(start, end).trim().length).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
+});
+
+describe("generated poetry and headings", () => {
+  const read = (book: string, chapter: number) =>
+    JSON.parse(
+      readFileSync(join(process.cwd(), "public", "bible", book, `${chapter}.json`), "utf8"),
+    ) as { headings?: { v: number; t: string }[]; verses: BibleVerse[] };
+
+  it("never loses a character when a verse is split into lines", () => {
+    for (const dir of readdirSync(join(process.cwd(), "public", "bible"))) {
+      for (const file of readdirSync(join(process.cwd(), "public", "bible", dir))) {
+        const chapter = JSON.parse(
+          readFileSync(join(process.cwd(), "public", "bible", dir, file), "utf8"),
+        ) as { verses: BibleVerse[] };
+        for (const verse of chapter.verses) {
+          const rebuilt = verseLines(verse)
+            .flatMap((line) => line.runs.map((run) => run.text))
+            .join("");
+          expect(rebuilt, `${dir} ${file} v${verse.n}`).toBe(verse.t);
+        }
+      }
+    }
+  });
+
+  it("gives the Psalms their superscriptions", () => {
+    expect(read("PSA", 3).headings?.[0]).toMatchObject({ v: 1 });
+    expect(read("PSA", 3).headings?.[0].t).toContain("David");
+  });
+
+  it("keeps all twenty-two stanza headings of Psalm 119", () => {
+    const headings = read("PSA", 119).headings ?? [];
+    expect(headings).toHaveLength(22);
+    expect(headings[0]).toMatchObject({ v: 1, t: "ALEPH" });
+    // Each stanza is eight verses long, so the headings land every eighth verse.
+    expect(headings.map((h) => h.v)).toEqual(
+      Array.from({ length: 22 }, (_, i) => i * 8 + 1),
+    );
+  });
+
+  it("sets the Psalms as poetry and narrative prose as prose", () => {
+    expect(read("PSA", 23).verses[0].q).toBeDefined();
+    expect(read("GEN", 1).verses[0].q).toBeUndefined();
+    expect(read("ROM", 1).verses[0].q).toBeUndefined();
+  });
+
+  it("keeps every line mark in bounds and ascending", () => {
+    for (const dir of readdirSync(join(process.cwd(), "public", "bible"))) {
+      for (const file of readdirSync(join(process.cwd(), "public", "bible", dir))) {
+        const chapter = JSON.parse(
+          readFileSync(join(process.cwd(), "public", "bible", dir, file), "utf8"),
+        ) as { verses: BibleVerse[] };
+        for (const verse of chapter.verses) {
+          let previous = -1;
+          for (const mark of verse.q ?? []) {
+            expect(mark[0]).toBeGreaterThan(previous);
+            expect(mark[0]).toBeLessThan(verse.t.length);
+            expect([1, 2]).toContain(mark[1]);
+            previous = mark[0];
+          }
         }
       }
     }
