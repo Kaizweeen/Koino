@@ -15,6 +15,7 @@ const PATHS = {
   "arrow-down": "<path d=\"M12 5l0 14\" /><path d=\"M18 13l-6 6\" /><path d=\"M6 13l6 6\" />",
   "arrow-right": "<path d=\"M5 12l14 0\" /><path d=\"M13 18l6 -6\" /><path d=\"M13 6l6 6\" />",
   "book": "<path d=\"M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0\" /><path d=\"M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0\" /><path d=\"M3 6l0 13\" /><path d=\"M12 6l0 13\" /><path d=\"M21 6l0 13\" />",
+  "book-2": "<path d=\"M19 4v16h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12z\" /><path d=\"M19 16h-12a2 2 0 0 0 -2 2\" /><path d=\"M9 8h6\" />",
   "chart-line": "<path d=\"M4 19l16 0\" /><path d=\"M4 15l4 -6l4 2l4 -5l4 4\" />",
   "check": "<path d=\"M5 12l5 5l10 -10\" />",
   "chevron-left": "<path d=\"M15 6l-6 6l6 6\" />",

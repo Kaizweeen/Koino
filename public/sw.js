@@ -20,10 +20,22 @@
  * PRECACHE message below stores exactly that.
  */
 
-const CACHE = "koino-v1";
+const CACHE = "koino-v2";
 const SHELL = "/app";
 
-const isCacheable = (url) => url.origin === self.location.origin && url.pathname.startsWith("/_next/static/");
+/**
+ * Cache-first paths.
+ *
+ * /_next/static is content-hashed and therefore immutable. /bible is the bundled World English
+ * Bible, one JSON file per chapter: those filenames are not hashed, but the text of a chapter does
+ * not change, and caching them is what lets the reader work in the same dead spots the rest of the
+ * app already survives. Only the chapters actually opened are ever stored, so the cache grows by
+ * the few kilobytes a reader asks for rather than the whole ~4.5 MB translation. Bumping CACHE
+ * clears both, which is the escape hatch if the text is ever regenerated.
+ */
+const isCacheable = (url) =>
+  url.origin === self.location.origin &&
+  (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/bible/"));
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

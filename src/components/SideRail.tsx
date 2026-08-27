@@ -13,6 +13,7 @@ import { Icon } from "@/components/Icon";
 const NAV = [
   { href: "/app", label: "Home", icon: "home" },
   { href: "/app/journal", label: "Journal", icon: "book" },
+  { href: "/app/bible", label: "Bible", icon: "book-2" },
   { href: "/app/themes", label: "Themes", icon: "sparkles" },
   { href: "/app/history", label: "History", icon: "chart-line" },
 ] as const;
