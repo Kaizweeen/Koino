@@ -58,6 +58,35 @@ const BOOKS = [
 
 const CANONICAL = new Map(BOOKS.map(([id, name, testament]) => [id, { name, testament }]));
 
+/**
+ * The traditional divisions, used to group the book list so finding a book is a glance down a
+ * short section rather than a scan of 66 names. Each entry names the first book of a division;
+ * a book belongs to the last division that opened at or before it.
+ */
+const SECTION_STARTS = [
+  ["GEN", "Law"],
+  ["JOS", "History"],
+  ["JOB", "Wisdom"],
+  ["ISA", "Major Prophets"],
+  ["HOS", "Minor Prophets"],
+  ["MAT", "Gospels"],
+  ["ACT", "Acts"],
+  ["ROM", "Paul's Letters"],
+  ["HEB", "General Letters"],
+  ["REV", "Revelation"],
+];
+
+const SECTION_BY_BOOK = (() => {
+  const starts = new Map(SECTION_STARTS);
+  const result = new Map();
+  let current = null;
+  for (const [id] of BOOKS) {
+    current = starts.get(id) ?? current;
+    result.set(id, current);
+  }
+  return result;
+})();
+
 async function loadSource() {
   if (existsSync(CACHE)) return readFileSync(CACHE, "utf8");
   process.stdout.write(`fetching ${SOURCE_URL}\n`);
@@ -99,34 +128,70 @@ function parse(xml) {
   let book = null;
   let chapter = null;
   let verse = null;
-  let buffer = "";
+  /** Text runs of the verse being read, each flagged for whether it sits inside <wj>. */
+  let segments = [];
+  let wjDepth = 0;
   let skipDepth = 0;
   let cursor = 0;
 
+  /**
+   * Locates the words of Jesus inside the finished verse text.
+   *
+   * Rather than track offsets through normalisation — which rewrites whitespace and so shifts
+   * every position — each <wj> run is tidied the same way the whole verse was and then found in
+   * it. A run that cannot be found means the two normalisations disagreed, which would silently
+   * mislocate the red text, so it throws instead. Runs separated only by whitespace are merged:
+   * a footnote dropped from the middle of a quotation leaves two <wj> elements that are really
+   * one continuous thing Jesus said.
+   */
+  const redLetters = (text) => {
+    const ranges = [];
+    let searchFrom = 0;
+    for (const segment of segments) {
+      if (!segment.wj) continue;
+      const piece = tidy(segment.text);
+      if (!piece) continue;
+      const start = text.indexOf(piece, searchFrom);
+      if (start === -1) throw new Error(`words of Jesus not located in verse: ${piece.slice(0, 60)}`);
+      const end = start + piece.length;
+      searchFrom = end;
+      const previous = ranges[ranges.length - 1];
+      if (previous && text.slice(previous[1], start).trim() === "") previous[1] = end;
+      else ranges.push([start, end]);
+    }
+    return ranges;
+  };
+
   const flush = () => {
     if (book && chapter && verse !== null) {
-      const text = tidy(buffer);
+      const text = tidy(segments.map((s) => s.text).join(""));
       if (text) {
+        const ranges = redLetters(text);
         const chapters = books.get(book);
         const verses = chapters.get(chapter) ?? [];
         // A verse can be interrupted and resumed (poetry, a chapter of mixed prose), so append
         // rather than overwrite when the same number comes back around.
         const existing = verses.find((v) => v.n === verse);
-        if (existing) existing.t = `${existing.t} ${text}`.trim();
-        else verses.push({ n: verse, t: text });
+        if (existing) {
+          const offset = existing.t.length + 1;
+          existing.t = `${existing.t} ${text}`.trim();
+          existing.w.push(...ranges.map(([a, b]) => [a + offset, b + offset]));
+        } else {
+          verses.push({ n: verse, t: text, w: ranges });
+        }
         chapters.set(chapter, verses);
       }
     }
-    buffer = "";
+    segments = [];
   };
 
   while (cursor < xml.length) {
     const open = xml.indexOf("<", cursor);
     if (open === -1) {
-      if (skipDepth === 0) buffer += xml.slice(cursor);
+      if (skipDepth === 0) segments.push({ text: xml.slice(cursor), wj: wjDepth > 0 });
       break;
     }
-    if (skipDepth === 0) buffer += xml.slice(cursor, open);
+    if (skipDepth === 0) segments.push({ text: xml.slice(cursor, open), wj: wjDepth > 0 });
 
     const close = xml.indexOf(">", open);
     if (close === -1) break;
@@ -145,12 +210,20 @@ function parse(xml) {
     }
     if (skipDepth > 0) continue;
 
+    // The words of Jesus, carried through so the reader can set them in red.
+    if (name === "wj") {
+      if (closing) wjDepth = Math.max(0, wjDepth - 1);
+      else if (!selfClosing) wjDepth += 1;
+      continue;
+    }
+
     if (name === "book") {
       flush();
       const id = /id="([^"]+)"/.exec(raw)?.[1] ?? null;
       book = CANONICAL.has(id) ? id : null;
       chapter = null;
       verse = null;
+      wjDepth = 0;
       if (book && !books.has(book)) books.set(book, new Map());
       continue;
     }
@@ -191,6 +264,7 @@ mkdirSync(OUT_DIR, { recursive: true });
 const manifest = [];
 let fileCount = 0;
 let verseCount = 0;
+let redLetterCount = 0;
 
 for (const [id, name, testament] of BOOKS) {
   const chapters = parsed.get(id);
@@ -203,7 +277,11 @@ for (const [id, name, testament] of BOOKS) {
 
   mkdirSync(join(OUT_DIR, id), { recursive: true });
   for (const number of numbers) {
-    const verses = chapters.get(number).sort((a, b) => a.n - b.n);
+    const verses = chapters.get(number)
+      .sort((a, b) => a.n - b.n)
+      // Most verses carry no words of Jesus, and an empty array in each of 31,098 of them is pure
+      // weight on the wire; the field is present only where there is something to mark.
+      .map(({ n, t, w }) => (w.length > 0 ? { n, t, w } : { n, t }));
     if (verses.length === 0) throw new Error(`${id} ${number}: no verses`);
     writeFileSync(
       join(OUT_DIR, id, `${number}.json`),
@@ -211,8 +289,9 @@ for (const [id, name, testament] of BOOKS) {
     );
     fileCount += 1;
     verseCount += verses.length;
+    redLetterCount += verses.filter((v) => v.w).length;
   }
-  manifest.push({ id, name, testament, chapters: expected });
+  manifest.push({ id, name, testament, section: SECTION_BY_BOOK.get(id), chapters: expected });
 }
 
 const generated = `/**
@@ -228,11 +307,30 @@ export interface BibleBook {
   id: string;
   name: string;
   testament: Testament;
+  /** Traditional division: Law, History, Wisdom, Gospels, Paul's Letters, and so on. */
+  section: string;
   chapters: number;
+}
+
+export interface BibleSection {
+  name: string;
+  testament: Testament;
+  books: BibleBook[];
 }
 
 /** The 66 canonical books, in canonical order. */
 export const BIBLE_BOOKS: readonly BibleBook[] = ${JSON.stringify(manifest, null, 2)};
+
+/** The same books grouped into their traditional divisions, in canonical order. */
+export const BIBLE_SECTIONS: readonly BibleSection[] = BIBLE_BOOKS.reduce<BibleSection[]>(
+  (sections, book) => {
+    const open = sections[sections.length - 1];
+    if (open && open.name === book.section) open.books.push(book);
+    else sections.push({ name: book.section, testament: book.testament, books: [book] });
+    return sections;
+  },
+  [],
+);
 
 /** The translation shipped in public/bible — public domain, hence bundleable. */
 export const TRANSLATION = "World English Bible";
@@ -243,5 +341,5 @@ mkdirSync(dirname(BOOKS_MODULE), { recursive: true });
 writeFileSync(BOOKS_MODULE, generated);
 
 process.stdout.write(
-  `wrote ${fileCount} chapter files (${verseCount} verses) across ${manifest.length} books\n`,
+  `wrote ${fileCount} chapter files (${verseCount} verses, ${redLetterCount} with words of Jesus) across ${manifest.length} books\n`,
 );

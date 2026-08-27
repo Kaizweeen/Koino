@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
-import { BIBLE_BOOKS, TRANSLATION, type BibleBook } from "@/lib/bible/books";
+import { BIBLE_SECTIONS, TRANSLATION, type BibleBook } from "@/lib/bible/books";
 import { getBook } from "@/lib/bible/refs";
 import { ChapterView } from "@/components/bible/ChapterView";
 import { Icon } from "@/components/Icon";
@@ -91,21 +91,39 @@ function BookList({ onPick }: { onPick: (book: BibleBook) => void }) {
       </header>
 
       {testaments.map(({ key, label }) => (
-        <section key={key} className="flex flex-col gap-2.5">
-          <h2 className="text-[11px] font-medium uppercase tracking-widest2 text-ink-muted">{label}</h2>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
-            {BIBLE_BOOKS.filter((b) => b.testament === key).map((b) => (
-              <button
-                key={b.id}
-                onClick={() => onPick(b)}
-                className="flex items-baseline justify-between gap-2 rounded-2xl border bg-paper px-3.5 py-3 text-left shadow-card transition-transform active:scale-[0.99]"
-                style={{ borderColor: "var(--hairline)" }}
-              >
-                <span className="truncate font-serif text-[0.9375rem] text-ink">{b.name}</span>
-                <span className="shrink-0 text-[11px] tabular-nums text-ink-muted">{b.chapters}</span>
-              </button>
-            ))}
-          </div>
+        <section key={key} className="flex flex-col gap-4">
+          <h2
+            className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-widest2 text-ink-muted"
+            id={`testament-${key}`}
+          >
+            {label}
+            <span className="h-px flex-1" style={{ background: "var(--hairline)" }} aria-hidden="true" />
+          </h2>
+
+          {/*
+            Grouped by traditional division rather than listed flat: 39 names in one grid is a
+            scan, while "it's a minor prophet" narrows it to twelve at a glance.
+          */}
+          {BIBLE_SECTIONS.filter((s) => s.testament === key).map((section) => (
+            <section key={section.name} className="flex flex-col gap-2" aria-labelledby={`section-${section.name}`}>
+              <h3 className="font-serif text-sm text-ink-secondary" id={`section-${section.name}`}>
+                {section.name}
+              </h3>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                {section.books.map((b) => (
+                  <button
+                    key={b.id}
+                    onClick={() => onPick(b)}
+                    className="group flex items-baseline justify-between gap-2 rounded-2xl border bg-paper px-3.5 py-3 text-left shadow-card transition-transform active:scale-[0.99]"
+                    style={{ borderColor: "var(--hairline)" }}
+                  >
+                    <span className="truncate font-serif text-[0.9375rem] text-ink">{b.name}</span>
+                    <span className="shrink-0 text-[11px] tabular-nums text-ink-muted">{b.chapters}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          ))}
         </section>
       ))}
     </Shell>

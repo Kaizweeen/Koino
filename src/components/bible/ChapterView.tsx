@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { loadChapter, type BibleChapter } from "@/lib/bible/chapter";
+import { loadChapter, verseRuns, type BibleChapter } from "@/lib/bible/chapter";
 import { TRANSLATION } from "@/lib/bible/books";
 
 interface ChapterViewProps {
@@ -106,7 +106,15 @@ export function ChapterView({
               >
                 {verse.n}
               </span>
-              {verse.t}
+              {verseRuns(verse).map((run, i) =>
+                run.wj ? (
+                  <span key={i} style={{ color: "var(--wj)" }}>
+                    {run.text}
+                  </span>
+                ) : (
+                  <span key={i}>{run.text}</span>
+                ),
+              )}
             </p>
           );
         })}

@@ -11,7 +11,15 @@ export interface BibleBook {
   id: string;
   name: string;
   testament: Testament;
+  /** Traditional division: Law, History, Wisdom, Gospels, Paul's Letters, and so on. */
+  section: string;
   chapters: number;
+}
+
+export interface BibleSection {
+  name: string;
+  testament: Testament;
+  books: BibleBook[];
 }
 
 /** The 66 canonical books, in canonical order. */
@@ -20,399 +28,476 @@ export const BIBLE_BOOKS: readonly BibleBook[] = [
     "id": "GEN",
     "name": "Genesis",
     "testament": "ot",
+    "section": "Law",
     "chapters": 50
   },
   {
     "id": "EXO",
     "name": "Exodus",
     "testament": "ot",
+    "section": "Law",
     "chapters": 40
   },
   {
     "id": "LEV",
     "name": "Leviticus",
     "testament": "ot",
+    "section": "Law",
     "chapters": 27
   },
   {
     "id": "NUM",
     "name": "Numbers",
     "testament": "ot",
+    "section": "Law",
     "chapters": 36
   },
   {
     "id": "DEU",
     "name": "Deuteronomy",
     "testament": "ot",
+    "section": "Law",
     "chapters": 34
   },
   {
     "id": "JOS",
     "name": "Joshua",
     "testament": "ot",
+    "section": "History",
     "chapters": 24
   },
   {
     "id": "JDG",
     "name": "Judges",
     "testament": "ot",
+    "section": "History",
     "chapters": 21
   },
   {
     "id": "RUT",
     "name": "Ruth",
     "testament": "ot",
+    "section": "History",
     "chapters": 4
   },
   {
     "id": "1SA",
     "name": "1 Samuel",
     "testament": "ot",
+    "section": "History",
     "chapters": 31
   },
   {
     "id": "2SA",
     "name": "2 Samuel",
     "testament": "ot",
+    "section": "History",
     "chapters": 24
   },
   {
     "id": "1KI",
     "name": "1 Kings",
     "testament": "ot",
+    "section": "History",
     "chapters": 22
   },
   {
     "id": "2KI",
     "name": "2 Kings",
     "testament": "ot",
+    "section": "History",
     "chapters": 25
   },
   {
     "id": "1CH",
     "name": "1 Chronicles",
     "testament": "ot",
+    "section": "History",
     "chapters": 29
   },
   {
     "id": "2CH",
     "name": "2 Chronicles",
     "testament": "ot",
+    "section": "History",
     "chapters": 36
   },
   {
     "id": "EZR",
     "name": "Ezra",
     "testament": "ot",
+    "section": "History",
     "chapters": 10
   },
   {
     "id": "NEH",
     "name": "Nehemiah",
     "testament": "ot",
+    "section": "History",
     "chapters": 13
   },
   {
     "id": "EST",
     "name": "Esther",
     "testament": "ot",
+    "section": "History",
     "chapters": 10
   },
   {
     "id": "JOB",
     "name": "Job",
     "testament": "ot",
+    "section": "Wisdom",
     "chapters": 42
   },
   {
     "id": "PSA",
     "name": "Psalms",
     "testament": "ot",
+    "section": "Wisdom",
     "chapters": 150
   },
   {
     "id": "PRO",
     "name": "Proverbs",
     "testament": "ot",
+    "section": "Wisdom",
     "chapters": 31
   },
   {
     "id": "ECC",
     "name": "Ecclesiastes",
     "testament": "ot",
+    "section": "Wisdom",
     "chapters": 12
   },
   {
     "id": "SNG",
     "name": "Song of Solomon",
     "testament": "ot",
+    "section": "Wisdom",
     "chapters": 8
   },
   {
     "id": "ISA",
     "name": "Isaiah",
     "testament": "ot",
+    "section": "Major Prophets",
     "chapters": 66
   },
   {
     "id": "JER",
     "name": "Jeremiah",
     "testament": "ot",
+    "section": "Major Prophets",
     "chapters": 52
   },
   {
     "id": "LAM",
     "name": "Lamentations",
     "testament": "ot",
+    "section": "Major Prophets",
     "chapters": 5
   },
   {
     "id": "EZK",
     "name": "Ezekiel",
     "testament": "ot",
+    "section": "Major Prophets",
     "chapters": 48
   },
   {
     "id": "DAN",
     "name": "Daniel",
     "testament": "ot",
+    "section": "Major Prophets",
     "chapters": 12
   },
   {
     "id": "HOS",
     "name": "Hosea",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 14
   },
   {
     "id": "JOL",
     "name": "Joel",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 3
   },
   {
     "id": "AMO",
     "name": "Amos",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 9
   },
   {
     "id": "OBA",
     "name": "Obadiah",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 1
   },
   {
     "id": "JON",
     "name": "Jonah",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 4
   },
   {
     "id": "MIC",
     "name": "Micah",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 7
   },
   {
     "id": "NAM",
     "name": "Nahum",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 3
   },
   {
     "id": "HAB",
     "name": "Habakkuk",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 3
   },
   {
     "id": "ZEP",
     "name": "Zephaniah",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 3
   },
   {
     "id": "HAG",
     "name": "Haggai",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 2
   },
   {
     "id": "ZEC",
     "name": "Zechariah",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 14
   },
   {
     "id": "MAL",
     "name": "Malachi",
     "testament": "ot",
+    "section": "Minor Prophets",
     "chapters": 4
   },
   {
     "id": "MAT",
     "name": "Matthew",
     "testament": "nt",
+    "section": "Gospels",
     "chapters": 28
   },
   {
     "id": "MRK",
     "name": "Mark",
     "testament": "nt",
+    "section": "Gospels",
     "chapters": 16
   },
   {
     "id": "LUK",
     "name": "Luke",
     "testament": "nt",
+    "section": "Gospels",
     "chapters": 24
   },
   {
     "id": "JHN",
     "name": "John",
     "testament": "nt",
+    "section": "Gospels",
     "chapters": 21
   },
   {
     "id": "ACT",
     "name": "Acts",
     "testament": "nt",
+    "section": "Acts",
     "chapters": 28
   },
   {
     "id": "ROM",
     "name": "Romans",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 16
   },
   {
     "id": "1CO",
     "name": "1 Corinthians",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 16
   },
   {
     "id": "2CO",
     "name": "2 Corinthians",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 13
   },
   {
     "id": "GAL",
     "name": "Galatians",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 6
   },
   {
     "id": "EPH",
     "name": "Ephesians",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 6
   },
   {
     "id": "PHP",
     "name": "Philippians",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 4
   },
   {
     "id": "COL",
     "name": "Colossians",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 4
   },
   {
     "id": "1TH",
     "name": "1 Thessalonians",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 5
   },
   {
     "id": "2TH",
     "name": "2 Thessalonians",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 3
   },
   {
     "id": "1TI",
     "name": "1 Timothy",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 6
   },
   {
     "id": "2TI",
     "name": "2 Timothy",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 4
   },
   {
     "id": "TIT",
     "name": "Titus",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 3
   },
   {
     "id": "PHM",
     "name": "Philemon",
     "testament": "nt",
+    "section": "Paul's Letters",
     "chapters": 1
   },
   {
     "id": "HEB",
     "name": "Hebrews",
     "testament": "nt",
+    "section": "General Letters",
     "chapters": 13
   },
   {
     "id": "JAS",
     "name": "James",
     "testament": "nt",
+    "section": "General Letters",
     "chapters": 5
   },
   {
     "id": "1PE",
     "name": "1 Peter",
     "testament": "nt",
+    "section": "General Letters",
     "chapters": 5
   },
   {
     "id": "2PE",
     "name": "2 Peter",
     "testament": "nt",
+    "section": "General Letters",
     "chapters": 3
   },
   {
     "id": "1JN",
     "name": "1 John",
     "testament": "nt",
+    "section": "General Letters",
     "chapters": 5
   },
   {
     "id": "2JN",
     "name": "2 John",
     "testament": "nt",
+    "section": "General Letters",
     "chapters": 1
   },
   {
     "id": "3JN",
     "name": "3 John",
     "testament": "nt",
+    "section": "General Letters",
     "chapters": 1
   },
   {
     "id": "JUD",
     "name": "Jude",
     "testament": "nt",
+    "section": "General Letters",
     "chapters": 1
   },
   {
     "id": "REV",
     "name": "Revelation",
     "testament": "nt",
+    "section": "Revelation",
     "chapters": 22
   }
 ];
+
+/** The same books grouped into their traditional divisions, in canonical order. */
+export const BIBLE_SECTIONS: readonly BibleSection[] = BIBLE_BOOKS.reduce<BibleSection[]>(
+  (sections, book) => {
+    const open = sections[sections.length - 1];
+    if (open && open.name === book.section) open.books.push(book);
+    else sections.push({ name: book.section, testament: book.testament, books: [book] });
+    return sections;
+  },
+  [],
+);
 
 /** The translation shipped in public/bible — public domain, hence bundleable. */
 export const TRANSLATION = "World English Bible";

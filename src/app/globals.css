@@ -13,6 +13,7 @@
   --brand: #0F6E56;        /* Koino's mark green — chrome that isn't theme-bound */
   --accent: var(--brand);  /* each screen/day overrides this */
   --accent-border: #9FE1CB;
+  --wj: #A6402E;           /* words of Jesus — brick, not pillarbox, to sit in the warm palette */
 }
 
 /* Dark theme: warm "paper at night". Neutral tokens flip; brand green and per-day accents stay. */
@@ -24,6 +25,7 @@
   --ink-secondary: #BAB6AA;
   --ink-muted: #97948A;
   --hairline: rgba(237, 234, 226, 0.13);
+  --wj: #E0907C;           /* lifted for contrast against paper-at-night */
 }
 
 /* Larger reading size for the verse and the reading/writing text. */
