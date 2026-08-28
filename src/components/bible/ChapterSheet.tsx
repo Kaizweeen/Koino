@@ -57,7 +57,7 @@ export function ChapterSheet({
    * over the bottom of the chapter. A portal puts the sheet above the whole app, where it belongs.
    */
   const sheet = (
-    <div className="fixed inset-0 z-50 flex flex-col justify-end" style={{ ["--accent" as string]: accent }}>
+    <div className="fixed inset-0 z-50 flex flex-col justify-end lg:items-center lg:justify-center lg:p-10" style={{ ["--accent" as string]: accent }}>
       <button
         aria-label="Close chapter"
         onClick={onClose}
@@ -68,7 +68,9 @@ export function ChapterSheet({
         role="dialog"
         aria-modal="true"
         aria-label={`${book.name} ${chapter}`}
-        className="fade-in relative flex max-h-[88dvh] flex-col rounded-t-well bg-paper shadow-lift"
+        /* A bottom sheet on a phone; on desktop the same panel centres as a dialog rather
+           than stretching a chapter of scripture across the whole screen. */
+        className="fade-in relative flex max-h-[88dvh] flex-col rounded-t-well bg-paper shadow-lift lg:max-h-full lg:w-full lg:max-w-3xl lg:rounded-well"
       >
         <header
           className="flex shrink-0 items-center justify-between gap-3 border-b px-6 py-4"

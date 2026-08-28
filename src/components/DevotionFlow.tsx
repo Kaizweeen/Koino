@@ -58,8 +58,8 @@ export function DevotionFlow() {
 
   if (!devotion) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center bg-paper shadow-column">
-        <div className="breathe h-16 w-16 rounded-full" style={{ ["--accent" as string]: "#0F6E56", background: "#E1F5EE", border: "1px solid #9FE1CB" }} aria-hidden="true" />
+      <main className="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center bg-paper shadow-column lg:max-w-none lg:bg-transparent lg:shadow-none">
+        <div className="breathe h-16 w-16 rounded-full lg:h-24 lg:w-24" style={{ ["--accent" as string]: "#0F6E56", background: "#E1F5EE", border: "1px solid #9FE1CB" }} aria-hidden="true" />
       </main>
     );
   }
@@ -81,10 +81,12 @@ export function DevotionFlow() {
 
   return (
     <div className="relative flex min-h-screen flex-col" style={{ ["--accent" as string]: theme.accent }}>
-      {/* Desktop-only ambient light that fills the whole canvas behind the floating column */}
+      {/* Desktop-only ambient light that fills the whole canvas the flow spreads across */}
       <Atmosphere accent={theme.accent} tone={step === "prayer" ? "night" : "day"} className="hidden lg:block" />
-      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-sm flex-col bg-paper shadow-column lg:max-w-lg">
-        <Atmosphere accent={theme.accent} tone={step === "prayer" ? "night" : "day"} />
+      {/* Mobile keeps the floating phone-width paper column; at lg the frame drops the
+          max-width, paper fill, and shadow so each step lays itself out full-screen. */}
+      <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-sm flex-col bg-paper shadow-column lg:max-w-none lg:bg-transparent lg:shadow-none">
+        <Atmosphere accent={theme.accent} tone={step === "prayer" ? "night" : "day"} className="lg:hidden" />
         <div key={step} className="fade-in relative z-10 flex min-h-screen flex-col">
         {step === "arrival" && (
           <Arrival

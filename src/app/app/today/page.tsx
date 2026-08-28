@@ -8,9 +8,8 @@ export default function TodayPage() {
       <Link
         href="/app"
         aria-label="Back to home"
-        /* Desktop: anchor to the gutter just left of the centered max-w-lg (32rem) reading
-           column, i.e. 16rem (half the column) + a gap left of viewport centre. */
-        className="absolute left-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full text-ink-secondary shadow-card ring-1 ring-black/[0.05] backdrop-blur transition-colors hover:text-ink lg:left-[calc(50%-19.5rem)] lg:top-8"
+        /* The flow is full-bleed on desktop, so the way back sits in the screen's own corner. */
+        className="absolute left-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full text-ink-secondary shadow-card ring-1 ring-black/[0.05] backdrop-blur transition-colors hover:text-ink lg:left-8 lg:top-8 lg:h-12 lg:w-12"
         style={{ background: "color-mix(in srgb, var(--paper) 80%, transparent)" }}
       >
         <Icon name="chevron-left" className="text-xl" />
