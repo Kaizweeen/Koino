@@ -4,7 +4,7 @@ import { Icon } from "@/components/Icon";
 
 export default function TodayPage() {
   return (
-    <div className="relative mx-auto max-w-sm lg:max-w-none">
+    <div className="relative mx-auto flex w-full max-w-sm flex-1 flex-col lg:max-w-none">
       <Link
         href="/app"
         aria-label="Back to home"

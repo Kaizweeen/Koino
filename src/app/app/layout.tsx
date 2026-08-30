@@ -14,7 +14,9 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
       <SideRail />
       <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-sm flex-col bg-paper shadow-column lg:mx-0 lg:max-w-none lg:flex-1 lg:bg-transparent lg:shadow-none">
         <StorageNotice />
-        <div className="pt-safe flex-1">{children}</div>
+        {/* A flex column, so a screen can claim the space left over after the TabBar
+            with flex-1 rather than guessing at a viewport height. */}
+        <div className="pt-safe flex flex-1 flex-col">{children}</div>
         <TabBar />
       </div>
     </div>
