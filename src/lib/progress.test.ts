@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { computeStreak, longestStreak, loadProgress, markComplete, toggleFavorite, isFavorite, setNote, getNote, notedDates, setSoapField, getEntry, hasWrittenEntry, entryDates, soapText } from "@/lib/progress";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { computeStreak, longestStreak, loadProgress, markComplete, toggleFavorite, isFavorite, setNote, getNote, notedDates, setSoapField, getEntry, hasWrittenEntry, entryDates, soapText, reflectionIdFor, setReflectionField, getReflection, toggleReflectionFavorite, reflectionList } from "@/lib/progress";
 
 beforeEach(() => localStorage.clear());
 
@@ -94,5 +94,78 @@ describe("SOAP entries", () => {
   it("composes non-empty parts into shareable text", () => {
     expect(soapText({ observation: "O", application: "", prayer: "P" })).toBe("O\n\nP");
     expect(soapText({ observation: "", application: "", prayer: "" })).toBe("");
+  });
+});
+
+describe("chosen-verse reflections", () => {
+  const seed = {
+    id: reflectionIdFor("2026-08-30", "Psalms 46:10"),
+    date: "2026-08-30",
+    verseRef: "Psalms 46:10",
+    verseText: "Be still, and know that I am God.",
+    mood: "open" as const,
+  };
+
+  it("keeps the verse alongside what was written, so the journal needs nothing else", () => {
+    setReflectionField(seed, "observation", "God does the stilling");
+    const r = getReflection(loadProgress(), seed.id);
+    expect(r?.verseRef).toBe("Psalms 46:10");
+    expect(r?.verseText).toBe("Be still, and know that I am God.");
+    expect(r?.soap.observation).toBe("God does the stilling");
+    expect(r?.favorite).toBe(false);
+  });
+
+  it("writes nothing until there are words, and lets go again when they are cleared", () => {
+    setReflectionField(seed, "observation", "");
+    expect(loadProgress().reflections[seed.id]).toBeUndefined();
+
+    setReflectionField(seed, "observation", "something");
+    setReflectionField(seed, "observation", "");
+    expect(loadProgress().reflections[seed.id]).toBeUndefined();
+  });
+
+  it("resumes the same reflection for the same verse on the same day", () => {
+    setReflectionField(seed, "observation", "first");
+    setReflectionField(seed, "prayer", "second");
+    const p = loadProgress();
+    expect(Object.keys(p.reflections)).toHaveLength(1);
+    expect(getReflection(p, seed.id)?.soap).toEqual({ observation: "first", application: "", prayer: "second" });
+  });
+
+  it("keeps the same verse on a different day apart", () => {
+    setReflectionField(seed, "observation", "today");
+    setReflectionField({ ...seed, id: reflectionIdFor("2026-08-31", seed.verseRef), date: "2026-08-31" }, "observation", "tomorrow");
+    expect(Object.keys(loadProgress().reflections)).toHaveLength(2);
+  });
+
+  it("toggles a favorite, and ignores an id nothing was written to", () => {
+    setReflectionField(seed, "observation", "x");
+    toggleReflectionFavorite(seed.id);
+    expect(getReflection(loadProgress(), seed.id)?.favorite).toBe(true);
+    toggleReflectionFavorite(seed.id);
+    expect(getReflection(loadProgress(), seed.id)?.favorite).toBe(false);
+
+    toggleReflectionFavorite("nothing-here");
+    expect(loadProgress().reflections["nothing-here"]).toBeUndefined();
+  });
+
+  it("lists reflections most recent first, newest within a day leading", () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date("2026-08-29T08:00:00Z"));
+      setReflectionField({ ...seed, id: "a", date: "2026-08-29", verseRef: "John 15:5" }, "observation", "a");
+      vi.setSystemTime(new Date("2026-08-30T08:00:00Z"));
+      setReflectionField({ ...seed, id: "b", date: "2026-08-30", verseRef: "Psalms 46:10" }, "observation", "b");
+      vi.setSystemTime(new Date("2026-08-30T21:00:00Z"));
+      setReflectionField({ ...seed, id: "c", date: "2026-08-30", verseRef: "Romans 8:38" }, "observation", "c");
+      expect(reflectionList(loadProgress()).map((r) => r.id)).toEqual(["c", "b", "a"]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("tolerates a store written before chosen verses existed", () => {
+    localStorage.setItem("koino.progress.v1", JSON.stringify({ completedDates: ["2026-06-25"], favorites: [], entries: {} }));
+    expect(loadProgress().reflections).toEqual({});
   });
 });

@@ -2,17 +2,17 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Theme } from "@/lib/themes";
-import type { Devotion } from "@/lib/devotions/types";
+import type { Verse } from "@/lib/devotions/types";
 import { buildCardSvg, shareFilename, svgToPngBlob } from "@/lib/shareCard";
 import { Icon } from "@/components/Icon";
 
 export function ShareButton({
-  devotion,
+  verse,
   theme,
   reflection,
   className,
 }: {
-  devotion: Devotion;
+  verse: Verse;
   theme: Theme;
   reflection?: string;
   className?: string;
@@ -46,14 +46,14 @@ export function ShareButton({
   const svg = useMemo(
     () =>
       buildCardSvg({
-        verseText: devotion.verseText,
-        verseRef: devotion.verseRef,
+        verseText: verse.verseText,
+        verseRef: verse.verseRef,
         themeName: theme.name,
         accent: theme.accent,
         accentSoft: theme.accentSoft,
         note: includeReflection && hasReflection ? reflection : undefined,
       }),
-    [devotion, theme, includeReflection, hasReflection, reflection],
+    [verse, theme, includeReflection, hasReflection, reflection],
   );
 
   const previewUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
@@ -62,7 +62,7 @@ export function ShareButton({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = shareFilename(devotion.verseRef);
+    a.download = shareFilename(verse.verseRef);
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -71,7 +71,7 @@ export function ShareButton({
     setBusy(true);
     try {
       const blob = await svgToPngBlob(svg);
-      const file = new File([blob], shareFilename(devotion.verseRef), { type: "image/png" });
+      const file = new File([blob], shareFilename(verse.verseRef), { type: "image/png" });
       const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
       if (nav.canShare && nav.canShare({ files: [file] })) {
         await nav.share({ files: [file] });

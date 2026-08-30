@@ -16,7 +16,7 @@ const dev: Devotion = {
 
 describe("Amen screen", () => {
   it("shows the streak and the save/share actions, without a note field", () => {
-    render(<Amen devotion={dev} theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} reflection="my observation" />);
+    render(<Amen verse={dev} theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} reflection="my observation" />);
     expect(screen.getByText(/8-day streak/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Save/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Share this verse" })).toBeInTheDocument();
@@ -25,15 +25,15 @@ describe("Amen screen", () => {
 
   it("toggles favorite", () => {
     const onToggleFavorite = vi.fn();
-    render(<Amen devotion={dev} theme={getTheme("peace")} streak={1} favorite={false} onToggleFavorite={onToggleFavorite} reflection="" />);
+    render(<Amen verse={dev} theme={getTheme("peace")} streak={1} favorite={false} onToggleFavorite={onToggleFavorite} reflection="" />);
     fireEvent.click(screen.getByRole("button", { name: /Save/ }));
     expect(onToggleFavorite).toHaveBeenCalledTimes(1);
   });
 
   it("celebrates a streak milestone but stays quiet on ordinary days", () => {
-    const { rerender } = render(<Amen devotion={dev} theme={getTheme("peace")} streak={7} favorite={false} onToggleFavorite={() => {}} reflection="" />);
+    const { rerender } = render(<Amen verse={dev} theme={getTheme("peace")} streak={7} favorite={false} onToggleFavorite={() => {}} reflection="" />);
     expect(screen.getByText("A full week with God.")).toBeInTheDocument();
-    rerender(<Amen devotion={dev} theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} reflection="" />);
+    rerender(<Amen verse={dev} theme={getTheme("peace")} streak={8} favorite={false} onToggleFavorite={() => {}} reflection="" />);
     expect(screen.queryByText("A full week with God.")).toBeNull();
   });
 });
@@ -66,7 +66,7 @@ describe("SoapProgress", () => {
 
 describe("Scripture screen", () => {
   it("shows the verse, reference, and SOAP progress at S", () => {
-    render(<Scripture devotion={dev} theme={getTheme("peace")} onContinue={() => {}} />);
+    render(<Scripture verse={dev} theme={getTheme("peace")} onContinue={() => {}} />);
     expect(screen.getByText("Be still, and know that I am God.")).toBeInTheDocument();
     expect(screen.getByText("Psalm 46:10")).toBeInTheDocument();
     expect(screen.getByLabelText("SOAP step 1 of 4")).toBeInTheDocument();

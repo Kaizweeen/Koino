@@ -1,4 +1,5 @@
 import { markStorageFailed, readRaw, writeRaw } from "@/lib/storage";
+import type { MoodSlug } from "@/lib/themes";
 
 export interface SoapEntry {
   observation: string;
@@ -6,11 +7,35 @@ export interface SoapEntry {
   prayer: string;
 }
 
+/**
+ * A SOAP reflection on a verse the reader chose, rather than on the devotion of a given day.
+ *
+ * The daily entries can be keyed by date because a date resolves back to a devotion. A chosen
+ * verse has no such anchor — nothing about "2026-08-30" says you sat with Romans 8, and a person
+ * may well sit with two passages in one day — so a reflection carries its own id and keeps the
+ * verse alongside what was written. Storing the text rather than just the reference is deliberate:
+ * the journal has to render an entry without going back to the network for the words.
+ */
+export interface VerseReflection {
+  id: string;
+  /** The local date it was written, YYYY-MM-DD. */
+  date: string;
+  /** When the first words went in — what orders two reflections written on the same day. */
+  createdAt: string;
+  verseRef: string;
+  verseText: string;
+  mood: MoodSlug;
+  soap: SoapEntry;
+  favorite: boolean;
+}
+
 export interface Progress {
   completedDates: string[];
   favorites: string[];
   entries: Record<string, SoapEntry>;
   notes: Record<string, string>; // legacy; read-only in UI, never destroyed
+  /** SOAP on verses the reader chose, keyed by the reflection's own id. */
+  reflections: Record<string, VerseReflection>;
 }
 
 const EMPTY_ENTRY: SoapEntry = { observation: "", application: "", prayer: "" };
@@ -34,7 +59,7 @@ export function computeStreak(completedDates: string[], today: string): number {
   return streak;
 }
 
-const empty = (): Progress => ({ completedDates: [], favorites: [], entries: {}, notes: {} });
+const empty = (): Progress => ({ completedDates: [], favorites: [], entries: {}, notes: {}, reflections: {} });
 
 export function loadProgress(): Progress {
   const raw = readRaw(KEY);
@@ -46,6 +71,9 @@ export function loadProgress(): Progress {
       favorites: parsed.favorites ?? [],
       entries: parsed.entries ?? {},
       notes: parsed.notes ?? {},
+      // Absent in every store written before chosen verses existed, so this default is what keeps
+      // an older device's journal loading rather than throwing on the first read.
+      reflections: parsed.reflections ?? {},
     };
   } catch {
     return empty();
@@ -129,6 +157,63 @@ export function entryDates(p: Progress): string[] {
   for (const [date, e] of Object.entries(p.entries)) if (!isEmptyEntry(e)) dates.add(date);
   for (const date of Object.keys(p.notes)) dates.add(date);
   return [...dates].sort().reverse();
+}
+
+/**
+ * The id a reflection on this verse, on this day, carries.
+ *
+ * Derived rather than random so that reopening the same passage the same day picks up what you had
+ * already written instead of starting a second, half-empty entry beside it — a reload mid-sentence
+ * is the common case, wanting two separate takes on one verse in one day is not.
+ */
+export function reflectionIdFor(date: string, verseRef: string): string {
+  return `${date}|${verseRef}`;
+}
+
+/** What a reflection knows about its verse, before anything has been written into it. */
+export type ReflectionSeed = Pick<VerseReflection, "id" | "date" | "verseRef" | "verseText" | "mood">;
+
+export function getReflection(p: Progress, id: string): VerseReflection | null {
+  return p.reflections[id] ?? null;
+}
+
+/**
+ * Auto-save one SOAP field of a chosen-verse reflection, writing the record on the first keystroke
+ * and dropping it again when every field goes blank — the same rule the daily entries follow, so
+ * a passage someone opened and thought better of never lingers in the journal.
+ */
+export function setReflectionField(seed: ReflectionSeed, field: keyof SoapEntry, text: string): Progress {
+  const p = loadProgress();
+  const existing = p.reflections[seed.id];
+  const soap: SoapEntry = { ...(existing?.soap ?? EMPTY_ENTRY), [field]: text };
+  const reflections = { ...p.reflections };
+  if (isEmptyEntry(soap)) delete reflections[seed.id];
+  else {
+    reflections[seed.id] = {
+      ...seed,
+      createdAt: existing?.createdAt ?? new Date().toISOString(),
+      soap,
+      favorite: existing?.favorite ?? false,
+    };
+  }
+  p.reflections = reflections;
+  return save(p);
+}
+
+/** Keep (or let go of) a chosen-verse reflection. A no-op for an id that was never written to. */
+export function toggleReflectionFavorite(id: string): Progress {
+  const p = loadProgress();
+  const existing = p.reflections[id];
+  if (!existing) return p;
+  p.reflections = { ...p.reflections, [id]: { ...existing, favorite: !existing.favorite } };
+  return save(p);
+}
+
+/** Chosen-verse reflections, most recent first. */
+export function reflectionList(p: Progress): VerseReflection[] {
+  return Object.values(p.reflections).sort((a, b) =>
+    a.date === b.date ? b.createdAt.localeCompare(a.createdAt) : b.date.localeCompare(a.date),
+  );
 }
 
 /** The non-empty SOAP parts joined for sharing. */

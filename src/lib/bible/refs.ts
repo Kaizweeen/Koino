@@ -93,6 +93,23 @@ export function parseReference(reference: string): BibleRef | null {
   return { book, chapter, verse, endVerse };
 }
 
+/**
+ * The reference a `?b=PSA&c=46&v=10-11` query points at, or null when it points nowhere.
+ *
+ * The reader keeps its position in the query string and hands the same shape to the SOAP flow, so
+ * both resolve it through `parseReference` rather than each rolling its own number parsing. A
+ * query with no `v` resolves to the chapter's first verse.
+ */
+export function referenceFromQuery(
+  bookId: string | null,
+  chapter: string | null,
+  verses: string | null,
+): BibleRef | null {
+  const book = getBook(bookId ?? "");
+  if (!book || !chapter) return null;
+  return parseReference(`${book.name} ${chapter}${verses ? `:${verses}` : ""}`);
+}
+
 /** The canonical display form of a reference, e.g. "Psalms 46:10". */
 export function formatReference(ref: BibleRef): string {
   const span = ref.endVerse > ref.verse ? `${ref.verse}-${ref.endVerse}` : `${ref.verse}`;

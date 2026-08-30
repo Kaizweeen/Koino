@@ -96,32 +96,43 @@ export function HomeHub() {
 
         {/* Today hero + this week */}
         <div className="flex flex-col gap-7 lg:grid lg:grid-cols-3 lg:items-start lg:gap-6">
-          <Link
-            href="/app/today"
-            className="group relative block overflow-hidden rounded-well p-6 shadow-card transition-transform active:scale-[0.99] lg:col-span-2 lg:p-9"
-            style={{ background: theme.accentSoft, border: `1px solid ${theme.accentBorder}` }}
-          >
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full lg:h-56 lg:w-56"
-              style={{ background: `radial-gradient(circle, color-mix(in srgb, ${theme.accent} 26%, transparent), transparent 70%)` }}
-            />
-            <div className="relative">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-widest2" style={{ color: theme.accent }}>
-                <Icon name={theme.icon} /> Today · {theme.name}
-              </span>
-              <p className="mt-3 font-serif text-[1.35rem] leading-snug text-balance lg:mt-4 lg:max-w-[26rem] lg:text-verse" style={{ color: theme.accent }}>
-                {devotion.verseText}
-              </p>
-              <p className="mt-2 text-[10px] uppercase tracking-widest2 lg:mt-3 lg:text-[11px]" style={{ color: theme.accent, opacity: 0.65 }}>
-                {devotion.verseRef}
-              </p>
-              <span className="btn-primary mt-5 flex w-full items-center justify-center gap-1.5 rounded-full py-3 text-sm font-medium lg:mt-8 lg:inline-flex lg:w-auto lg:px-8 lg:py-3.5">
-                {completedToday ? "Revisit today" : "Begin today's devotion"}
-                <Icon name="arrow-right" className="transition-transform duration-200 group-hover:translate-x-0.5" />
-              </span>
-            </div>
-          </Link>
+          <div className="flex flex-col gap-3.5 lg:col-span-2">
+            <Link
+              href="/app/today"
+              className="group relative block overflow-hidden rounded-well p-6 shadow-card transition-transform active:scale-[0.99] lg:p-9"
+              style={{ background: theme.accentSoft, border: `1px solid ${theme.accentBorder}` }}
+            >
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full lg:h-56 lg:w-56"
+                style={{ background: `radial-gradient(circle, color-mix(in srgb, ${theme.accent} 26%, transparent), transparent 70%)` }}
+              />
+              <div className="relative">
+                <span className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-widest2" style={{ color: theme.accent }}>
+                  <Icon name={theme.icon} /> Today · {theme.name}
+                </span>
+                <p className="mt-3 font-serif text-[1.35rem] leading-snug text-balance lg:mt-4 lg:max-w-[26rem] lg:text-verse" style={{ color: theme.accent }}>
+                  {devotion.verseText}
+                </p>
+                <p className="mt-2 text-[10px] uppercase tracking-widest2 lg:mt-3 lg:text-[11px]" style={{ color: theme.accent, opacity: 0.65 }}>
+                  {devotion.verseRef}
+                </p>
+                <span className="btn-primary mt-5 flex w-full items-center justify-center gap-1.5 rounded-full py-3 text-sm font-medium lg:mt-8 lg:inline-flex lg:w-auto lg:px-8 lg:py-3.5">
+                  {completedToday ? "Revisit today" : "Begin today's devotion"}
+                  <Icon name="arrow-right" className="transition-transform duration-200 group-hover:translate-x-0.5" />
+                </span>
+              </div>
+            </Link>
+
+            {/* Quietly under the day's verse, not competing with it: the daily arc stays the offer,
+                and this is here for the morning you arrive already knowing where you want to be. */}
+            <Link
+              href="/app/soap"
+              className="flex items-center gap-1.5 self-center text-xs font-medium text-ink-muted transition-colors hover:text-ink lg:self-start lg:text-sm"
+            >
+              <Icon name="book-2" /> Or reflect on a verse of your own
+            </Link>
+          </div>
 
           <section
             className="lg:col-span-1 lg:rounded-well lg:border lg:bg-paper lg:p-6 lg:shadow-card"

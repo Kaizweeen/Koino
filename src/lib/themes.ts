@@ -2,8 +2,15 @@ export type ThemeSlug =
   | "peace" | "gratitude" | "hope" | "lament" | "surrender" | "awe"
   | "joy" | "repentance" | "strength" | "comfort" | "love" | "longing";
 
+/**
+ * A theme, or `"open"` — the mood a verse carries when the reader chose the verse themselves and
+ * named no feeling for it. The twelve themes stay the shape of the daily devotion; "open" exists
+ * only so a self-chosen passage has a colour and a name to wear.
+ */
+export type MoodSlug = ThemeSlug | "open";
+
 export interface Theme {
-  slug: ThemeSlug;
+  slug: MoodSlug;
   name: string;
   definition: string;
   accent: string;
@@ -27,6 +34,36 @@ export const THEMES: Record<ThemeSlug, Theme> = {
   longing:    { slug: "longing",    name: "Longing",    definition: "Seeking and waiting on God.",                     accent: "#26215C", accentSoft: "#EEEDFE", accentBorder: "#AFA9EC", icon: "compass" },
 };
 
+/**
+ * What a verse you chose for yourself wears: Koino's own green, and a name that says whose verse
+ * it is rather than naming a feeling you never claimed. Deliberately outside THEMES — it is not a
+ * thirteenth theme, it never comes up on a day of its own, and it does not belong in the explorer.
+ */
+export const OPEN_THEME: Theme = {
+  slug: "open",
+  name: "Your verse",
+  definition: "A passage you chose to sit with.",
+  accent: "#0F6E56",
+  accentSoft: "#E1F5EE",
+  accentBorder: "#9FE1CB",
+  icon: "book-2",
+};
+
 export function getTheme(slug: ThemeSlug): Theme {
   return THEMES[slug];
+}
+
+/** The palette for a mood, which is either one of the twelve themes or the neutral "open". */
+export function getMood(slug: MoodSlug): Theme {
+  return slug === "open" ? OPEN_THEME : THEMES[slug];
+}
+
+/**
+ * Whether a stored or query-string value names a mood we know.
+ *
+ * `hasOwnProperty` rather than `in`, because `in` walks the prototype chain: `?m=toString` would
+ * otherwise pass here and hand `getMood` a function to read an accent off.
+ */
+export function isMoodSlug(value: unknown): value is MoodSlug {
+  return typeof value === "string" && (value === "open" || Object.prototype.hasOwnProperty.call(THEMES, value));
 }

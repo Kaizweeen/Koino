@@ -2,16 +2,16 @@
 
 import { useMemo, useState } from "react";
 import type { Theme } from "@/lib/themes";
-import type { Devotion } from "@/lib/devotions/types";
+import type { Verse } from "@/lib/devotions/types";
 import { SoapProgress } from "@/components/screens/SoapProgress";
 import { ChapterSheet } from "@/components/bible/ChapterSheet";
 import { parseReference } from "@/lib/bible/refs";
 import { Icon } from "@/components/Icon";
 
-export function Scripture({ devotion, theme, onContinue }: { devotion: Devotion; theme: Theme; onContinue: () => void }) {
+export function Scripture({ verse, theme, onContinue }: { verse: Verse; theme: Theme; onContinue: () => void }) {
   const [chapterOpen, setChapterOpen] = useState(false);
   // A reference the reader can't resolve simply means no chapter affordance, never a broken screen.
-  const reference = useMemo(() => parseReference(devotion.verseRef), [devotion.verseRef]);
+  const reference = useMemo(() => parseReference(verse.verseRef), [verse.verseRef]);
 
   return (
     <div className="flex flex-1 flex-col px-7 py-7 lg:px-16 lg:py-12">
@@ -25,10 +25,10 @@ export function Scripture({ devotion, theme, onContinue }: { devotion: Devotion;
       </div>
 
       <div className="stagger my-auto flex flex-col items-center gap-6 text-center lg:gap-10">
-        <p className="max-w-[19rem] font-serif text-verse text-balance text-ink lg:max-w-[46rem] lg:text-[clamp(2.4rem,3.4vw,3.5rem)] lg:leading-[1.3]">{devotion.verseText}</p>
+        <p className="max-w-[19rem] font-serif text-verse text-balance text-ink lg:max-w-[46rem] lg:text-[clamp(2.4rem,3.4vw,3.5rem)] lg:leading-[1.3]">{verse.verseText}</p>
         <div className="flex flex-col items-center gap-3 lg:gap-4">
           <span className="h-px w-8 rounded-full lg:w-12" style={{ background: theme.accentBorder }} aria-hidden="true" />
-          <span className="text-[11px] font-medium uppercase tracking-widest2 text-ink-muted lg:text-xs">{devotion.verseRef}</span>
+          <span className="text-[11px] font-medium uppercase tracking-widest2 text-ink-muted lg:text-xs">{verse.verseRef}</span>
           {reference && (
             <button
               onClick={() => setChapterOpen(true)}
