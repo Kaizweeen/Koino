@@ -1,11 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BIBLE_SECTIONS, TRANSLATION, type BibleBook } from "@/lib/bible/books";
 import { getBook } from "@/lib/bible/refs";
 import { ChapterView } from "@/components/bible/ChapterView";
 import { Icon } from "@/components/Icon";
+
+/** A span of verses picked out of the chapter on screen. */
+interface VerseSpan {
+  from: number;
+  to: number;
+}
 
 /**
  * The Bible reader.
@@ -176,6 +183,26 @@ function ChapterReading({
   onBack: () => void;
   onChapter: (chapter: number) => void;
 }) {
+  const [selected, setSelected] = useState<VerseSpan | null>(null);
+
+  // Turning the page is a fresh chapter, and a selection left over from the last one would offer
+  // to reflect on a verse that is no longer on screen.
+  useEffect(() => setSelected(null), [book.id, chapter]);
+
+  /**
+   * Tapping builds the span: the first tap takes a verse, a tap outside it stretches the span to
+   * reach, a tap inside a span narrows back to that one verse, and tapping the single selected
+   * verse again lets it go.
+   */
+  const pick = useCallback((verse: number) => {
+    setSelected((current) => {
+      if (!current) return { from: verse, to: verse };
+      if (current.from === verse && current.to === verse) return null;
+      if (verse >= current.from && verse <= current.to) return { from: verse, to: verse };
+      return { from: Math.min(current.from, verse), to: Math.max(current.to, verse) };
+    });
+  }, []);
+
   return (
     <Shell>
       <header className="flex flex-col gap-3">
@@ -183,14 +210,28 @@ function ChapterReading({
         <h1 className="font-serif text-3xl text-ink lg:text-4xl">
           {book.name} {chapter}
         </h1>
+        {!selected && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <Link
+              href={`/app/soap?b=${book.id}&c=${chapter}`}
+              className="btn-quiet inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium"
+            >
+              <Icon name="book-2" /> Reflect on this chapter
+            </Link>
+            <p className="text-xs text-ink-muted lg:text-sm">or tap any verse to sit with just that.</p>
+          </div>
+        )}
       </header>
+
+      {selected && <ReflectBar book={book} chapter={chapter} span={selected} onClear={() => setSelected(null)} />}
 
       <ChapterView
         bookId={book.id}
         bookName={book.name}
         chapter={chapter}
-        highlight={highlight}
-        scrollToHighlight={highlight !== undefined}
+        highlight={selected ?? highlight}
+        scrollToHighlight={selected === null && highlight !== undefined}
+        onSelectVerse={pick}
       />
 
       <nav className="flex items-center justify-between gap-3 border-t pt-5" style={{ borderColor: "var(--hairline)" }}>
@@ -208,6 +249,59 @@ function ChapterReading({
         />
       </nav>
     </Shell>
+  );
+}
+
+/**
+ * What a reader can do with the verse they just tapped.
+ *
+ * Sticks to the top of the chapter rather than floating over the bottom: below lg the TabBar
+ * already owns the bottom edge, and a bar that has to dodge it would be guessing at its height.
+ * The top edge is free on every size, and the reference stays in view while the chapter scrolls
+ * under it.
+ */
+function ReflectBar({
+  book,
+  chapter,
+  span,
+  onClear,
+}: {
+  book: BibleBook;
+  chapter: number;
+  span: VerseSpan;
+  onClear: () => void;
+}) {
+  const verses = span.to > span.from ? `${span.from}-${span.to}` : `${span.from}`;
+  return (
+    <div
+      className="fade-in sticky top-0 z-30 -mx-5 flex items-center gap-3 border-b px-5 py-3 backdrop-blur-md lg:-mx-10 lg:px-10"
+      style={{
+        background: "color-mix(in srgb, var(--paper) 97%, transparent)",
+        borderColor: "var(--hairline)",
+        paddingTop: "max(0.75rem, env(safe-area-inset-top))",
+      }}
+    >
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-serif text-[0.9375rem] text-ink">
+          {book.name} {chapter}:{verses}
+        </p>
+        <p className="text-[11px] text-ink-muted">Tap another to extend</p>
+      </div>
+      <Link
+        href={`/app/soap?b=${book.id}&c=${chapter}&v=${verses}`}
+        className="btn-primary inline-flex shrink-0 items-center rounded-full px-4 py-2 text-sm font-medium"
+      >
+        Reflect on this
+      </Link>
+      <button
+        onClick={onClear}
+        aria-label="Clear selection"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:text-ink"
+        style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)" }}
+      >
+        <Icon name="x" />
+      </button>
+    </div>
   );
 }
 

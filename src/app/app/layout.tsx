@@ -14,7 +14,10 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
       <SideRail />
       <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-sm flex-col bg-paper shadow-column lg:mx-0 lg:max-w-none lg:flex-1 lg:bg-transparent lg:shadow-none">
         <StorageNotice />
-        <div className="pt-safe flex-1">{children}</div>
+        {/* A flex column, not a plain block, so a screen that wants the whole canvas — the SOAP
+            flow centring a step in it — can take it with flex-1. Screens that don't simply size to
+            their content, as before. */}
+        <div className="pt-safe flex flex-1 flex-col">{children}</div>
         <TabBar />
       </div>
     </div>

@@ -1,5 +1,5 @@
 import type { Theme } from "@/lib/themes";
-import { SoapProgress } from "@/components/screens/SoapProgress";
+import { StepHeader } from "@/components/screens/StepHeader";
 
 export function SoapStep({
   theme,
@@ -25,14 +25,7 @@ export function SoapStep({
   const fieldId = `soap-${label.toLowerCase()}`;
   return (
     <div className="flex flex-1 flex-col px-7 py-7 lg:px-16 lg:py-12">
-      {/* lg:pl-14 clears the full-bleed flow's back button, which sits in the screen's corner. */}
-      <div className="flex items-center justify-between lg:pl-14">
-        <span className="inline-flex items-center gap-2 text-sm font-medium lg:text-base" style={{ color: theme.accent }}>
-          <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: theme.accent }} />
-          {label}
-        </span>
-        <SoapProgress current={step} accent={theme.accent} />
-      </div>
+      <StepHeader label={label} accent={theme.accent} step={step} />
 
       {/*
        * Mobile stacks prompt → field → nudge. At lg the same DOM becomes two columns —

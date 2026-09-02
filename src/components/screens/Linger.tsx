@@ -1,8 +1,8 @@
 import type { Theme } from "@/lib/themes";
-import type { Devotion } from "@/lib/devotions/types";
+import type { Verse } from "@/lib/devotions/types";
 import { Icon } from "@/components/Icon";
 
-export function Linger({ devotion, theme }: { devotion: Devotion; theme: Theme }) {
+export function Linger({ verse, theme }: { verse: Verse; theme: Theme }) {
   return (
     <div className="stagger flex flex-1 flex-col gap-4 px-7 py-8 lg:mx-auto lg:w-full lg:max-w-3xl lg:gap-6 lg:px-16 lg:py-14">
       <h2 className="font-serif text-2xl text-ink lg:text-[2.75rem] lg:leading-tight">Linger a while</h2>
@@ -22,7 +22,7 @@ export function Linger({ devotion, theme }: { devotion: Devotion; theme: Theme }
         </span>
         <div>
           <p className="text-sm font-medium text-ink lg:text-base">{theme.name} — completed</p>
-          <p className="text-xs text-ink-muted lg:text-sm">{devotion.verseRef}</p>
+          <p className="text-xs text-ink-muted lg:text-sm">{verse.verseRef}</p>
         </div>
       </div>
 

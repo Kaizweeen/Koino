@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { BIBLE_BOOKS } from "@/lib/bible/books";
-import { chapterPath, findBook, formatReference, parseReference } from "@/lib/bible/refs";
+import { chapterPath, findBook, formatReference, parseReference, referenceFromQuery } from "@/lib/bible/refs";
 import { DEVOTIONS } from "@/lib/devotions/content";
 
 describe("BIBLE_BOOKS", () => {
@@ -69,11 +69,25 @@ describe("parseReference", () => {
   });
 
   it("treats a bare number in a one-chapter book as a verse", () => {
-    expect(parseReference("Jude 24")).toMatchObject({ chapter: 1, verse: 24 });
+    expect(parseReference("Jude 24")).toMatchObject({ chapter: 1, verse: 24, wholeChapter: false });
   });
 
   it("treats a bare number elsewhere as a whole chapter", () => {
-    expect(parseReference("Psalm 23")).toMatchObject({ chapter: 23, verse: 1, endVerse: 1 });
+    expect(parseReference("Psalm 23")).toMatchObject({ chapter: 23, verse: 1, endVerse: 1, wholeChapter: true });
+  });
+
+  it("separates a chapter from that chapter's first verse", () => {
+    expect(parseReference("Psalm 23")?.wholeChapter).toBe(true);
+    expect(parseReference("Psalm 23:1")?.wholeChapter).toBe(false);
+    expect(parseReference("Psalm 23:1-6")?.wholeChapter).toBe(false);
+  });
+
+  it("reads a one-chapter book named on its own as the whole of it", () => {
+    expect(parseReference("Jude")).toMatchObject({ chapter: 1, wholeChapter: true });
+    expect(parseReference("Obadiah")?.book.id).toBe("OBA");
+    // 150 chapters: naming the book alone names no passage.
+    expect(parseReference("Psalms")).toBeNull();
+    expect(parseReference("Genesis")).toBeNull();
   });
 
   it("returns null rather than throwing on nonsense", () => {
@@ -88,6 +102,35 @@ describe("formatReference", () => {
   it("renders single verses and ranges", () => {
     expect(formatReference(parseReference("Psalm 46:10")!)).toBe("Psalms 46:10");
     expect(formatReference(parseReference("Numbers 6:24-26")!)).toBe("Numbers 6:24-26");
+  });
+
+  it("drops the verse number for a whole chapter", () => {
+    expect(formatReference(parseReference("Psalm 23")!)).toBe("Psalms 23");
+    expect(formatReference(parseReference("Psalm 23:1")!)).toBe("Psalms 23:1");
+  });
+});
+
+describe("referenceFromQuery", () => {
+  it("reads a verse and a span", () => {
+    expect(referenceFromQuery("PSA", "46", "10")).toMatchObject({ verse: 10, endVerse: 10, wholeChapter: false });
+    expect(referenceFromQuery("PSA", "46", "10-11")).toMatchObject({ verse: 10, endVerse: 11, wholeChapter: false });
+  });
+
+  it("reads no verse as the whole chapter", () => {
+    expect(referenceFromQuery("PSA", "46", null)).toMatchObject({ chapter: 46, wholeChapter: true });
+    expect(referenceFromQuery("PSA", "46", "")).toMatchObject({ chapter: 46, wholeChapter: true });
+  });
+
+  it("reads a one-chapter book's chapter as a chapter, not as its first verse", () => {
+    expect(referenceFromQuery("JUD", "1", null)).toMatchObject({ chapter: 1, wholeChapter: true });
+    expect(referenceFromQuery("JUD", "1", "24")).toMatchObject({ chapter: 1, verse: 24, wholeChapter: false });
+  });
+
+  it("returns null for a query that points nowhere", () => {
+    expect(referenceFromQuery(null, "46", "10")).toBeNull();
+    expect(referenceFromQuery("PSA", null, null)).toBeNull();
+    expect(referenceFromQuery("NOPE", "1", null)).toBeNull();
+    expect(referenceFromQuery("PSA", "151", null)).toBeNull();
   });
 });
 

@@ -15,7 +15,7 @@ const dev: Devotion = {
 
 describe("ShareButton", () => {
   it("opens a preview dialog with the verse card image", () => {
-    render(<ShareButton devotion={dev} theme={getTheme("peace")} />);
+    render(<ShareButton verse={dev} theme={getTheme("peace")} />);
     fireEvent.click(screen.getByRole("button", { name: "Share this verse" }));
     const dialog = screen.getByRole("dialog", { name: "Share verse card" });
     expect(dialog).toBeInTheDocument();
@@ -26,16 +26,16 @@ describe("ShareButton", () => {
   });
 
   it("offers the reflection toggle only when a reflection is present", () => {
-    const { rerender } = render(<ShareButton devotion={dev} theme={getTheme("peace")} />);
+    const { rerender } = render(<ShareButton verse={dev} theme={getTheme("peace")} />);
     fireEvent.click(screen.getByRole("button", { name: "Share this verse" }));
     expect(screen.queryByLabelText("Include my reflection")).toBeNull();
 
-    rerender(<ShareButton devotion={dev} theme={getTheme("peace")} reflection="my response" />);
+    rerender(<ShareButton verse={dev} theme={getTheme("peace")} reflection="my response" />);
     expect(screen.getByLabelText("Include my reflection")).toBeInTheDocument();
   });
 
   it("adds the reflection to the card when the toggle is checked", () => {
-    render(<ShareButton devotion={dev} theme={getTheme("peace")} reflection="my response" />);
+    render(<ShareButton verse={dev} theme={getTheme("peace")} reflection="my response" />);
     fireEvent.click(screen.getByRole("button", { name: "Share this verse" }));
     const before = screen.getByAltText("Peace verse card") as HTMLImageElement;
     expect(decodeURIComponent(before.src)).not.toContain("my response");
@@ -45,7 +45,7 @@ describe("ShareButton", () => {
   });
 
   it("can be dismissed with Escape, since the backdrop click is mouse-only", () => {
-    render(<ShareButton devotion={dev} theme={getTheme("peace")} />);
+    render(<ShareButton verse={dev} theme={getTheme("peace")} />);
     fireEvent.click(screen.getByRole("button", { name: "Share this verse" }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
 
@@ -54,7 +54,7 @@ describe("ShareButton", () => {
   });
 
   it("moves focus into the dialog and returns it to the Share button on close", () => {
-    render(<ShareButton devotion={dev} theme={getTheme("peace")} />);
+    render(<ShareButton verse={dev} theme={getTheme("peace")} />);
     const opener = screen.getByRole("button", { name: "Share this verse" });
     fireEvent.click(opener);
     expect(screen.getByRole("button", { name: "Close" })).toHaveFocus();

@@ -18,8 +18,8 @@ describe("backup", () => {
   });
 
   it("unions completed dates and favorites and prefers incoming entries", () => {
-    const base = { completedDates: ["a"], favorites: ["x"], entries: { d1: { observation: "old", application: "", prayer: "" } }, notes: {} };
-    const incoming = { completedDates: ["b"], favorites: ["x", "y"], entries: { d1: { observation: "new", application: "", prayer: "" }, d2: { observation: "n2", application: "", prayer: "" } }, notes: {} };
+    const base = { completedDates: ["a"], favorites: ["x"], entries: { d1: { observation: "old", application: "", prayer: "" } }, notes: {}, reflections: {} };
+    const incoming = { completedDates: ["b"], favorites: ["x", "y"], entries: { d1: { observation: "new", application: "", prayer: "" }, d2: { observation: "n2", application: "", prayer: "" } }, notes: {}, reflections: {} };
     const merged = mergeProgress(base, incoming);
     expect(merged.completedDates).toEqual(["a", "b"]);
     expect(merged.favorites).toEqual(["x", "y"]);
