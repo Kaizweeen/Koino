@@ -67,6 +67,19 @@ describe("BibleReader verse selection", () => {
     expect(screen.queryByRole("link", { name: "Reflect on this" })).toBeNull();
   });
 
+  it("offers the whole chapter until a verse narrows it", async () => {
+    render(<BibleReader />);
+    const chapterLink = await screen.findByRole("link", { name: /Reflect on this chapter/ });
+    expect(chapterLink).toHaveAttribute("href", "/app/soap?b=PSA&c=46");
+
+    // Picking a verse is a narrower ask, so the chapter offer steps out of its way.
+    fireEvent.click(screen.getByText("Be still, and know that I am God."));
+    expect(screen.queryByRole("link", { name: /Reflect on this chapter/ })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear selection" }));
+    expect(screen.getByRole("link", { name: /Reflect on this chapter/ })).toBeInTheDocument();
+  });
+
   it("clears the selection outright", async () => {
     render(<BibleReader />);
     fireEvent.click(await screen.findByText("Be still, and know that I am God."));

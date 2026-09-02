@@ -173,7 +173,7 @@ export function JournalView() {
                   Go to today&apos;s devotion
                 </Link>
                 <Link href="/app/soap" className="btn-quiet rounded-full px-5 py-2.5 text-sm font-medium transition-transform active:scale-95">
-                  Choose a verse
+                  Choose a passage
                 </Link>
               </div>
             </>
@@ -193,7 +193,7 @@ export function JournalView() {
                 <span className="inline-flex shrink-0 items-center gap-1 text-[10px] text-ink-muted">
                   {/* A mood-carrying reflection would otherwise be indistinguishable from the day's
                       own devotion, and which one you were sitting with is part of remembering it. */}
-                  {chosen && <Icon name="book-2" label="A verse you chose" />}
+                  {chosen && <Icon name="book-2" label="A passage you chose" />}
                   {formatDisplayDate(date)}
                 </span>
               </div>

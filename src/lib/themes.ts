@@ -35,14 +35,15 @@ export const THEMES: Record<ThemeSlug, Theme> = {
 };
 
 /**
- * What a verse you chose for yourself wears: Koino's own green, and a name that says whose verse
- * it is rather than naming a feeling you never claimed. Deliberately outside THEMES — it is not a
- * thirteenth theme, it never comes up on a day of its own, and it does not belong in the explorer.
+ * What scripture you chose for yourself wears: Koino's own green, and a name that says whose
+ * passage it is rather than naming a feeling you never claimed. "Passage" rather than "verse"
+ * because it covers a verse, a span and a whole chapter alike. Deliberately outside THEMES — it is
+ * not a thirteenth theme, it never comes up on a day of its own, and it is not in the explorer.
  */
 export const OPEN_THEME: Theme = {
   slug: "open",
-  name: "Your verse",
-  definition: "A passage you chose to sit with.",
+  name: "Your passage",
+  definition: "Scripture you chose to sit with.",
   accent: "#0F6E56",
   accentSoft: "#E1F5EE",
   accentBorder: "#9FE1CB",

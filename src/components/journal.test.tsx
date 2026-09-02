@@ -99,7 +99,7 @@ describe("JournalView", () => {
     expect(screen.getByText("I am the vine. You are the branches.")).toBeInTheDocument();
     expect(screen.getByText("the day's verse")).toBeInTheDocument();
     // Marked as one the reader picked, so it is not mistaken for that day's devotion.
-    expect(screen.getByLabelText("A verse you chose")).toBeInTheDocument();
+    expect(screen.getByLabelText("A passage you chose")).toBeInTheDocument();
   });
 
   it("keeps and filters a chosen-verse reflection by its own favorite flag", async () => {

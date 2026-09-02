@@ -39,7 +39,7 @@ describe("VerseSoap", () => {
   it("offers the picker when no verse has been chosen", () => {
     params = new URLSearchParams();
     render(<VerseSoap />);
-    expect(screen.getByText("Reflect on a verse")).toBeInTheDocument();
+    expect(screen.getByText("Reflect on a passage")).toBeInTheDocument();
     expect(screen.getByLabelText("The passage")).toBeInTheDocument();
   });
 
@@ -52,6 +52,26 @@ describe("VerseSoap", () => {
     expect(screen.getByRole("link", { name: /Begin with Psalms 46:10/ })).toHaveAttribute(
       "href",
       "/app/soap?b=PSA&c=46&v=10&m=open",
+    );
+  });
+
+  it("takes a typed chapter, and says so before you commit to it", () => {
+    params = new URLSearchParams();
+    render(<VerseSoap />);
+
+    fireEvent.change(screen.getByLabelText("The passage"), { target: { value: "Psalm 46" } });
+    expect(screen.getByText("the whole chapter", { exact: false })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Begin with Psalms 46/ })).toHaveAttribute(
+      "href",
+      "/app/soap?b=PSA&c=46&m=open",
+    );
+
+    // One keystroke apart and a different sitting, so the two must not look alike here.
+    fireEvent.change(screen.getByLabelText("The passage"), { target: { value: "Psalm 46:1" } });
+    expect(screen.queryByText("the whole chapter", { exact: false })).toBeNull();
+    expect(screen.getByRole("link", { name: /Begin with Psalms 46:1/ })).toHaveAttribute(
+      "href",
+      "/app/soap?b=PSA&c=46&v=1&m=open",
     );
   });
 
@@ -116,6 +136,34 @@ describe("VerseSoap", () => {
     expect(screen.getByText("Amen.")).toBeInTheDocument();
     expect(screen.getByText("Kept in your journal")).toBeInTheDocument();
     expect(screen.queryByText(/day streak/)).toBeNull();
+  });
+
+  it("sets a whole chapter to read rather than quoting it", async () => {
+    params = new URLSearchParams("b=PSA&c=46");
+    render(<VerseSoap />);
+
+    // Every verse of the chapter, in reading type — not one pull quote of the lot.
+    expect(await screen.findByRole("heading", { name: "Psalms 46" })).toBeInTheDocument();
+    expect(screen.getByText("Be still, and know that I am God.")).toBeInTheDocument();
+    expect(screen.getByText("Yahweh of Armies is with us.")).toBeInTheDocument();
+    expect(screen.getByLabelText("SOAP step 1 of 4")).toBeInTheDocument();
+    // The chapter is the passage, so there is nothing further to open.
+    expect(screen.queryByText("Read the whole chapter")).toBeNull();
+  });
+
+  it("saves a chapter reflection against the chapter, not its first verse", async () => {
+    params = new URLSearchParams("b=PSA&c=46");
+    render(<VerseSoap />);
+    fireEvent.click(await screen.findByRole("button", { name: /Continue/ }));
+    fireEvent.change(screen.getByLabelText("Observation"), { target: { value: "refuge, then stillness" } });
+
+    await waitFor(() => {
+      const stored = loadProgress().reflections[reflectionIdFor("2026-08-30", "Psalms 46")];
+      expect(stored?.soap.observation).toBe("refuge, then stillness");
+      // The opening stands in for the chapter; the whole of it is never copied into storage.
+      expect(stored?.verseText).toBe("Be still, and know that I am God. Yahweh of Armies is with us.");
+    });
+    expect(loadProgress().reflections[reflectionIdFor("2026-08-30", "Psalms 46:1")]).toBeUndefined();
   });
 
   it("shows a way back when the passage cannot be loaded", async () => {

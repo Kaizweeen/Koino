@@ -25,10 +25,10 @@ export function VersePicker() {
   return (
     <div className="fade-in mx-auto flex w-full max-w-2xl flex-col gap-6 p-5 pb-8 lg:gap-8 lg:px-10 lg:py-12">
       <header>
-        <h1 className="font-serif text-3xl text-ink lg:text-4xl">Reflect on a verse</h1>
+        <h1 className="font-serif text-3xl text-ink lg:text-4xl">Reflect on a passage</h1>
         <p className="mt-1 max-w-[26rem] text-xs text-ink-muted lg:mt-2 lg:max-w-[34rem] lg:text-sm">
-          Any passage you like, walked through the same four steps as the daily devotion — Scripture,
-          Observation, Application, Prayer.
+          Any passage you like — a verse, a few, or a whole chapter — walked through the same four
+          steps as the daily devotion: Scripture, Observation, Application, Prayer.
         </p>
       </header>
 
@@ -59,14 +59,19 @@ export function VersePicker() {
           )}
         </div>
         {/* Silent until there is something to say: an empty field is not a mistake, and neither is
-            a reference half-typed. aria-live so the resolution is announced, not just seen. */}
+            a reference half-typed. Naming what was understood matters most for a chapter, where
+            "Psalm 23" and "Psalm 23:1" are a keystroke apart and mean quite different sittings.
+            aria-live so the resolution is announced, not just seen. */}
         <p className="min-h-[1.25rem] px-4 text-xs" aria-live="polite">
           {reference ? (
-            <span className="text-ink-secondary">{formatReference(reference)}</span>
+            <span className="text-ink-secondary">
+              {formatReference(reference)}
+              {reference.wholeChapter && <span className="text-ink-muted"> · the whole chapter</span>}
+            </span>
           ) : trimmed !== "" ? (
-            <span className="text-ink-muted">Try a book, chapter and verse — “John 15:5” or “Romans 8:38-39”.</span>
+            <span className="text-ink-muted">Try a book with a chapter, and a verse if you want one — “John 15:5”.</span>
           ) : (
-            <span className="text-ink-muted">A verse or a short span, in any translation&apos;s numbering.</span>
+            <span className="text-ink-muted">A verse, a short span, or a whole chapter — “Psalm 46:10”, “Romans 8:38-39”, “Psalm 23”.</span>
           )}
         </p>
       </div>
@@ -76,7 +81,7 @@ export function VersePicker() {
           Coming to it with <span className="normal-case tracking-normal">(optional)</span>
         </span>
         <div className="flex flex-wrap gap-2">
-          <MoodChip slug="open" name="No mood, just the verse" icon="book-2" accent="#0F6E56" accentSoft="#E1F5EE" selected={mood === "open"} onSelect={setMood} />
+          <MoodChip slug="open" name="No mood, just the passage" icon="book-2" accent="#0F6E56" accentSoft="#E1F5EE" selected={mood === "open"} onSelect={setMood} />
           {Object.values(THEMES).map((t) => (
             <MoodChip
               key={t.slug}
@@ -123,7 +128,7 @@ export function VersePicker() {
         </span>
         <div className="min-w-0">
           <p className="text-sm font-medium text-ink">Not sure where to land?</p>
-          <p className="text-xs text-ink-muted">Read the Bible and tap a verse as you go.</p>
+          <p className="text-xs text-ink-muted">Read the Bible and pick as you go.</p>
         </div>
         <Icon name="chevron-right" className="ml-auto shrink-0 text-ink-muted" />
       </Link>

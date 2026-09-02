@@ -19,6 +19,7 @@ import {
 } from "@/lib/progress";
 import { Atmosphere } from "@/components/Atmosphere";
 import { Scripture } from "@/components/screens/Scripture";
+import { ChapterScripture } from "@/components/screens/ChapterScripture";
 import { SoapStep } from "@/components/screens/SoapStep";
 import { Amen } from "@/components/screens/Amen";
 import { Icon } from "@/components/Icon";
@@ -106,7 +107,7 @@ export function VerseSoapFlow({ reference, mood }: { reference: BibleRef; mood: 
               Try again
             </button>
             <Link href="/app/soap" className="rounded-full px-5 py-2.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink">
-              Choose another verse
+              Choose another passage
             </Link>
           </div>
         </div>
@@ -140,7 +141,17 @@ export function VerseSoapFlow({ reference, mood }: { reference: BibleRef; mood: 
   return (
     <Frame accent={theme.accent} tone={step === "prayer" ? "night" : "day"}>
       <div key={step} className="fade-in flex flex-1 flex-col">
-        {step === "scripture" && <Scripture verse={verse} theme={theme} onContinue={() => setStep("observation")} />}
+        {step === "scripture" &&
+          (reference.wholeChapter ? (
+            <ChapterScripture
+              book={reference.book}
+              chapter={reference.chapter}
+              theme={theme}
+              onContinue={() => setStep("observation")}
+            />
+          ) : (
+            <Scripture verse={verse} theme={theme} onContinue={() => setStep("observation")} />
+          ))}
         {step === "observation" && (
           <SoapStep theme={theme} step={2} label="Observation" prompt={prompts.observation}
             value={entry.observation} onChange={(t) => write("observation", t)}
@@ -178,7 +189,7 @@ export function VerseSoapFlow({ reference, mood }: { reference: BibleRef; mood: 
                 <Icon name="arrow-right" className="transition-transform duration-200 group-hover:translate-x-0.5" />
               </Link>
               <Link href="/app/soap" className="rounded-full px-4 py-1.5 text-xs text-ink-muted transition-colors hover:text-ink">
-                Reflect on another verse
+                Reflect on another passage
               </Link>
             </div>
           </>

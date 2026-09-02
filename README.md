@@ -126,7 +126,7 @@ src/
     app/                    the app itself
       page.tsx              hub: today, plans, themes
       today/                the guided SOAP devotion
-      soap/                 the same SOAP arc on a verse you choose
+      soap/                 the same SOAP arc on a verse or chapter you choose
       bible/  journal/  history/  themes/  settings/  plans/[slug]/
     layout.tsx              fonts, metadata, theme bootstrap
     manifest.ts  robots.ts  sitemap.ts
@@ -134,7 +134,7 @@ src/
   components/
     DevotionFlow.tsx        the devotion arc
     VerseSoap*.tsx          picking a verse of your own, and the arc over it
-    bible/                  the reader; tapping a verse hands it to the SOAP arc
+    bible/                  the reader; a verse or the chapter hands off to the SOAP arc
     screens/                Arrival, Scripture, SOAP steps, Amen, Linger, Done
     Icon.tsx                self-hosted inline SVG icon set
     ...

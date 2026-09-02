@@ -211,7 +211,15 @@ function ChapterReading({
           {book.name} {chapter}
         </h1>
         {!selected && (
-          <p className="text-xs text-ink-muted lg:text-sm">Tap any verse to sit with it in Scripture, Observation, Application, Prayer.</p>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <Link
+              href={`/app/soap?b=${book.id}&c=${chapter}`}
+              className="btn-quiet inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium"
+            >
+              <Icon name="book-2" /> Reflect on this chapter
+            </Link>
+            <p className="text-xs text-ink-muted lg:text-sm">or tap any verse to sit with just that.</p>
+          </div>
         )}
       </header>
 

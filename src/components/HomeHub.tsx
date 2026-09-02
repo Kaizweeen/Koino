@@ -130,7 +130,7 @@ export function HomeHub() {
               href="/app/soap"
               className="flex items-center gap-1.5 self-center text-xs font-medium text-ink-muted transition-colors hover:text-ink lg:self-start lg:text-sm"
             >
-              <Icon name="book-2" /> Or reflect on a verse of your own
+              <Icon name="book-2" /> Or choose a passage of your own
             </Link>
           </div>
 

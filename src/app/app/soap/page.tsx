@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { VerseSoap } from "@/components/VerseSoap";
 
 export const metadata: Metadata = {
-  title: "Reflect on a verse",
-  description: "Choose any passage and sit with it — Scripture, Observation, Application, Prayer.",
+  title: "Reflect on a passage",
+  description: "Choose any verse or chapter and sit with it — Scripture, Observation, Application, Prayer.",
 };
 
 export default function SoapPage() {

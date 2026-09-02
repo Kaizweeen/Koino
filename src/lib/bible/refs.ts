@@ -7,6 +7,15 @@ export interface BibleRef {
   verse: number;
   /** Last verse of a range, equal to `verse` for a single-verse reference. */
   endVerse: number;
+  /**
+   * The reference named a chapter and no verse at all — "Psalm 46" rather than "Psalm 46:1".
+   *
+   * `verse` and `endVerse` still say 1, so anything that only wants somewhere to open the reader
+   * can carry on ignoring this. It exists because sitting with a whole chapter and sitting with its
+   * first verse are different things to ask for, and the parser is the only place that can still
+   * tell them apart.
+   */
+  wholeChapter: boolean;
 }
 
 const normalise = (name: string) =>
@@ -69,7 +78,14 @@ export function getBook(id: string): BibleBook | null {
  */
 export function parseReference(reference: string): BibleRef | null {
   const match = /^\s*(.+?)\s+(\d+)(?::(\d+)(?:\s*[-–]\s*(\d+))?)?\s*$/.exec(reference);
-  if (!match) return null;
+
+  // No number at all. A book of one chapter still names a passage on its own — "Jude" can only
+  // mean the whole of Jude — while a bare "Psalms" names 150 chapters and so names none of them.
+  if (!match) {
+    const onlyBook = findBook(reference);
+    if (!onlyBook || onlyBook.chapters !== 1) return null;
+    return { book: onlyBook, chapter: 1, verse: 1, endVerse: 1, wholeChapter: true };
+  }
 
   const [, name, chapterText, verseText, endVerseText] = match;
   const book = findBook(name);
@@ -81,7 +97,7 @@ export function parseReference(reference: string): BibleRef | null {
   // decided before the chapter is range-checked, or the verse number fails that check.
   if (book.chapters === 1 && verseText === undefined) {
     if (chapter < 1) return null;
-    return { book, chapter: 1, verse: chapter, endVerse: chapter };
+    return { book, chapter: 1, verse: chapter, endVerse: chapter, wholeChapter: false };
   }
 
   if (chapter < 1 || chapter > book.chapters) return null;
@@ -90,7 +106,7 @@ export function parseReference(reference: string): BibleRef | null {
   const endVerse = endVerseText === undefined ? verse : Number.parseInt(endVerseText, 10);
   if (verse < 1 || endVerse < verse) return null;
 
-  return { book, chapter, verse, endVerse };
+  return { book, chapter, verse, endVerse, wholeChapter: verseText === undefined };
 }
 
 /**
@@ -98,7 +114,7 @@ export function parseReference(reference: string): BibleRef | null {
  *
  * The reader keeps its position in the query string and hands the same shape to the SOAP flow, so
  * both resolve it through `parseReference` rather than each rolling its own number parsing. A
- * query with no `v` resolves to the chapter's first verse.
+ * query with no `v` names the whole chapter, which is how the reader offers one to sit with.
  */
 export function referenceFromQuery(
   bookId: string | null,
@@ -107,11 +123,16 @@ export function referenceFromQuery(
 ): BibleRef | null {
   const book = getBook(bookId ?? "");
   if (!book || !chapter) return null;
-  return parseReference(`${book.name} ${chapter}${verses ? `:${verses}` : ""}`);
+  // Spelled with the chapter and verse apart, so a one-chapter book's "?c=1" is read as its
+  // chapter rather than as "Jude 1", which parseReference rightly takes for a verse.
+  const parsed = parseReference(`${book.name} ${chapter}:${verses || "1"}`);
+  if (!parsed) return null;
+  return verses ? parsed : { ...parsed, wholeChapter: true };
 }
 
-/** The canonical display form of a reference, e.g. "Psalms 46:10". */
+/** The canonical display form of a reference, e.g. "Psalms 46:10" — or "Psalms 46" for a chapter. */
 export function formatReference(ref: BibleRef): string {
+  if (ref.wholeChapter) return `${ref.book.name} ${ref.chapter}`;
   const span = ref.endVerse > ref.verse ? `${ref.verse}-${ref.endVerse}` : `${ref.verse}`;
   return `${ref.book.name} ${ref.chapter}:${span}`;
 }
