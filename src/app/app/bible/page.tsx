@@ -4,7 +4,7 @@ import { BibleReader } from "@/components/bible/BibleReader";
 
 export const metadata: Metadata = {
   title: "Bible",
-  description: "Read the World English Bible — the whole text, offline and ad-free.",
+  description: "Read the whole Bible in your choice of translation — offline and ad-free.",
 };
 
 export default function BiblePage() {

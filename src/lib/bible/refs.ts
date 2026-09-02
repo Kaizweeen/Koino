@@ -99,7 +99,7 @@ export function formatReference(ref: BibleRef): string {
   return `${ref.book.name} ${ref.chapter}:${span}`;
 }
 
-/** Path of the chapter's JSON payload under public/. */
-export function chapterPath(bookId: string, chapter: number): string {
-  return `/bible/${bookId}/${chapter}.json`;
+/** Path of the chapter's JSON payload under public/, in one translation. */
+export function chapterPath(versionId: string, bookId: string, chapter: number): string {
+  return `/bible/${versionId}/${bookId}/${chapter}.json`;
 }

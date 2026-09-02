@@ -40,6 +40,7 @@ http://localhost:3000/app for the app itself.
 | `npm run typecheck`      | `tsc --noEmit`                                   |
 | `npm test`               | Vitest, once                                     |
 | `npm run test:watch`     | Vitest, watching                                 |
+| `npm run build:bible`    | Regenerate the bundled translations              |
 | `npm run verify:verses`  | Check every verse against the WEB translation    |
 | `npm run generate:splash`| Regenerate the iOS launch images                 |
 
@@ -137,12 +138,14 @@ src/
     ...
   lib/
     devotions/content.ts    the curated devotions (WEB verse text)
+    bible/                  the reader's book/version metadata and chapter loading
     themes.ts  plans.ts     twelve emotional themes; curated series over them
     progress.ts  prefs.ts   what a person writes, and their settings
     storage.ts              localStorage that cannot throw
     backup.ts               export / import of a person's journal
     shareCard.ts            the shareable verse card (SVG rendered to PNG)
 public/
+  bible/<version>/<book>/<chapter>.json   the bundled translations
   sw.js                     offline service worker
   icon-*.png / *.svg        app + install icons
   opengraph-image.png       link preview card
@@ -159,6 +162,34 @@ The curated calendar currently covers a fixed range of dates. Past its end, the
 day's devotion rotates deterministically through the whole pool by day index, so
 the app never runs out; the practical effect is that the set repeats once a
 person gets past it. Adding devotions is the way to lengthen that cycle.
+
+## Translations
+
+The reader ships three translations — the World English Bible, the King James
+Version, and the Berean Standard Bible — and the version is a preference, set
+from Settings or from the pills in the reader and in the chapter a devotion opens.
+The daily verse itself stays in the WEB, which is the wording each reflection was
+written around.
+
+`npm run build:bible` produces them all: it reads the upstream USFX and OSIS
+files from [open-bibles](https://github.com/seven1m/open-bibles) and writes
+`public/bible/<version>/<book>/<chapter>.json` plus the generated
+`src/lib/bible/books.ts`. The output is committed, so the script only needs
+re-running to correct the text or add a version — which is one entry in its
+`VERSIONS` list, since the picker, the preference, and the service worker all
+read the generated manifest.
+
+Two constraints hold it together. **Every translation has to be public domain**:
+the app makes no third-party runtime requests (`connect-src 'self'`), so the text
+is served from Koino's own origin, and the mainstream modern translations (NIV,
+ESV, NASB, NLT) are under copyright and cannot be bundled at any price. And
+**every version has to divide the books the same way**, since the book list, the
+chapter grid, and every deep link are shared across them; the build fails rather
+than shipping a version whose chapter counts disagree.
+
+Each translation is about 7 MB on disk, spread over 1,189 files. Nothing is
+downloaded up front — the reader fetches one chapter at a time and the service
+worker keeps only what has actually been read.
 
 ## Credits
 

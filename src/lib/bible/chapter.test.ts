@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { verseLines, verseRuns, type BibleVerse } from "@/lib/bible/chapter";
-import { BIBLE_BOOKS, BIBLE_SECTIONS } from "@/lib/bible/books";
+import { BIBLE_BOOKS, BIBLE_SECTIONS, BIBLE_VERSIONS } from "@/lib/bible/books";
 
 describe("verseRuns", () => {
   it("returns one plain run when there are no words of Jesus", () => {
@@ -133,22 +133,36 @@ describe("BIBLE_SECTIONS", () => {
   });
 });
 
-/**
- * The red-letter offsets are produced by scripts/build-bible.mjs by locating each <wj> run inside
- * the normalised verse, so a drift between those two normalisations would mislocate the colour
- * rather than fail loudly. These sweep the generated data for that.
- */
-describe("generated red-letter data", () => {
-  const chapters = function* () {
-    for (const dir of readdirSync(join(process.cwd(), "public", "bible"))) {
-      for (const file of readdirSync(join(process.cwd(), "public", "bible", dir))) {
-        yield JSON.parse(
-          readFileSync(join(process.cwd(), "public", "bible", dir, file), "utf8"),
-        ) as { book: string; verses: BibleVerse[] };
+/** Every generated chapter of every shipped translation, tagged with where it came from. */
+const chapters = function* () {
+  const root = join(process.cwd(), "public", "bible");
+  for (const version of BIBLE_VERSIONS) {
+    for (const book of readdirSync(join(root, version.id))) {
+      for (const file of readdirSync(join(root, version.id, book))) {
+        yield {
+          where: `${version.id} ${book} ${file}`,
+          version: version.id,
+          ...(JSON.parse(readFileSync(join(root, version.id, book, file), "utf8")) as {
+            book: string;
+            verses: BibleVerse[];
+          }),
+        };
       }
     }
-  };
+  }
+};
 
+const read = (versionId: string, book: string, chapter: number) =>
+  JSON.parse(
+    readFileSync(join(process.cwd(), "public", "bible", versionId, book, `${chapter}.json`), "utf8"),
+  ) as { headings?: { v: number; t: string }[]; verses: BibleVerse[] };
+
+/**
+ * The red-letter offsets are produced by scripts/build-bible.mjs by locating each run of Jesus'
+ * words inside the normalised verse, so a drift between those two normalisations would mislocate
+ * the colour rather than fail loudly. These sweep the generated data for that.
+ */
+describe("generated red-letter data", () => {
   it("keeps every span inside its verse and in ascending order", () => {
     let spans = 0;
     for (const chapter of chapters()) {
@@ -171,7 +185,7 @@ describe("generated red-letter data", () => {
     const ot = new Set(BIBLE_BOOKS.filter((b) => b.testament === "ot").map((b) => b.id));
     for (const chapter of chapters()) {
       if (!ot.has(chapter.book)) continue;
-      expect(chapter.verses.some((v) => v.w), `${chapter.book} has red letters`).toBe(false);
+      expect(chapter.verses.some((v) => v.w), `${chapter.where} has red letters`).toBe(false);
     }
   });
 
@@ -179,7 +193,7 @@ describe("generated red-letter data", () => {
     for (const chapter of chapters()) {
       for (const verse of chapter.verses) {
         for (const [start, end] of verse.w ?? []) {
-          expect(verse.t.slice(start, end).trim().length).toBeGreaterThan(0);
+          expect(verse.t.slice(start, end).trim().length, chapter.where).toBeGreaterThan(0);
         }
       }
     }
@@ -187,62 +201,57 @@ describe("generated red-letter data", () => {
 });
 
 describe("generated poetry and headings", () => {
-  const read = (book: string, chapter: number) =>
-    JSON.parse(
-      readFileSync(join(process.cwd(), "public", "bible", book, `${chapter}.json`), "utf8"),
-    ) as { headings?: { v: number; t: string }[]; verses: BibleVerse[] };
-
   it("never loses a character when a verse is split into lines", () => {
-    for (const dir of readdirSync(join(process.cwd(), "public", "bible"))) {
-      for (const file of readdirSync(join(process.cwd(), "public", "bible", dir))) {
-        const chapter = JSON.parse(
-          readFileSync(join(process.cwd(), "public", "bible", dir, file), "utf8"),
-        ) as { verses: BibleVerse[] };
-        for (const verse of chapter.verses) {
-          const rebuilt = verseLines(verse)
-            .flatMap((line) => line.runs.map((run) => run.text))
-            .join("");
-          expect(rebuilt, `${dir} ${file} v${verse.n}`).toBe(verse.t);
-        }
+    for (const chapter of chapters()) {
+      for (const verse of chapter.verses) {
+        const rebuilt = verseLines(verse)
+          .flatMap((line) => line.runs.map((run) => run.text))
+          .join("");
+        expect(rebuilt, `${chapter.where} v${verse.n}`).toBe(verse.t);
       }
     }
   });
 
   it("gives the Psalms their superscriptions", () => {
-    expect(read("PSA", 3).headings?.[0]).toMatchObject({ v: 1 });
-    expect(read("PSA", 3).headings?.[0].t).toContain("David");
+    for (const version of BIBLE_VERSIONS) {
+      const headings = read(version.id, "PSA", 3).headings ?? [];
+      expect(headings.some((h) => h.v === 1 && h.t.includes("David")), version.id).toBe(true);
+    }
   });
 
   it("keeps all twenty-two stanza headings of Psalm 119", () => {
-    const headings = read("PSA", 119).headings ?? [];
-    expect(headings).toHaveLength(22);
-    expect(headings[0]).toMatchObject({ v: 1, t: "ALEPH" });
-    // Each stanza is eight verses long, so the headings land every eighth verse.
-    expect(headings.map((h) => h.v)).toEqual(
-      Array.from({ length: 22 }, (_, i) => i * 8 + 1),
-    );
+    // Each stanza is eight verses long, so the Hebrew letters land every eighth verse. Asserted as
+    // "a heading stands here" rather than by counting, because a version may also print a section
+    // title over the psalm, which is not one of the twenty-two.
+    const stanzaStarts = Array.from({ length: 22 }, (_, i) => i * 8 + 1);
+    for (const version of BIBLE_VERSIONS) {
+      const headings = read(version.id, "PSA", 119).headings ?? [];
+      for (const start of stanzaStarts) {
+        expect(headings.some((h) => h.v === start), `${version.id} Psalm 119:${start}`).toBe(true);
+      }
+      expect(headings.some((h) => h.v === 1 && h.t.startsWith("ALEPH")), version.id).toBe(true);
+      expect(headings.some((h) => h.v === 169 && h.t.startsWith("TA")), version.id).toBe(true);
+    }
   });
 
-  it("sets the Psalms as poetry and narrative prose as prose", () => {
-    expect(read("PSA", 23).verses[0].q).toBeDefined();
-    expect(read("GEN", 1).verses[0].q).toBeUndefined();
-    expect(read("ROM", 1).verses[0].q).toBeUndefined();
+  it("sets the Psalms as poetry and narrative prose as prose, where a version marks its poetry", () => {
+    expect(read("web", "PSA", 23).verses[0].q).toBeDefined();
+    expect(read("bsb", "PSA", 23).verses[0].q).toBeDefined();
+    for (const version of BIBLE_VERSIONS) {
+      expect(read(version.id, "GEN", 1).verses[0].q, version.id).toBeUndefined();
+      expect(read(version.id, "ROM", 1).verses[0].q, version.id).toBeUndefined();
+    }
   });
 
   it("keeps every line mark in bounds and ascending", () => {
-    for (const dir of readdirSync(join(process.cwd(), "public", "bible"))) {
-      for (const file of readdirSync(join(process.cwd(), "public", "bible", dir))) {
-        const chapter = JSON.parse(
-          readFileSync(join(process.cwd(), "public", "bible", dir, file), "utf8"),
-        ) as { verses: BibleVerse[] };
-        for (const verse of chapter.verses) {
-          let previous = -1;
-          for (const mark of verse.q ?? []) {
-            expect(mark[0]).toBeGreaterThan(previous);
-            expect(mark[0]).toBeLessThan(verse.t.length);
-            expect([1, 2]).toContain(mark[1]);
-            previous = mark[0];
-          }
+    for (const chapter of chapters()) {
+      for (const verse of chapter.verses) {
+        let previous = -1;
+        for (const mark of verse.q ?? []) {
+          expect(mark[0], chapter.where).toBeGreaterThan(previous);
+          expect(mark[0], chapter.where).toBeLessThan(verse.t.length);
+          expect([1, 2], chapter.where).toContain(mark[1]);
+          previous = mark[0];
         }
       }
     }

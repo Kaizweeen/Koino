@@ -116,11 +116,12 @@ function runsWithin(verse: BibleVerse, start: number, end: number): { text: stri
 }
 
 /**
- * Chapters already fetched in this session.
+ * Chapters already fetched in this session, keyed by translation as well as by chapter.
  *
  * The text never changes between deploys, so a chapter is worth holding onto: flipping back and
- * forth between two chapters, or reopening the one a devotion points at, should not re-request
- * anything. The service worker caches the same responses across sessions (see public/sw.js).
+ * forth between two chapters, between two translations of the same one, or reopening the chapter a
+ * devotion points at, should not re-request anything. The service worker caches the same responses
+ * across sessions (see public/sw.js).
  */
 const cache = new Map<string, BibleChapter>();
 
@@ -136,17 +137,21 @@ const isChapter = (value: unknown): value is BibleChapter => {
 };
 
 /**
- * Loads one chapter of the bundled World English Bible.
+ * Loads one chapter, in one of the bundled translations.
  *
  * Throws on a failed or malformed response so callers can show a retry rather than an empty
  * chapter that reads as though the text were missing.
  */
-export async function loadChapter(bookId: string, chapter: number): Promise<BibleChapter> {
-  const key = `${bookId}.${chapter}`;
+export async function loadChapter(
+  versionId: string,
+  bookId: string,
+  chapter: number,
+): Promise<BibleChapter> {
+  const key = `${versionId}.${bookId}.${chapter}`;
   const hit = cache.get(key);
   if (hit) return hit;
 
-  const response = await fetch(chapterPath(bookId, chapter));
+  const response = await fetch(chapterPath(versionId, bookId, chapter));
   if (!response.ok) throw new Error(`chapter ${key}: HTTP ${response.status}`);
 
   const data: unknown = await response.json();

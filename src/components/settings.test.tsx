@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { SettingsView } from "@/components/SettingsView";
 import { loadPrefs } from "@/lib/prefs";
 
@@ -25,5 +25,17 @@ describe("SettingsView", () => {
     render(<SettingsView />);
     fireEvent.click(await screen.findByRole("button", { name: /^Large$/ }));
     expect(loadPrefs().textSize).toBe("large");
+  });
+
+  it("offers every bundled translation and persists the choice", async () => {
+    render(<SettingsView />);
+
+    const chosen = await screen.findByRole("radio", { name: /King James Version/ });
+    expect(screen.getByRole("radio", { name: /World English Bible/ })).toHaveAttribute("aria-checked", "true");
+
+    fireEvent.click(chosen);
+
+    expect(loadPrefs().bibleVersion).toBe("kjv");
+    await waitFor(() => expect(chosen).toHaveAttribute("aria-checked", "true"));
   });
 });

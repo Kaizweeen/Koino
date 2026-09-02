@@ -313,7 +313,7 @@ export function Landing() {
         <footer className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-6 py-12 text-center">
           <span className="font-serif text-xl text-ink">Koino</span>
           <p className="max-w-sm text-xs leading-relaxed text-ink-muted">
-            From <span className="italic">koinonia</span>, the Greek word for fellowship. Scripture in the World English Bible.
+            From <span className="italic">koinonia</span>, the Greek word for fellowship. Read in the King James, the World English Bible, or the Berean Standard Bible.
           </p>
           <Link href="/app" className="mt-1 text-xs font-medium text-ink-secondary transition-colors hover:text-ink">
             Enter the app

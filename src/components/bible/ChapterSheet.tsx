@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { BibleRef } from "@/lib/bible/refs";
+import { useBibleVersion } from "@/lib/bible/useBibleVersion";
 import { ChapterView } from "@/components/bible/ChapterView";
+import { VersionPills } from "@/components/bible/VersionPicker";
 import { Icon } from "@/components/Icon";
 
 /**
@@ -25,6 +27,7 @@ export function ChapterSheet({
 }) {
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const [mounted, setMounted] = useState(false);
+  const { version, choose } = useBibleVersion();
 
   useEffect(() => setMounted(true), []);
 
@@ -73,28 +76,34 @@ export function ChapterSheet({
         className="fade-in relative flex max-h-[88dvh] flex-col rounded-t-well bg-paper shadow-lift lg:max-h-full lg:w-full lg:max-w-3xl lg:rounded-well"
       >
         <header
-          className="flex shrink-0 items-center justify-between gap-3 border-b px-6 py-4"
+          className="flex shrink-0 flex-col gap-2.5 border-b px-6 py-4"
           style={{ borderColor: "var(--hairline)" }}
         >
-          <div className="min-w-0">
-            <h2 className="truncate font-serif text-xl text-ink">
-              {book.name} {chapter}
-            </h2>
-            <p className="text-[11px] text-ink-muted">The chapter around today&apos;s verse</p>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="truncate font-serif text-xl text-ink">
+                {book.name} {chapter}
+              </h2>
+              <p className="text-[11px] text-ink-muted">The chapter around today&apos;s verse</p>
+            </div>
+            <button
+              ref={closeRef}
+              onClick={onClose}
+              aria-label="Close chapter"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:text-ink"
+              style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)" }}
+            >
+              <Icon name="x" />
+            </button>
           </div>
-          <button
-            ref={closeRef}
-            onClick={onClose}
-            aria-label="Close chapter"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:text-ink"
-            style={{ background: "color-mix(in srgb, var(--ink) 6%, transparent)" }}
-          >
-            <Icon name="x" />
-          </button>
+          {/* Switching here writes the same standing preference the reader and Settings hold, so
+              comparing a wording mid-devotion is one tap and does not need undoing afterwards. */}
+          <VersionPills value={version} onChange={choose} />
         </header>
 
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
           <ChapterView
+            version={version}
             bookId={book.id}
             bookName={book.name}
             chapter={chapter}

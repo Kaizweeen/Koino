@@ -20,18 +20,21 @@
  * PRECACHE message below stores exactly that.
  */
 
-const CACHE = "koino-v2";
+// v3 moved the Bible under a per-translation path (/bible/web/… rather than /bible/…), so the
+// older entries name chapters that no longer exist and the bump is what drops them.
+const CACHE = "koino-v3";
 const SHELL = "/app";
 
 /**
  * Cache-first paths.
  *
- * /_next/static is content-hashed and therefore immutable. /bible is the bundled World English
- * Bible, one JSON file per chapter: those filenames are not hashed, but the text of a chapter does
- * not change, and caching them is what lets the reader work in the same dead spots the rest of the
- * app already survives. Only the chapters actually opened are ever stored, so the cache grows by
- * the few kilobytes a reader asks for rather than the whole ~4.5 MB translation. Bumping CACHE
- * clears both, which is the escape hatch if the text is ever regenerated.
+ * /_next/static is content-hashed and therefore immutable. /bible holds the bundled translations,
+ * one JSON file per chapter per version: those filenames are not hashed, but the text of a chapter
+ * does not change, and caching them is what lets the reader work in the same dead spots the rest
+ * of the app already survives. Only the chapters actually opened, in the versions actually read,
+ * are ever stored — so the cache grows by the few kilobytes a reader asks for rather than the
+ * ~7 MB of any one translation, let alone all of them. Bumping CACHE clears both, which is the
+ * escape hatch if the text is ever regenerated.
  */
 const isCacheable = (url) =>
   url.origin === self.location.origin &&

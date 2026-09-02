@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { loadChapter, verseLines, type BibleChapter } from "@/lib/bible/chapter";
-import { TRANSLATION } from "@/lib/bible/books";
+import type { BibleVersion } from "@/lib/bible/books";
 
 interface ChapterViewProps {
+  version: BibleVersion;
   bookId: string;
   bookName: string;
   chapter: number;
@@ -16,7 +17,7 @@ interface ChapterViewProps {
 }
 
 /**
- * Renders one chapter of the bundled World English Bible.
+ * Renders one chapter, in whichever bundled translation the reader has chosen.
  *
  * Verse numbers are set quietly beside the text rather than inline with it: this is a reading
  * view, not a study view, and the numbers should be available for finding a place without
@@ -24,6 +25,7 @@ interface ChapterViewProps {
  * see at a glance where the verse they were given sits in its chapter.
  */
 export function ChapterView({
+  version,
   bookId,
   bookName,
   chapter,
@@ -41,7 +43,7 @@ export function ChapterView({
     setData(null);
     setFailed(false);
 
-    loadChapter(bookId, chapter)
+    loadChapter(version.id, bookId, chapter)
       .then((chapterData) => {
         if (active) setData(chapterData);
       })
@@ -52,7 +54,7 @@ export function ChapterView({
     return () => {
       active = false;
     };
-  }, [bookId, chapter, attempt]);
+  }, [version.id, bookId, chapter, attempt]);
 
   useEffect(() => {
     if (!data || !scrollToHighlight || !highlightRef.current) return;
@@ -152,7 +154,9 @@ export function ChapterView({
           );
         })}
       </div>
-      <p className="mt-8 text-center text-[11px] text-ink-muted">{TRANSLATION} (public domain)</p>
+      <p className="mt-8 text-center text-[11px] text-ink-muted">
+        {version.name} ({version.notice})
+      </p>
     </div>
   );
 }

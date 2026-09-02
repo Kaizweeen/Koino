@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { loadPrefs, setThemePref, setTextSize, applyPrefs, type ThemePref, type TextSize } from "@/lib/prefs";
+import { DEFAULT_VERSION } from "@/lib/bible/versions";
+import { useBibleVersion } from "@/lib/bible/useBibleVersion";
 import { BackupControls } from "@/components/BackupControls";
+import { VersionChoices } from "@/components/bible/VersionPicker";
 import { Icon } from "@/components/Icon";
 
 const BRAND = "#0F6E56";
@@ -22,6 +25,7 @@ const TEXT_OPTS: { value: TextSize; label: string }[] = [
 export function SettingsView() {
   const [theme, setTheme] = useState<ThemePref>("system");
   const [size, setSize] = useState<TextSize>("regular");
+  const { version, choose } = useBibleVersion();
 
   useEffect(() => {
     const p = loadPrefs();
@@ -81,6 +85,17 @@ export function SettingsView() {
           </div>
           <p className="mt-2 reading-text text-sm text-ink-secondary">This is how your reading will look.</p>
         </div>
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-[11px] font-medium uppercase tracking-widest2 text-ink-muted">Bible version</h2>
+        <VersionChoices value={version} onChange={choose} />
+        <p className="text-xs text-ink-secondary">
+          What the reader and the chapter beside a devotion open in. Every version here is public
+          domain, which is why it can live inside the app and work with no signal — today&apos;s
+          verse itself stays in the {DEFAULT_VERSION.short}, the wording each reflection was
+          written around.
+        </p>
       </section>
 
       <section className="flex flex-col gap-2">

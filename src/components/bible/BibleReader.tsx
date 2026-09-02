@@ -2,9 +2,11 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
-import { BIBLE_SECTIONS, TRANSLATION, type BibleBook } from "@/lib/bible/books";
+import { BIBLE_SECTIONS, type BibleBook, type BibleVersion } from "@/lib/bible/books";
 import { getBook } from "@/lib/bible/refs";
+import { useBibleVersion } from "@/lib/bible/useBibleVersion";
 import { ChapterView } from "@/components/bible/ChapterView";
+import { VersionPills } from "@/components/bible/VersionPicker";
 import { Icon } from "@/components/Icon";
 
 /**
@@ -14,10 +16,15 @@ import { Icon } from "@/components/Icon";
  * for two reasons: the app is exported as static files, so a route per chapter would mean
  * prerendering 1,189 pages into the bundle and the iOS shell; and a query string keeps every
  * position linkable, which is what lets a devotion hand the reader a verse to open at.
+ *
+ * The translation is deliberately *not* in the query string. It is a standing preference rather
+ * than a position, so it should survive following a link into the reader and should match what the
+ * chapter sheet shows mid-devotion, which no URL is handing a version to.
  */
 export function BibleReader() {
   const router = useRouter();
   const params = useSearchParams();
+  const { version, choose } = useBibleVersion();
 
   const book = getBook(params.get("b") ?? "");
   const chapterParam = Number.parseInt(params.get("c") ?? "", 10);
@@ -51,6 +58,8 @@ export function BibleReader() {
   if (book && chapter) {
     return (
       <ChapterReading
+        version={version}
+        onVersion={choose}
         book={book}
         chapter={chapter}
         highlight={highlight}
@@ -61,10 +70,18 @@ export function BibleReader() {
   }
 
   if (book) {
-    return <ChapterPicker book={book} onBack={() => go({})} onPick={(c) => go({ b: book.id, c })} />;
+    return (
+      <ChapterPicker
+        version={version}
+        onVersion={choose}
+        book={book}
+        onBack={() => go({})}
+        onPick={(c) => go({ b: book.id, c })}
+      />
+    );
   }
 
-  return <BookList onPick={(picked) => go({ b: picked.id })} />;
+  return <BookList version={version} onVersion={choose} onPick={(picked) => go({ b: picked.id })} />;
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -75,7 +92,15 @@ function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function BookList({ onPick }: { onPick: (book: BibleBook) => void }) {
+function BookList({
+  version,
+  onVersion,
+  onPick,
+}: {
+  version: BibleVersion;
+  onVersion: (id: string) => void;
+  onPick: (book: BibleBook) => void;
+}) {
   const testaments = [
     { key: "ot", label: "Old Testament" },
     { key: "nt", label: "New Testament" },
@@ -84,9 +109,12 @@ function BookList({ onPick }: { onPick: (book: BibleBook) => void }) {
   return (
     <Shell>
       <header>
-        <h1 className="font-serif text-3xl text-ink lg:text-4xl">Bible</h1>
+        <div className="flex items-start justify-between gap-3">
+          <h1 className="font-serif text-3xl text-ink lg:text-4xl">Bible</h1>
+          <VersionPills value={version} onChange={onVersion} className="mt-1.5" />
+        </div>
         <p className="mt-1 max-w-[22rem] text-xs text-ink-muted lg:mt-2 lg:max-w-[34rem] lg:text-sm">
-          The whole {TRANSLATION}, here when you want to sit with more than a day&apos;s verse.
+          The whole {version.name}, here when you want to sit with more than a day&apos;s verse.
         </p>
       </header>
 
@@ -131,10 +159,14 @@ function BookList({ onPick }: { onPick: (book: BibleBook) => void }) {
 }
 
 function ChapterPicker({
+  version,
+  onVersion,
   book,
   onBack,
   onPick,
 }: {
+  version: BibleVersion;
+  onVersion: (id: string) => void;
   book: BibleBook;
   onBack: () => void;
   onPick: (chapter: number) => void;
@@ -142,7 +174,10 @@ function ChapterPicker({
   return (
     <Shell>
       <header className="flex flex-col gap-3">
-        <BackLink label="All books" onClick={onBack} />
+        <div className="flex items-center justify-between gap-3">
+          <BackLink label="All books" onClick={onBack} />
+          <VersionPills value={version} onChange={onVersion} />
+        </div>
         <h1 className="font-serif text-3xl text-ink lg:text-4xl">{book.name}</h1>
       </header>
 
@@ -164,12 +199,16 @@ function ChapterPicker({
 }
 
 function ChapterReading({
+  version,
+  onVersion,
   book,
   chapter,
   highlight,
   onBack,
   onChapter,
 }: {
+  version: BibleVersion;
+  onVersion: (id: string) => void;
   book: BibleBook;
   chapter: number;
   highlight?: { from: number; to: number };
@@ -179,13 +218,17 @@ function ChapterReading({
   return (
     <Shell>
       <header className="flex flex-col gap-3">
-        <BackLink label={book.name} onClick={onBack} />
+        <div className="flex items-center justify-between gap-3">
+          <BackLink label={book.name} onClick={onBack} />
+          <VersionPills value={version} onChange={onVersion} />
+        </div>
         <h1 className="font-serif text-3xl text-ink lg:text-4xl">
           {book.name} {chapter}
         </h1>
       </header>
 
       <ChapterView
+        version={version}
         bookId={book.id}
         bookName={book.name}
         chapter={chapter}
