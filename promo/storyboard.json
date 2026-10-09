@@ -1,0 +1,150 @@
+{
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "duration": 55,
+  "url": "",
+
+  "device": { "width": 384, "height": 832, "statusBar": 54, "homeBar": 24, "scale": 2, "clock": "7:12" },
+
+  "presets": {
+    "flowStart": { "streakDays": 6 },
+    "streak3": { "streakDays": 3 },
+    "hub": {
+      "completedDates": [
+        "2026-06-27", "2026-06-28", "2026-06-29", "2026-06-30",
+        "2026-07-08", "2026-07-09", "2026-07-10", "2026-07-11", "2026-07-12", "2026-07-13",
+        "2026-07-14", "2026-07-15", "2026-07-16", "2026-07-17", "2026-07-18", "2026-07-19"
+      ],
+      "favorites": ["2026-07-19"],
+      "entries": {
+        "2026-07-19": { "observation": "His peace isn't fragile like mine. He gives it; I don't have to manufacture it.", "application": "", "prayer": "" },
+        "2026-07-18": { "observation": "David asked for one thing: to be near. Not answers first, just nearness.", "application": "", "prayer": "" },
+        "2026-07-17": { "observation": "Love is patient. I haven't been patient with my brother this week.", "application": "", "prayer": "" },
+        "2026-07-15": { "observation": "Nothing he purposes can be stopped. That is a relief, not a threat.", "application": "", "prayer": "" }
+      }
+    }
+  },
+
+  "clips": [
+    { "id": "arrival-peace", "date": "2026-06-25", "preset": "flowStart", "path": "/app/today", "from": 8.6, "to": 10.75 },
+    { "id": "mood-gratitude", "date": "2026-06-26", "preset": "streak3", "path": "/app/today", "from": 10.5, "to": 11.5 },
+    { "id": "mood-hope", "date": "2026-06-28", "preset": "streak3", "path": "/app/today", "from": 11.25, "to": 12.25 },
+    { "id": "mood-joy", "date": "2026-06-30", "preset": "streak3", "path": "/app/today", "from": 12.0, "to": 13.0 },
+    { "id": "mood-lament", "date": "2026-06-27", "preset": "streak3", "path": "/app/today", "from": 12.75, "to": 13.75 },
+    { "id": "mood-longing", "date": "2026-07-06", "preset": "streak3", "path": "/app/today", "from": 13.5, "to": 14.5 },
+    {
+      "id": "flow", "date": "2026-06-25", "preset": "flowStart", "path": "/app/today", "from": 14.25, "to": 39.35,
+      "actions": [
+        { "t": 15.0, "type": "click", "role": "button", "name": "Begin" },
+        { "t": 18.0, "type": "click", "role": "button", "name": "Continue" },
+        { "t": 18.7, "until": 21.6, "type": "type", "text": "That stillness isn't the absence of noise. It's trusting the One who holds it all." },
+        { "t": 22.5, "type": "click", "role": "button", "name": "Continue" },
+        { "t": 23.2, "until": 25.7, "type": "type", "text": "Before the inbox. Let me begin from rest, not from proving." },
+        { "t": 27.0, "type": "click", "role": "button", "name": "Continue" },
+        { "t": 27.6, "until": 30.3, "type": "type", "text": "Quiet my heart, Lord. Before anything today, let me rest in you." },
+        { "t": 31.5, "type": "click", "role": "button", "name": "Amen" },
+        { "t": 36.0, "type": "click", "role": "button", "name": "Share this verse" }
+      ]
+    },
+    { "id": "home", "date": "2026-07-20", "preset": "hub", "path": "/app", "from": 39.0, "to": 40.85 },
+    { "id": "history", "date": "2026-07-20", "preset": "hub", "path": "/app/history", "from": 40.5, "to": 42.35 },
+    {
+      "id": "journal", "date": "2026-07-20", "preset": "hub", "path": "/app/journal", "from": 42.0, "to": 43.85,
+      "actions": [{ "t": 42.35, "until": 43.85, "type": "scroll", "y": 300 }]
+    },
+    {
+      "id": "bible", "date": "2026-07-20", "preset": "hub", "path": "/app/bible", "from": 43.5, "to": 45.7,
+      "actions": [{ "t": 43.8, "until": 45.7, "type": "scroll", "y": 760 }]
+    }
+  ],
+
+  "phone": [
+    { "clip": "arrival-peace", "at": 8.6 },
+    { "clip": "mood-gratitude", "at": 10.5, "enter": "fade" },
+    { "clip": "mood-hope", "at": 11.25, "enter": "fade" },
+    { "clip": "mood-joy", "at": 12.0, "enter": "fade" },
+    { "clip": "mood-lament", "at": 12.75, "enter": "fade" },
+    { "clip": "mood-longing", "at": 13.5, "enter": "fade" },
+    { "clip": "flow", "at": 14.25, "enter": "fade" },
+    { "clip": "home", "at": 39.0, "enter": "slide" },
+    { "clip": "history", "at": 40.5, "enter": "slide" },
+    { "clip": "journal", "at": 42.0, "enter": "slide" },
+    { "clip": "bible", "at": 43.5, "enter": "slide" }
+  ],
+
+  "moods": [
+    { "at": 9.0, "theme": "peace" },
+    { "at": 10.5, "theme": "gratitude" },
+    { "at": 11.25, "theme": "hope" },
+    { "at": 12.0, "theme": "joy" },
+    { "at": 12.75, "theme": "lament" },
+    { "at": 13.5, "theme": "longing" },
+    { "at": 14.25, "theme": "peace" }
+  ],
+
+  "accents": [
+    { "at": 0, "color": "#0F6E56" },
+    { "at": 10.5, "color": "#854F0B" },
+    { "at": 11.25, "color": "#185FA5" },
+    { "at": 12.0, "color": "#993C1D" },
+    { "at": 12.75, "color": "#534AB7" },
+    { "at": 13.5, "color": "#26215C" },
+    { "at": 14.25, "color": "#0F6E56" },
+    { "at": 39.0, "color": "#854F0B" },
+    { "at": 40.5, "color": "#0F6E56" }
+  ],
+
+  "captions": [
+    { "from": 15.0, "to": 17.85, "step": 1, "kicker": "Step 1 · Scripture", "headline": "Read one verse.", "sub": "Slowly. Let it land." },
+    { "from": 18.0, "to": 22.35, "step": 2, "kicker": "Step 2 · Observation", "headline": "Notice what it says.", "sub": "A gentle question. No wrong answers." },
+    { "from": 22.5, "to": 26.85, "step": 3, "kicker": "Step 3 · Application", "headline": "Let it touch today.", "sub": "One honest sentence for the day ahead." },
+    { "from": 27.0, "to": 31.35, "step": 4, "kicker": "Step 4 · Prayer", "headline": "Pray it back.", "sub": "In your own words." },
+    { "from": 31.5, "to": 35.85, "step": 5, "kicker": "Amen", "headline": "Four steps. A few minutes.", "sub": "A quiet time you can actually finish." },
+    { "from": 36.0, "to": 38.85, "kicker": "Keep it", "headline": "Share the verse that moved you.", "sub": "A card made in a tap." },
+    { "from": 39.0, "to": 41.85, "kicker": "A gentle rhythm", "headline": "A streak that grows like a plant.", "sub": "Never a scoreboard. Missed days are held softly." },
+    { "from": 42.0, "to": 43.35, "kicker": "Your journal", "headline": "Everything you write, kept." },
+    { "from": 43.5, "to": 44.85, "kicker": "Built in", "headline": "The whole Bible, right inside." }
+  ],
+
+  "hook": { "first": 0.2, "gap": 0.42, "accel": 0.84, "count": 14 },
+
+  "promises": { "from": 45.3, "to": 48.6, "step": 0.75, "lines": ["No feed to fall into.", "No ads. No sign-up.", "Works offline.", "Your words stay on your phone."] },
+
+  "cta": { "from": 48.9 },
+
+  "music": {
+    "bpm": 80,
+    "start": 3.0,
+    "chords": [
+      { "at": 3.0, "notes": ["D3", "A3", "E4", "F#4", "C#5"] },
+      { "at": 6.0, "notes": ["B2", "F#3", "D4", "E4", "A4"] },
+      { "at": 9.0, "notes": ["G2", "D3", "B3", "F#4", "A4"] },
+      { "at": 12.0, "notes": ["A2", "E3", "D4", "E4", "B4"] },
+      { "at": 13.5, "notes": ["A2", "E3", "C#4", "E4", "A4"] },
+      { "at": 15.0, "notes": ["D3", "A3", "D4", "F#4", "A4"] },
+      { "at": 18.0, "notes": ["B2", "F#3", "D4", "F#4", "B4"] },
+      { "at": 22.5, "notes": ["G2", "D3", "B3", "D4", "F#4"] },
+      { "at": 27.0, "notes": ["E2", "B2", "G3", "D4", "F#4"] },
+      { "at": 29.25, "notes": ["A2", "E3", "D4", "E4", "A4"] },
+      { "at": 31.5, "notes": ["D3", "A3", "E4", "F#4", "A4"] },
+      { "at": 36.0, "notes": ["B2", "F#3", "D4", "E4", "A4"] },
+      { "at": 39.0, "notes": ["G2", "D3", "B3", "D4", "A4"] },
+      { "at": 42.0, "notes": ["F#2", "D3", "A3", "D4", "F#4"] },
+      { "at": 43.5, "notes": ["E2", "B2", "G3", "D4", "B4"] },
+      { "at": 45.0, "notes": ["A2", "E3", "D4", "E4", "A4"] },
+      { "at": 48.75, "notes": ["G2", "D3", "B3", "F#4", "A4"] },
+      { "at": 51.75, "notes": ["D2", "A2", "F#3", "E4", "A4"] }
+    ],
+    "arpeggio": [
+      { "from": 3.6, "to": 15.0, "every": 0.75 },
+      { "from": 15.0, "to": 31.5, "every": 0.375 },
+      { "from": 31.5, "to": 36.0, "every": 0.75 },
+      { "from": 36.0, "to": 45.0, "every": 0.375 },
+      { "from": 48.75, "to": 52.5, "every": 0.75 }
+    ],
+    "chimes": [3.0, 6.0, 31.5, 48.9],
+    "swells": [8.6, 38.8],
+    "promiseHits": [45.3, 46.05, 46.8, 47.55]
+  }
+}
