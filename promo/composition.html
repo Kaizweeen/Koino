@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Koino Promo</title>
+<style>
+  /* Koino's own faces, bundled (SIL OFL 1.1) so a render never depends on the network. */
+  @font-face { font-family: "Lora"; src: url("fonts/Lora.ttf") format("truetype"); font-weight: 400 700; font-style: normal; font-display: block; }
+  @font-face { font-family: "Lora"; src: url("fonts/Lora-Italic.ttf") format("truetype"); font-weight: 400 700; font-style: italic; font-display: block; }
+  @font-face { font-family: "Inter"; src: url("fonts/Inter.ttf") format("truetype"); font-weight: 100 900; font-style: normal; font-display: block; }
+
+  :root {
+    --paper: #FBFAF7;
+    --canvas: #EEEBE3;
+    --canvas-glow: #F6F3EC;
+    --ink: #262521;
+    --ink-secondary: #55544D;
+    --ink-muted: #6C6A5F;
+    --brand: #0F6E56;
+    --accent: #0F6E56;
+    --serif: "Lora", Georgia, serif;
+    --sans: "Inter", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--canvas); }
+  body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+  .layer { position: absolute; inset: 0; }
+  .center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+  /* Paper world: warm canvas, the day's drifting light, faint grain. */
+  #bg { background: radial-gradient(120% 70% at 50% -10%, var(--canvas-glow) 0%, var(--canvas) 62%); }
+  .glow { position: absolute; border-radius: 50%; will-change: transform, opacity; }
+  #grain { opacity: 0.065; background-size: 180px 180px; mix-blend-mode: multiply; }
+
+  /* Hook: a lock screen filling up with noise. */
+  #hook { background: radial-gradient(90% 60% at 30% 20%, #3a3f4b 0%, transparent 70%), radial-gradient(80% 60% at 80% 85%, #2f2a3a 0%, transparent 70%), linear-gradient(180deg, #17181c, #1e2026); color: #fff; }
+  #lockDate { position: absolute; top: 170px; width: 100%; text-align: center; font: 500 42px var(--sans); color: rgba(255,255,255,0.86); }
+  #lockTime { position: absolute; top: 215px; width: 100%; text-align: center; font: 300 236px/1 var(--sans); letter-spacing: -0.045em; color: rgba(255,255,255,0.94); }
+  #notes { position: absolute; inset: 0; }
+  .note { position: absolute; left: 54px; width: 972px; height: 150px; border-radius: 44px; background: rgba(238,238,242,0.86); backdrop-filter: blur(24px); display: flex; align-items: center; gap: 26px; padding: 0 34px; color: #111; box-shadow: 0 10px 30px -12px rgba(0,0,0,0.5); transform-origin: 50% 0; }
+  .note .ic { width: 84px; height: 84px; flex: none; border-radius: 22px; display: flex; align-items: center; justify-content: center; }
+  .note .ic svg { width: 50px; height: 50px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .note .tx { flex: 1; min-width: 0; }
+  .note .row { display: flex; justify-content: space-between; align-items: baseline; }
+  .note .ti { font: 600 33px var(--sans); }
+  .note .tm { font: 400 27px var(--sans); color: rgba(0,0,0,0.45); }
+  .note .bd { font: 400 31px var(--sans); color: rgba(0,0,0,0.78); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; }
+  #hookShade { position: absolute; left: 0; right: 0; bottom: 0; height: 900px; background: linear-gradient(180deg, transparent, rgba(16,16,19,0.92) 45%, #121215 70%); }
+  #hookLine { position: absolute; left: 70px; right: 70px; bottom: 250px; font: 500 92px/1.12 var(--serif); letter-spacing: -0.02em; text-align: center; color: #fff; text-wrap: balance; }
+  #hookLine em { font-style: italic; color: #C9C4B6; }
+
+  /* Stillness + brand */
+  .serif-xl { font: 500 104px/1.12 var(--serif); letter-spacing: -0.025em; color: var(--ink); }
+  .serif-xl em { font-style: italic; color: var(--accent); }
+  #stillHalo { position: absolute; left: 50%; top: 50%; width: 760px; height: 760px; margin: -380px 0 0 -380px; border-radius: 50%; }
+  .appicon { width: 230px; height: 230px; border-radius: 54px; background: var(--brand); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(15,110,86,0.3), 0 40px 70px -26px rgba(15,110,86,0.65); }
+  .appicon svg { width: 150px; height: 150px; }
+  .halo { position: absolute; border-radius: 50%; background: #E1F5EE; border: 2px solid #9FE1CB; }
+  .ring { position: absolute; border-radius: 50%; border: 3px solid #9FE1CB; }
+  .wordmark { font: 500 168px/1 var(--serif); letter-spacing: -0.03em; color: var(--ink); }
+  .tagline { font: 400 46px/1.3 var(--sans); color: var(--ink-secondary); }
+  .label { font: 500 26px/1.3 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-muted); }
+
+  /* Captions above the phone */
+  #captions { position: absolute; left: 0; right: 0; top: 0; height: 520px; }
+  .cap { position: absolute; inset: 0; padding: 0 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 18px; }
+  .cap.step { padding-top: 110px; }
+  .cap .kicker { font: 500 27px/1.3 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); }
+  .cap .headline { font: 500 78px/1.14 var(--serif); letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
+  .cap .sub { font: 400 38px/1.4 var(--sans); color: var(--ink-secondary); text-wrap: balance; }
+  #soap { position: absolute; top: 96px; left: 0; right: 0; display: flex; justify-content: center; gap: 22px; }
+  #soap span { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font: 600 32px var(--sans); }
+  #moodCap { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 0 60px; text-align: center; }
+  #moodHead { text-wrap: balance; }
+  #moodWords { position: relative; width: 100%; height: 176px; overflow: hidden; }
+  #moodWords span { position: absolute; left: 0; right: 0; top: 12px; font: italic 500 132px/1.1 var(--serif); letter-spacing: -0.02em; }
+
+  /* The phone */
+  #phone { position: absolute; left: 206px; top: 522px; width: 668px; height: 1415px; border-radius: 106px; padding: 14px; background: linear-gradient(145deg, #3b3a37, #141412 40%, #262522); box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08), 0 2px 6px rgba(38,37,33,0.25), 0 70px 120px -40px rgba(38,37,33,0.55), 0 30px 50px -30px rgba(38,37,33,0.4); transform-origin: 50% 0; will-change: transform; }
+  #screen { display: block; width: 640px; height: 1387px; border-radius: 92px; background: var(--paper); }
+  #phoneGlare { position: absolute; inset: 14px; border-radius: 92px; pointer-events: none; background: linear-gradient(125deg, rgba(255,255,255,0.10), transparent 30%); }
+
+  /* Promise + call to action */
+  #promise { padding: 0 80px; gap: 30px; }
+  #promise p { font: 500 80px/1.18 var(--serif); letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
+  #promise p:last-child { font-style: italic; color: var(--accent); }
+  #cta { gap: 0; }
+  #ctaMark { position: relative; width: 420px; height: 420px; display: flex; align-items: center; justify-content: center; }
+  #ctaWord { margin-top: 10px; }
+  #ctaHead { margin-top: 34px; font: 500 70px/1.15 var(--serif); letter-spacing: -0.02em; color: var(--ink); }
+  #ctaBtn { margin-top: 64px; display: inline-flex; align-items: center; gap: 18px; padding: 38px 76px; border-radius: 999px; background: var(--brand); color: #fff; font: 500 42px var(--sans); box-shadow: 0 2px 4px rgba(15,110,86,0.45), 0 30px 50px -18px rgba(15,110,86,0.7); }
+  #ctaBtn svg { width: 40px; height: 40px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #ctaFine { margin-top: 46px; font: 400 34px/1.5 var(--sans); color: var(--ink-muted); }
+  #ctaUrl { margin-top: 14px; font: 500 40px var(--sans); color: var(--brand); letter-spacing: 0.01em; }
+  #veil { background: var(--paper); opacity: 0; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script type="module" src="composition.js"></script>
+</body>
+</html>
