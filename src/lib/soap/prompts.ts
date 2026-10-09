@@ -1,4 +1,4 @@
-import type { ThemeSlug } from "@/lib/themes";
+import type { MoodSlug, ThemeSlug } from "@/lib/themes";
 
 export interface SoapPrompts {
   observation: string;
@@ -21,6 +21,19 @@ export const SOAP_PROMPTS: Record<ThemeSlug, SoapPrompts> = {
   longing:    { observation: "What is this verse teaching you about seeking and waiting on God?", application: "What are you waiting for, and how can you keep seeking God in it?", prayer: "Tell God what you long for, and ask him to meet you as you wait." },
 };
 
-export function getSoapPrompts(theme: ThemeSlug): SoapPrompts {
-  return SOAP_PROMPTS[theme];
+/**
+ * The prompts for a verse the reader picked themselves.
+ *
+ * A passage chosen off the page arrives without a mood attached, and guessing one would put words
+ * in the reader's mouth on the very screen that asks them to find their own. So these ask the
+ * plain SOAP questions instead — open enough for any passage, still specific enough to write to.
+ */
+export const OPEN_SOAP_PROMPTS: SoapPrompts = {
+  observation: "What does this passage actually say, and what does it show you about God?",
+  application: "What is this asking of you, in the life you are living today?",
+  prayer: "Pray this passage back to God in your own words.",
+};
+
+export function getSoapPrompts(mood: MoodSlug): SoapPrompts {
+  return mood === "open" ? OPEN_SOAP_PROMPTS : SOAP_PROMPTS[mood];
 }

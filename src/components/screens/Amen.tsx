@@ -1,25 +1,30 @@
 import type { Theme } from "@/lib/themes";
-import type { Devotion } from "@/lib/devotions/types";
+import type { Verse } from "@/lib/devotions/types";
 import { milestoneFor } from "@/lib/streak";
 import { ShareButton } from "@/components/ShareButton";
 import { Icon } from "@/components/Icon";
 
 export function Amen({
-  devotion,
+  verse,
   theme,
   streak,
   favorite,
   onToggleFavorite,
   reflection,
 }: {
-  devotion: Devotion;
+  verse: Verse;
   theme: Theme;
-  streak: number;
+  /**
+   * The daily rhythm this sitting belongs to. Left out for a verse the reader chose themselves:
+   * the streak is the shape of the daily devotion, and claiming one here would either be wrong or
+   * quietly redefine what the number counts.
+   */
+  streak?: number;
   favorite: boolean;
   onToggleFavorite: () => void;
   reflection: string;
 }) {
-  const milestone = milestoneFor(streak);
+  const milestone = streak === undefined ? null : milestoneFor(streak);
   return (
     <div className="flex flex-1 flex-col gap-6 px-7 py-8 lg:gap-10 lg:px-16 lg:py-14">
       <div className="my-auto flex flex-col items-center gap-3 text-center lg:gap-5">
@@ -31,7 +36,15 @@ export function Amen({
         </div>
         <span className="font-serif text-2xl text-ink lg:text-[3.25rem] lg:leading-tight">Amen.</span>
         <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted lg:text-sm">
-          <Icon name="plant-2" style={{ color: theme.accent }} /> {streak}-day streak
+          {streak === undefined ? (
+            <>
+              <Icon name="book" style={{ color: theme.accent }} /> Kept in your journal
+            </>
+          ) : (
+            <>
+              <Icon name="plant-2" style={{ color: theme.accent }} /> {streak}-day streak
+            </>
+          )}
         </span>
         {milestone && (
           <span
@@ -58,7 +71,7 @@ export function Amen({
           {favorite ? "Saved" : "Save"}
         </button>
         <ShareButton
-          devotion={devotion}
+          verse={verse}
           theme={theme}
           reflection={reflection}
           className="flex flex-1 items-center justify-center gap-1.5 rounded-full py-3 text-sm font-medium lg:py-3.5 lg:text-base"

@@ -3,9 +3,21 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { DEVOTIONS } from "@/lib/devotions/content";
-import { getTheme } from "@/lib/themes";
+import { getMood, getTheme, type Theme } from "@/lib/themes";
+import type { Verse } from "@/lib/devotions/types";
 import { getDevotionShownOn } from "@/lib/devotions/select";
-import { loadProgress, getEntry, entryDates, isFavorite, toggleFavorite, soapText, type Progress } from "@/lib/progress";
+import {
+  loadProgress,
+  getEntry,
+  entryDates,
+  isFavorite,
+  toggleFavorite,
+  reflectionList,
+  toggleReflectionFavorite,
+  soapText,
+  type Progress,
+  type SoapEntry,
+} from "@/lib/progress";
 import { formatDisplayDate } from "@/lib/dates";
 import { ShareButton } from "@/components/ShareButton";
 import { BackupControls } from "@/components/BackupControls";
@@ -17,6 +29,27 @@ const PARTS = [
   { key: "prayer", label: "Prayer" },
 ] as const;
 
+/**
+ * One card in the journal, whichever way the writing got here.
+ *
+ * A day's devotion and a verse the reader chose are stored differently — one keyed by date against
+ * the curated content, the other carrying its own passage — but they are the same thing to read
+ * back, so they are flattened to this before anything is rendered or searched.
+ */
+interface JournalRecord {
+  key: string;
+  chosen: boolean;
+  date: string;
+  /** Orders two records written on the same day. */
+  order: string;
+  verse: Verse;
+  theme: Theme;
+  entry: SoapEntry;
+  legacyNote: string;
+  favorite: boolean;
+  toggleFavorite: () => Progress;
+}
+
 export function JournalView() {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [favOnly, setFavOnly] = useState(false);
@@ -24,17 +57,43 @@ export function JournalView() {
 
   useEffect(() => setProgress(loadProgress()), []);
 
-  const records = useMemo(() => {
+  const records = useMemo<JournalRecord[]>(() => {
     if (!progress) return [];
-    return entryDates(progress).map((date) => {
+
+    const daily: JournalRecord[] = entryDates(progress).map((date) => {
       const devotion = getDevotionShownOn(DEVOTIONS, date);
       return {
+        key: `daily:${date}`,
+        chosen: false,
         date,
-        devotion,
+        order: "",
+        verse: devotion,
         theme: getTheme(devotion.theme),
         entry: getEntry(progress, date),
         legacyNote: progress.notes[date] ?? "",
+        favorite: isFavorite(progress, date),
+        toggleFavorite: () => toggleFavorite(date),
       };
+    });
+
+    const chosen: JournalRecord[] = reflectionList(progress).map((r) => ({
+      key: `verse:${r.id}`,
+      chosen: true,
+      date: r.date,
+      order: r.createdAt,
+      verse: { verseRef: r.verseRef, verseText: r.verseText },
+      theme: getMood(r.mood),
+      entry: r.soap,
+      legacyNote: "",
+      favorite: r.favorite,
+      toggleFavorite: () => toggleReflectionFavorite(r.id),
+    }));
+
+    return [...daily, ...chosen].sort((a, b) => {
+      if (a.date !== b.date) return b.date.localeCompare(a.date);
+      // A day's own devotion leads its day; whatever else was chosen that day follows it, newest first.
+      if (a.chosen !== b.chosen) return a.chosen ? 1 : -1;
+      return b.order.localeCompare(a.order);
     });
   }, [progress]);
 
@@ -48,14 +107,14 @@ export function JournalView() {
 
   const q = query.trim().toLowerCase();
   const filtered = records.filter((r) => {
-    if (favOnly && !isFavorite(progress, r.date)) return false;
+    if (favOnly && !r.favorite) return false;
     if (!q) return true;
-    const hay = [r.devotion.verseText, r.devotion.verseRef, r.theme.name, r.entry.observation, r.entry.application, r.entry.prayer, r.legacyNote]
+    const hay = [r.verse.verseText, r.verse.verseRef, r.theme.name, r.entry.observation, r.entry.application, r.entry.prayer, r.legacyNote]
       .join(" ")
       .toLowerCase();
     return hay.includes(q);
   });
-  const hasFavorites = records.some((r) => isFavorite(progress, r.date));
+  const hasFavorites = records.some((r) => r.favorite);
 
   const emptyMessage =
     records.length === 0 ? "Your journal is empty." : favOnly && !q ? "No favorites yet." : "No entries match your search.";
@@ -106,28 +165,41 @@ export function JournalView() {
           <p className="text-sm text-ink-secondary">{emptyMessage}</p>
           {records.length === 0 && (
             <>
-              <p className="max-w-[16rem] text-xs text-ink-muted">Finish a devotion and your Observation, Application, and Prayer will gather here.</p>
-              <Link href="/app/today" className="btn-quiet mt-2 rounded-full px-5 py-2.5 text-sm font-medium transition-transform active:scale-95" style={{ ["--accent" as string]: "#0F6E56" }}>
-                Go to today&apos;s devotion
-              </Link>
+              <p className="max-w-[18rem] text-xs text-ink-muted">
+                Sit with a verse — today&apos;s or one of your own — and your Observation, Application, and Prayer will gather here.
+              </p>
+              <div className="mt-2 flex flex-wrap items-center justify-center gap-2" style={{ ["--accent" as string]: "#0F6E56" }}>
+                <Link href="/app/today" className="btn-quiet rounded-full px-5 py-2.5 text-sm font-medium transition-transform active:scale-95">
+                  Go to today&apos;s devotion
+                </Link>
+                <Link href="/app/soap" className="btn-quiet rounded-full px-5 py-2.5 text-sm font-medium transition-transform active:scale-95">
+                  Choose a passage
+                </Link>
+              </div>
             </>
           )}
         </div>
       ) : (
         <div className="flex flex-col gap-5 lg:block lg:columns-2 lg:gap-x-4 xl:columns-3">
-          {filtered.map(({ date, devotion: d, theme: t, entry, legacyNote }) => {
+          {filtered.map((record) => {
+          const { key, chosen, date, verse: v, theme: t, entry, legacyNote } = record;
           const accent = t.accent;
           return (
-            <article key={date} className="rounded-well border bg-paper p-5 shadow-card lg:mb-4 lg:break-inside-avoid" style={{ borderColor: "var(--hairline)", ["--accent" as string]: accent }}>
-              <div className="flex items-center justify-between">
+            <article key={key} className="rounded-well border bg-paper p-5 shadow-card lg:mb-4 lg:break-inside-avoid" style={{ borderColor: "var(--hairline)", ["--accent" as string]: accent }}>
+              <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium" style={{ background: t.accentSoft, color: t.accent }}>
                   <Icon name={t.icon} /> {t.name}
                 </span>
-                <span className="text-[10px] text-ink-muted">{formatDisplayDate(date)}</span>
+                <span className="inline-flex shrink-0 items-center gap-1 text-[10px] text-ink-muted">
+                  {/* A mood-carrying reflection would otherwise be indistinguishable from the day's
+                      own devotion, and which one you were sitting with is part of remembering it. */}
+                  {chosen && <Icon name="book-2" label="A passage you chose" />}
+                  {formatDisplayDate(date)}
+                </span>
               </div>
 
-              <p className="mt-3.5 font-serif text-xl leading-snug text-ink">{d.verseText}</p>
-              <p className="mt-1.5 text-[10px] uppercase tracking-widest2 text-ink-muted">{d.verseRef}</p>
+              <p className="mt-3.5 font-serif text-xl leading-snug text-ink">{v.verseText}</p>
+              <p className="mt-1.5 text-[10px] uppercase tracking-widest2 text-ink-muted">{v.verseRef}</p>
 
               <div className="mt-4 flex flex-col gap-3">
                 {PARTS.map(({ key, label }) =>
@@ -148,15 +220,15 @@ export function JournalView() {
 
               <div className="mt-4 flex items-center justify-between border-t pt-3.5" style={{ borderColor: "var(--hairline)" }}>
                 <button
-                  onClick={() => setProgress(toggleFavorite(date))}
-                  aria-pressed={isFavorite(progress, date)}
-                  aria-label={isFavorite(progress, date) ? "Remove from favorites" : "Add to favorites"}
+                  onClick={() => setProgress(record.toggleFavorite())}
+                  aria-pressed={record.favorite}
+                  aria-label={record.favorite ? "Remove from favorites" : "Add to favorites"}
                   className="text-lg"
-                  style={{ color: isFavorite(progress, date) ? accent : "var(--ink-muted)" }}
+                  style={{ color: record.favorite ? accent : "var(--ink-muted)" }}
                 >
                   <Icon name="heart" />
                 </button>
-                <ShareButton devotion={d} theme={t} reflection={soapText(entry)} className="flex items-center gap-1.5 text-xs font-medium" />
+                <ShareButton verse={v} theme={t} reflection={soapText(entry)} className="flex items-center gap-1.5 text-xs font-medium" />
               </div>
             </article>
           );

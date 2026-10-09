@@ -97,7 +97,7 @@ export function DevotionFlow() {
             onBegin={() => setStep("scripture")}
           />
         )}
-        {step === "scripture" && <Scripture devotion={devotion} theme={theme} onContinue={() => setStep("observation")} />}
+        {step === "scripture" && <Scripture verse={devotion} theme={theme} onContinue={() => setStep("observation")} />}
         {step === "observation" && (
           <SoapStep theme={theme} step={2} label="Observation" prompt={prompts.observation}
             value={entry.observation} onChange={(t) => writeField("observation", t)}
@@ -115,7 +115,7 @@ export function DevotionFlow() {
         )}
         {step === "amen" && (
           <Amen
-            devotion={devotion}
+            verse={devotion}
             theme={theme}
             streak={streak}
             favorite={isFavorite(progress, devotion.date)}
@@ -133,7 +133,7 @@ export function DevotionFlow() {
             <Icon name="arrow-right" className="transition-transform duration-200 group-hover:translate-x-0.5" />
           </button>
         )}
-        {step === "linger" && <Linger devotion={devotion} theme={theme} />}
+        {step === "linger" && <Linger verse={devotion} theme={theme} />}
         {step === "done" && <Done theme={theme} streak={streak} onReadAgain={() => setStep("scripture")} />}
         </div>
       </main>

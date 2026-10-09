@@ -12,6 +12,12 @@ interface ChapterViewProps {
   highlight?: { from: number; to: number };
   /** Scroll the highlighted verse into view once the chapter has loaded. */
   scrollToHighlight?: boolean;
+  /**
+   * Makes every verse a control that reports the verse tapped. Left off, the chapter is purely
+   * something to read — which is what the devotion's chapter sheet wants, and what keeps a screen
+   * reader from announcing all 176 verses of Psalm 119 as buttons.
+   */
+  onSelectVerse?: (verse: number) => void;
   className?: string;
 }
 
@@ -29,6 +35,7 @@ export function ChapterView({
   chapter,
   highlight,
   scrollToHighlight = false,
+  onSelectVerse,
   className = "",
 }: ChapterViewProps) {
   const [data, setData] = useState<BibleChapter | null>(null);
@@ -105,8 +112,28 @@ export function ChapterView({
               ))}
               <p
                 ref={marked && verse.n === highlight?.from ? highlightRef : undefined}
+                /* Kept a <p> rather than wrapped in a <button>: the verse sets poetry as block
+                   lines, which a button may not contain. The role carries the affordance instead,
+                   and the verse's own words are its accessible name. */
+                role={onSelectVerse ? "button" : undefined}
+                tabIndex={onSelectVerse ? 0 : undefined}
+                aria-pressed={onSelectVerse ? marked : undefined}
+                onClick={onSelectVerse ? () => onSelectVerse(verse.n) : undefined}
+                onKeyDown={
+                  onSelectVerse
+                    ? (event) => {
+                        if (event.key !== "Enter" && event.key !== " ") return;
+                        event.preventDefault();
+                        onSelectVerse(verse.n);
+                      }
+                    : undefined
+                }
                 className={`font-serif text-[1.0625rem] leading-[1.85] transition-colors ${
                   marked ? "rounded-2xl px-3.5 py-2.5 text-ink" : "text-ink-secondary"
+                } ${
+                  onSelectVerse
+                    ? "cursor-pointer rounded-2xl px-3.5 py-2.5 outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]"
+                    : ""
                 }`}
                 style={marked ? { background: "color-mix(in srgb, var(--accent) 12%, transparent)" } : undefined}
               >

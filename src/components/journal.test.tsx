@@ -73,6 +73,63 @@ describe("JournalView", () => {
     expect(screen.getByText("gratitude for gifts")).toBeInTheDocument();
   });
 
+  it("gathers a chosen-verse reflection alongside the daily entries", async () => {
+    localStorage.setItem(
+      "koino.progress.v1",
+      JSON.stringify({
+        completedDates: [],
+        favorites: [],
+        entries: { "2026-06-25": { observation: "the day's verse", application: "", prayer: "" } },
+        reflections: {
+          "2026-06-26|John 15:5": {
+            id: "2026-06-26|John 15:5",
+            date: "2026-06-26",
+            createdAt: "2026-06-26T08:00:00.000Z",
+            verseRef: "John 15:5",
+            verseText: "I am the vine. You are the branches.",
+            mood: "open",
+            soap: { observation: "abiding, not striving", application: "", prayer: "" },
+            favorite: false,
+          },
+        },
+      }),
+    );
+    render(<JournalView />);
+    expect(await screen.findByText("abiding, not striving")).toBeInTheDocument();
+    expect(screen.getByText("I am the vine. You are the branches.")).toBeInTheDocument();
+    expect(screen.getByText("the day's verse")).toBeInTheDocument();
+    // Marked as one the reader picked, so it is not mistaken for that day's devotion.
+    expect(screen.getByLabelText("A passage you chose")).toBeInTheDocument();
+  });
+
+  it("keeps and filters a chosen-verse reflection by its own favorite flag", async () => {
+    localStorage.setItem(
+      "koino.progress.v1",
+      JSON.stringify({
+        completedDates: [],
+        favorites: [],
+        entries: { "2026-06-25": { observation: "not kept", application: "", prayer: "" } },
+        reflections: {
+          r1: {
+            id: "r1",
+            date: "2026-06-26",
+            createdAt: "2026-06-26T08:00:00.000Z",
+            verseRef: "John 15:5",
+            verseText: "I am the vine.",
+            mood: "peace",
+            soap: { observation: "kept", application: "", prayer: "" },
+            favorite: true,
+          },
+        },
+      }),
+    );
+    render(<JournalView />);
+    expect(await screen.findByText("not kept")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Favorites/ }));
+    expect(screen.queryByText("not kept")).toBeNull();
+    expect(screen.getByText("kept")).toBeInTheDocument();
+  });
+
   it("shows a legacy note when present without a structured entry", async () => {
     localStorage.setItem(
       "koino.progress.v1",
